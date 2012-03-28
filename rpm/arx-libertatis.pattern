@@ -1,0 +1,20 @@
+<pattern
+ xmlns="http://novell.com/package/metadata/suse/pattern"
+ xmlns:rpm="http://linux.duke.edu/metadata/rpm"
+>
+	<name>Arx Libertatis</name>
+	<summary>Cross-platform port of Arx Fatalis, a first-person role-playing game</summary>
+	<description>Arx Libertatis and it's crash handler</description>
+	<uservisible/>
+	<category lang="en">Games</category>
+	<rpm:requires>
+		<rpm:entry name="arx"/>
+	</rpm:requires>
+	<rpm:recommends>
+		<rpm:entry name="arxcrashreporter"/>
+	</rpm:recommends>
+	<rpm:suggests>
+		<rpm:entry name="arxunpak"/>
+		<rpm:entry name="arxsavetool"/>
+	</rpm:suggests>
+</pattern>
