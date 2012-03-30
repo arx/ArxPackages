@@ -20,7 +20,7 @@ Version:        1.0_rc4
 Release:        0
 License:        GPL-3.0+
 Summary:        Cross-platform port of Arx Fatalis, a first-person role-playing game
-Url:            http://arx-libertatis.org/
+URL:            http://arx-libertatis.org/
 Group:          Amusements/Games/RPG
 Source:         %{name}-%{version}.tar.xz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
@@ -152,5 +152,5 @@ echo "See http://wiki.arx-libertatis.org/Getting_the_game_data for more informat
 %desktop_database_postun
 
 %changelog
-* Sun Mar 26 2011 daniel@constexpr.org
+* Sun Mar 26 2011 Daniel Scharrer <daniel@constexpr.org> 1.0
 - created package

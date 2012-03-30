@@ -4,7 +4,7 @@
 >
 	<name>Arx Libertatis</name>
 	<summary>Cross-platform port of Arx Fatalis, a first-person role-playing game</summary>
-	<description>Arx Libertatis and it's crash handler</description>
+	<description>Arx Libertatis and related utilities</description>
 	<uservisible/>
 	<category lang="en">Games</category>
 	<rpm:requires>
@@ -16,5 +16,6 @@
 	<rpm:suggests>
 		<rpm:entry name="arxunpak"/>
 		<rpm:entry name="arxsavetool"/>
+		<rpm:entry name="innoextract"/>
 	</rpm:suggests>
 </pattern>

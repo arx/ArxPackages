@@ -57,5 +57,5 @@ make DESTDIR=%{buildroot} install
 %{_bindir}/innoextract
 
 %changelog
-* Sun Mar 25 2011 daniel@constexpr.org
+* Sun Mar 25 2011 Daniel Scharrer <daniel@constexpr.org>
 - created package
