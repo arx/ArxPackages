@@ -52,7 +52,6 @@ BuildRequires:  pkgconfig(QtNetwork)
 BuildRequires:  xz
 %if 0%{?suse_version}
 BuildRequires:  update-desktop-files
-%else
 %endif
 Requires:       arx
 Requires:       arxcrashreporter
