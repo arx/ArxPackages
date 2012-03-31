@@ -1,0 +1,5 @@
+innoextract (1.1-0.1) stable; urgency=low
+
+  * Initial release
+
+ -- Daniel Scharrer <daniel@constexpr.org>  Sun, 30 Mar 2012 08:01:24 +0200

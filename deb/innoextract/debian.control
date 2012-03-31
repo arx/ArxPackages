@@ -1,0 +1,18 @@
+Source: innoextract
+Section: utils
+Priority: extra
+Maintainer: Daniel Scharrer <daniel@constexpr.org>
+Build-Depends: debhelper (>= 8.0.0), cmake (>= 2.8), libboost-dev, libboost-iostreams-dev , libboost-filesystem-dev, libboost-date-time-dev, libboost-system-dev, libboost-program-options-dev, liblzma-dev
+Standards-Version: 3.9.2
+Homepage: http://innoextract.constexpr.org/
+Vcs-Git: git://github.com/dscharrer/InnoExtract.git
+Vcs-Browser: https://github.com/dscharrer/InnoExtract
+
+Package: innoextract
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Tool to extract installers created by Inno Setup
+ Inno Setup is a tool to create installers for Microsoft Windows applications.
+ Inno Extracts allows one to extract such installers under non-windows systems
+ without running the actual installer using wine. Inno Extract currently
+ supports installers created by Inno Setup 1.2.10 to 5.4.3.
