@@ -1,3 +1,9 @@
+innoextract (1.2-0.1) stable; urgency=low
+
+  * New upstream release: fix compile errors on older systems and remove unused dependency.
+
+ -- Daniel Scharrer <daniel@constexpr.org>  Sun, 01 Apr 2012 02:26:24 +0200
+
 innoextract (1.1-0.1) stable; urgency=low
 
   * Initial release

@@ -16,7 +16,7 @@
 #
 
 Name:           innoextract
-Version:        1.1
+Version:        1.2
 Release:        0
 License:        Zlib
 Summary:        A tool to extract installers created by Inno Setup
