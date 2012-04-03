@@ -5,5 +5,8 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+override_dh_installchangelogs:
+	dh_installchangelogs CHANGELOG
+
 %:
 	dh $@

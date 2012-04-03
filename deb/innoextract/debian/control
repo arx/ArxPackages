@@ -2,7 +2,7 @@ Source: innoextract
 Section: utils
 Priority: extra
 Maintainer: Daniel Scharrer <daniel@constexpr.org>
-Build-Depends: debhelper (>= 7.0.0), cmake (>= 2.8), libboost-dev, libboost-iostreams-dev , libboost-filesystem-dev, libboost-date-time-dev, libboost-system-dev, libboost-program-options-dev, liblzma-dev
+Build-Depends: debhelper (>= 7.0.50), cmake (>= 2.8), libboost-dev, libboost-iostreams-dev , libboost-filesystem-dev, libboost-date-time-dev, libboost-system-dev, libboost-program-options-dev, liblzma-dev
 Standards-Version: 3.9.2
 Homepage: http://innoextract.constexpr.org/
 Vcs-Git: git://github.com/dscharrer/InnoExtract.git

@@ -1,3 +1,9 @@
+innoextract (1.2-0.2) stable; urgency=low
+
+  * Install the upstream changelog file with the correct name.
+
+ -- Daniel Scharrer <daniel@constexpr.org>  Tue, 03 Apr 2012 21:17:42 +0200
+
 innoextract (1.2-0.1) stable; urgency=low
 
   * New upstream release: fix compile errors on older systems and remove unused dependency.
