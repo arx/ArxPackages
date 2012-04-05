@@ -1,0 +1,21 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+# We don't need any custom rules as debhelper is able to fugure out everything.
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+override_dh_auto_configure:
+	dh_auto_configure -- \
+		-DUNITY_BUILD=ON \
+		-DCMAKE_INSTALL_LIBEXECDIR=lib/arx \
+		-DGAMESBINDIR=games
+
+override_dh_strip:
+	dh_strip --dbg-package=arx-libertatis-dbg
+
+override_dh_installchangelogs:
+	dh_installchangelogs -parx-libertatis CHANGELOG
+
+%:
+	dh $@
