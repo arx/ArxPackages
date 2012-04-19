@@ -16,6 +16,10 @@ override_dh_strip:
 
 override_dh_installchangelogs:
 	dh_installchangelogs -parx-libertatis CHANGELOG
+	dh_installchangelogs -parxcrashreporter
+	dh_installchangelogs -parxsavetool
+	dh_installchangelogs -parxunpak
+	dh_installchangelogs -parx-libertatis-dbg
 
 %:
 	dh $@
