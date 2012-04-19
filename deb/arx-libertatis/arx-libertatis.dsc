@@ -2,7 +2,7 @@ Format: 3.0 (quilt)
 Source: arx-libertatis
 Binary: arx-libertatis, arxcrashreporter, arxsavetool, arxunpak, arx-libertatis-dbg
 Architecture: any
-Version: 0.99+1.0rc5-0.1
+Version: 1.0-0.1
 Maintainer: Daniel Scharrer <daniel@constexpr.org>
 Homepage: http://arx-libertatis.org/
 Standards-Version: 3.9.2
