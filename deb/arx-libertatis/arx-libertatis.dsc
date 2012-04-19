@@ -10,11 +10,11 @@ Vcs-Browser: https://github.com/arx/ArxLibertatis
 Vcs-Git: git://github.com/arx/ArxLibertatis.git
 Build-Depends: debhelper (>= 7.0.50), cmake (>= 2.8), libboost-dev (>= 1.39), libboost-program-options-dev, libdevil-dev (>= 1.7), zlib1g-dev, libsdl1.2-dev, libfreetype6-dev, libopenal-dev, mesa-common-dev, libgl1-mesa-dev, libglew-dev, libqt4-dev
 Checksums-Sha1: 
- 7774a61229793e863fbca2dd37dc05704c7bef2d 908440 arx-libertatis_0.99+1.0rc5.orig.tar.xz
- e64faa72d573f528a562c0be127cd0cc5d304dca 4089 arx-libertatis_0.99+1.0rc5-0.1.debian.tar.gz
+ 71e0fa58faee0a1e227528d7e577025cc0047c1e 909452 arx-libertatis_1.0.orig.tar.xz
+ 8e15c19e98c4a7b889ad87b0ad1c78f602faeb88 4086 arx-libertatis_1.0-0.1.debian.tar.gz
 Checksums-Sha256: 
- caa0d603c62a516e1283a27ef2e3a72e7d3855d7a4fe7d1b6994a7d619108b67 908440 arx-libertatis_0.99+1.0rc5.orig.tar.xz
- d57d21f133bb9b85068be62a1e5383f8b5930b045f8f6a1dfd7024b9b22a2229 4089 arx-libertatis_0.99+1.0rc5-0.1.debian.tar.gz
+ 5e410ca14dae05910162e1052cd4a693dce763ebe3158ca78e44d9dacb289108 909452 arx-libertatis_1.0.orig.tar.xz
+ 627187cbb3d0e0c46d3a41b7c197be0b3e2a1704e17c2db7f7d54ab59080d1ed 4086 arx-libertatis_1.0-0.1.debian.tar.gz
 Files: 
- 8dc49054378157039ee9f24328413423 908440 arx-libertatis_0.99+1.0rc5.orig.tar.xz
- b2301101a7185c035bc7820649cb1683 4089 arx-libertatis_0.99+1.0rc5-0.1.debian.tar.gz
+ 836737327340baed0c3955256ed3134a 909452 arx-libertatis_1.0.orig.tar.xz
+ 3ee0d295b50d92145d73162f692f9c2a 4086 arx-libertatis_1.0-0.1.debian.tar.gz
