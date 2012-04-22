@@ -1,3 +1,13 @@
+arx-libertatis (1.0.1-0.1) stable; urgency=low
+
+  * Bump version to 1.0.1:
+  * Fixed garbled text rendering in the Russian version (upstream bug #226)
+  * Fixed a crash in the critical error dialog on some Linux systems
+    (upstream crash report #229)
+  * Loading files from the graph and misc directories is now case-insensitive
+
+ -- Daniel Scharrer <daniel@constexpr.org>  Sun, 22 Apr 2012 19:25:42 +0200
+
 arx-libertatis (1.0-0.1) stable; urgency=low
 
   * Initial release
