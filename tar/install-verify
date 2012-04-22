@@ -1,0 +1,12 @@
+#!/bin/sh
+
+there="$(pwd)"
+cd "$(dirname "$0")"
+here="$(pwd)"
+cd "$there"
+
+command="$(basename "$0")"
+
+export PATH="$here:$PATH"
+
+"$here/scripts/$command" "$@"

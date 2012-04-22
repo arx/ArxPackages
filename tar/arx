@@ -1,0 +1,19 @@
+#!/bin/sh
+
+there="$(pwd)"
+cd "$(dirname "$0")"
+here="$(pwd)"
+cd "$there"
+
+command="$(basename "$0")"
+
+machine=`uname -m`
+if [ -e "$here/amd64/bin/$command" ] \
+   && ( [ "$machine" = 'x86_64' ] || [ "$machine" = 'amd64' ] )
+	then arch='amd64'
+	else arch='x86'
+fi
+
+export LD_LIBRARY_PATH="$here/$arch/lib:$LD_LIBRARY_PATH"
+
+"$here/$arch/bin/$command" "$@"

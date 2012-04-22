@@ -1,0 +1,117 @@
+            _______________________
+           /\                      \
+           \_|         Arx         |
+             |      Libertatis     |
+             |   __________________|__
+              \_/____________________/
+
+
+Cross-platform port of Arx Fatalis
+
+Arx Libertatisis based on the publicly released Arx Fatalis source code
+available at http://www.arkane-studios.com/uk/arx_downloads.php.
+GPLv3 - read ARX_PUBLIC_LICENSE.txt
+
+## Contact
+
+Website: http://arx-libertatis.org
+
+Bug Tracker: https://bugs.arx-libertatis.org/
+
+IRC: \#arxfatalis on irc.freenode.net
+
+Wiki: http://wiki.arx-libertatis.org/
+
+Reddit: http://www.reddit.com/r/ArxFatalis/
+
+## Using these binaries
+
+The simplest way to use these binaries is to cd to this directory in a terminal,
+then install the game data using one of the install scripts:
+
+    $ ./install-... <path-to-source-data>
+
+and the running the game using the `play` wrapper:
+
+    $ ./play
+
+## Data file, config and savegame locations
+
+You will need to get either the full game or demo data of Arx Fatalis. See
+http://wiki.arx-libertatis.org/Getting_the_game_data
+
+Where arx will look for data files and write config and save files depends on
+the operating system and environment - the wiki has a page detailing the full
+data directory detection algorithm:
+http://wiki.arx-libertatis.org/Data_directories
+
+To print all directories considered by arx, run
+
+    $ ./arx --list-dirs
+
+If you don't have a system-wide installation of the Arx Fatalis data files, you
+can just run arx from the directory containing the .pak files:
+
+    $ ./arx
+
+Arx Libertatis will then put the config and save files in the same directory. If
+you have a system-wide installation, but still want to run from the current
+directory, use the `--no-data-dir --user-dir=. --config-dir=.` command-line
+options. This is what the `play` script does.
+
+For other systems like **Linux**, the data files can be in
+`/usr/local/share/games/arx` and `/usr/share/games/arx` as well as other
+locations depending on your linux distribution. Config files are normally
+located in `~/.config/arx` while save files are stored in `~/.local/share/arx`.
+
+## Run
+
+Run from the directory containing the .pak files (or from anywhere in case of a
+system-wide installation):
+
+    $ ./arx
+
+The game will try to automatically rename all used files in the user directory
+(but not the data directory) to lowercase on the first run if possible.
+System-wide installations always need to manually rename the files to lowercase
+- you can use the install-copy script.
+
+You can close it with `Alt + F4` or `killall arx`
+
+## Tools
+
+* `./arxunpak <pakfile> [<pakfile>...]`
+  Extracts the .pak files containing the game assets.
+
+* `./arxsavetool <command> <savefile> [<options>...]` - commands are:
+  * `extract <savefile>`
+    Extract the contents of the given savefile to the current directly.
+  * `add <savefile> [<files>...]`
+    Add files to a savefile, create it if needed.
+  * `fix <savefile>`
+    Fix savegame issues created by previous builds of Arx Libertatis
+  * `view <savefile> <ident>` - Print savegame information.
+
+## Scripts
+
+The `scripts` directory contains shell scripts that allow to extract/install the
+game data under linux without wine from the CD, demo, GOG.com installer or any
+fully patched Arx Fatalis install respectively. Also see
+http://wiki.arx-libertatis.org/Installing_the_game_data_under_Linux
+
+* `./install-cd path/to/cd path/to/ArxFatalis_1.21_MULTILANG.exe [output_dir]`
+  requires cabextract (http://www.cabextract.org.uk/)
+  and innoextract (http://innoextract.constexpr.org/)
+  `ArxFatalis_1.21_MULTILANG.exe` can be downloaded from
+  http://www.arkane-studios.com/uk/arx_downloads.php
+
+* `./install-demo path/to/arx_demo_english.zip [output_dir]`
+  requires unzip (http://www.info-zip.org/)
+  and cabextract (http://www.cabextract.org.uk/)
+
+* `./install-gog path/to/setup_arx_fatalis.exe [output_dir]`
+  requires innoextract (http://innoextract.constexpr.org/)
+  `setup_arx_fatalis.exe` can be downloaded from your GOG.com account after
+  buying Arx Fatalis
+
+* `./install-copy path/to/ArxFatalis/ [output_dir]`
