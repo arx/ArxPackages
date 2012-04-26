@@ -9,4 +9,4 @@ command="$(basename "$0")"
 
 export PATH="$here:$PATH"
 
-"$here/scripts/$command" "$@"
+exec "$here/scripts/$command" "$@"

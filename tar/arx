@@ -16,4 +16,4 @@ fi
 
 export LD_LIBRARY_PATH="$here/$arch/lib:$LD_LIBRARY_PATH"
 
-"$here/$arch/bin/$command" "$@"
+exec "$here/$arch/bin/$command" "$@"
