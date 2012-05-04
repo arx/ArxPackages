@@ -2,5 +2,4 @@
 
 cd "$(dirname "$0")"
 
-"./arx" --no-data-dir --user-dir=. --config-dir=. "$@"
- 
+exec "./arx" --no-data-dir --user-dir=. --config-dir=. "$@"
