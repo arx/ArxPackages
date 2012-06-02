@@ -115,3 +115,5 @@ http://wiki.arx-libertatis.org/Installing_the_game_data_under_Linux
   buying Arx Fatalis
 
 * `./install-copy path/to/ArxFatalis/ [output_dir]`
+  `path/to/ArxFatalis/` should point to a fully pached (1.21) Arx Fatalis
+  installation, such as the one from Steam
