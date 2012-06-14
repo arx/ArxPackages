@@ -1,3 +1,13 @@
+arx-libertatis (1.0.2-0.1) stable; urgency=low
+
+  * Bump version to 1.0.2:
+  * Fixed various crashes
+  * Fixed disappearing items when sorting the inventory
+  * Fixed minor rendering and input bugs
+  * Fixed spanish version
+
+ -- Daniel Scharrer <daniel@constexpr.org>  Thu, 14 Jun 2012 20:09:42 +0200
+
 arx-libertatis (1.0.1-0.1) stable; urgency=low
 
   * Bump version to 1.0.1:

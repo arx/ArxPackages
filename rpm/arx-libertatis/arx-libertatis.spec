@@ -16,7 +16,7 @@
 #
 
 Name:           arx-libertatis
-Version:        1.0.1
+Version:        1.0.2
 Release:        0
 License:        GPL-3.0+
 Summary:        Cross-platform port of Arx Fatalis, a first-person role-playing game
@@ -151,6 +151,12 @@ echo "See http://wiki.arx-libertatis.org/Getting_the_game_data for more informat
 %desktop_database_postun
 
 %changelog
+* Thu Jun 14 2012 Daniel Scharrer <daniel@constexpr.org> 1.0.2
+- bump version to 1.0.2:
+- Fixed various crashes
+- Fixed disappearing items when sorting the inventory
+- Fixed minor rendering and input bugs
+- Fixed spanish version
 * Sun Apr 22 2012 Daniel Scharrer <daniel@constexpr.org> 1.0.1
 - bump version to 1.0.1:
 - Fixed garbled text rendering in the Russian version (upstream bug #226)
