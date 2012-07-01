@@ -37,8 +37,6 @@ BuildRequires:  pkgconfig(liblzma)
 Inno Setup is a tool to create installers for Microsoft Windows
 applications. Inno Extracts allows to extract such installers under
 non-windows systems without running the actual installer using wine.
-Inno Extract currently supports installers created by
-Inno Setup 1.2.10 to 5.4.3.
 
 %prep
 %setup -q
