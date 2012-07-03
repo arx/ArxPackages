@@ -101,7 +101,7 @@ http://wiki.arx-libertatis.org/Installing_the_game_data_under_Linux
 
 * `./install-cd path/to/cd path/to/ArxFatalis_1.21_MULTILANG.exe [output_dir]`
   requires cabextract (http://www.cabextract.org.uk/)
-  and innoextract (http://innoextract.constexpr.org/)
+  and innoextract (http://constexpr.org/innoextract/)
   `ArxFatalis_1.21_MULTILANG.exe` can be downloaded from
   http://www.arkane-studios.com/uk/arx_downloads.php
 
@@ -110,7 +110,7 @@ http://wiki.arx-libertatis.org/Installing_the_game_data_under_Linux
   and cabextract (http://www.cabextract.org.uk/)
 
 * `./install-gog path/to/setup_arx_fatalis.exe [output_dir]`
-  requires innoextract (http://innoextract.constexpr.org/)
+  requires innoextract (http://constexpr.org/innoextract/)
   `setup_arx_fatalis.exe` can be downloaded from your GOG.com account after
   buying Arx Fatalis
 

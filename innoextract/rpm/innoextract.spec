@@ -20,7 +20,7 @@ Version:        1.3
 Release:        0
 License:        Zlib
 Summary:        A tool to extract installers created by Inno Setup
-Url:            http://innoextract.constexpr.org/
+Url:            http://constexpr.org/innoextract/
 Group:          Productivity/Archiving/Compression
 Source:         %{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build

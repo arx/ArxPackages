@@ -4,7 +4,7 @@ Binary: innoextract
 Architecture: any
 Version: 1.3-0.1
 Maintainer: Daniel Scharrer <daniel@constexpr.org>
-Homepage: http://innoextract.constexpr.org/
+Homepage: http://constexpr.org/innoextract/
 Standards-Version: 3.9.2
 Vcs-Browser: https://github.com/dscharrer/InnoExtract
 Vcs-Git: git://github.com/dscharrer/InnoExtract.git
