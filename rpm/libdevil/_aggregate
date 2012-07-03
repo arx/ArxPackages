@@ -1,5 +1,0 @@
-<aggregatelist>
-  <aggregate project="games">
-    <package>libdevil</package>
-  </aggregate>
-</aggregatelist>
