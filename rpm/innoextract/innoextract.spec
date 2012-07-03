@@ -16,7 +16,7 @@
 #
 
 Name:           innoextract
-Version:        1.2
+Version:        1.3
 Release:        0
 License:        Zlib
 Summary:        A tool to extract installers created by Inno Setup
@@ -55,5 +55,11 @@ make DESTDIR=%{buildroot} install
 %{_bindir}/innoextract
 
 %changelog
+* Tue Jul 03 2012 Daniel Scharrer <daniel@constexpr.org>
+- bump version to 1.3:
+- Respect --quiet and --silent for multi-file installers
+- Compile in C++11 mode if supported
+- Warn about unsupported setup data versions
+- Add support for Inno Setup 5.5.0 installers
 * Sun Mar 25 2011 Daniel Scharrer <daniel@constexpr.org>
 - created package
