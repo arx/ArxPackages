@@ -1,3 +1,15 @@
+arx-libertatis (1.0.3-0.1) stable; urgency=low
+
+  * Bump version to 1.0.3:
+  * Fixed minor rendering glitches
+  * Fixed missing speech in cinematics for the Russian and Italian versions
+  * Fixed missing ambient sound effects
+  * Include attribute modifiers when calculating the effective object knowledge
+    and projectile skills
+  * Savegames can now be deleted from the save and load menus
+
+ -- Daniel Scharrer <daniel@constexpr.org>  Tue, 31 Jul 2012 03:37:42 +0200
+
 arx-libertatis (1.0.2-0.1) stable; urgency=low
 
   * Bump version to 1.0.2:

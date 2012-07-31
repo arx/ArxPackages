@@ -16,7 +16,7 @@
 #
 
 Name:           arx-libertatis
-Version:        1.0.2
+Version:        1.0.3
 Release:        0
 License:        GPL-3.0+
 Summary:        Cross-platform port of Arx Fatalis, a first-person role-playing game
@@ -151,6 +151,15 @@ echo "See http://wiki.arx-libertatis.org/Getting_the_game_data for more informat
 %desktop_database_postun
 
 %changelog
+* Thu Jul 31 2012 Daniel Scharrer <daniel@constexpr.org> 1.0.3
+- bump version to 1.0.3:
+- Bump version to 1.0.3:
+- Fixed minor rendering glitches
+- Fixed missing speech in cinematics for the Russian and Italian versions
+- Fixed missing ambient sound effects
+- Include attribute modifiers when calculating the effective object knowledge
+  and projectile skills
+- Savegames can now be deleted from the save and load menus
 * Thu Jun 14 2012 Daniel Scharrer <daniel@constexpr.org> 1.0.2
 - bump version to 1.0.2:
 - Fixed various crashes
