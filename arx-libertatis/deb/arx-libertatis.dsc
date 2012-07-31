@@ -5,7 +5,7 @@ Architecture: any
 Version: 1.0.3-0.1
 Maintainer: Daniel Scharrer <daniel@constexpr.org>
 Homepage: http://arx-libertatis.org/
-Standards-Version: 3.9.2
+Standards-Version: 3.9.3
 Vcs-Browser: https://github.com/arx/ArxLibertatis
 Vcs-Git: git://github.com/arx/ArxLibertatis.git
 Build-Depends: debhelper (>= 7.0.50), cmake (>= 2.8), libboost-dev (>= 1.39), libboost-program-options-dev, libdevil-dev (>= 1.7), zlib1g-dev, libsdl1.2-dev, libfreetype6-dev, libopenal-dev, mesa-common-dev, libgl1-mesa-dev, libglew-dev, libqt4-dev
