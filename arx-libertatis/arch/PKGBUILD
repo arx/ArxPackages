@@ -7,7 +7,7 @@ pkgdesc='Cross-platform port of Arx Fatalis, a first-person role-playing game'
 url='http://arx-libertatis.org/'
 arch=('i686' 'x86_64')
 license=('GPL3')
-depends=('sdl' 'devil' 'openal' 'freetype2' 'zlib' 'boost' 'glew' 'libgl')
+depends=('sdl' 'openal' 'freetype2' 'zlib' 'boost' 'glew' 'libgl')
 optdepends=('qt: enable built-in crash handler (recompile needed)'
             'gdb: generate detailed crash reports')
 makedepends=('cmake')

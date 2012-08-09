@@ -31,11 +31,6 @@ BuildRequires:  gcc-c++
 %endif
 BuildRequires:  cmake >= 2.8
 BuildRequires:  boost-devel >= 1.39
-%if 0%{?mandriva_version}
-BuildRequires:  libdevil-devel >= 1.7
-%else
-BuildRequires:  DevIL-devel >= 1.7
-%endif
 BuildRequires:  zlib-devel
 BuildRequires:  SDL-devel >= 1.2
 %if 0%{?suse_version}

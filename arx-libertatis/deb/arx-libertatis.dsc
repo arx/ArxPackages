@@ -8,7 +8,7 @@ Homepage: http://arx-libertatis.org/
 Standards-Version: 3.9.3
 Vcs-Browser: https://github.com/arx/ArxLibertatis
 Vcs-Git: git://github.com/arx/ArxLibertatis.git
-Build-Depends: debhelper (>= 7.0.50), cmake (>= 2.8), libboost-dev (>= 1.39), libboost-program-options-dev, libdevil-dev (>= 1.7), zlib1g-dev, libsdl1.2-dev, libfreetype6-dev, libopenal-dev, mesa-common-dev, libgl1-mesa-dev, libglew-dev, libqt4-dev
+Build-Depends: debhelper (>= 7.0.50), cmake (>= 2.8), libboost-dev (>= 1.39), libboost-program-options-dev, zlib1g-dev, libsdl1.2-dev, libfreetype6-dev, libopenal-dev, mesa-common-dev, libgl1-mesa-dev, libglew-dev, libqt4-dev
 Checksums-Sha1: 
  5c341ea6a55cbe2cfdd78f6cc95baa2dd0782285 912288 arx-libertatis_1.0.3.orig.tar.xz
  2d15298eb49c6c0a5b5ab60220b55d9b7f3db334 4530 arx-libertatis_1.0.3-0.1.debian.tar.gz
