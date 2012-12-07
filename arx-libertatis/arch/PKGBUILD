@@ -2,7 +2,7 @@
 
 pkgname=arx-libertatis
 pkgver=1.1
-pkgrel=2
+pkgrel=1
 pkgdesc='Cross-platform port of Arx Fatalis, a first-person role-playing game (binaries only)'
 url='http://arx-libertatis.org/'
 arch=('i686' 'x86_64')
