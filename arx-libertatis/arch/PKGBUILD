@@ -13,7 +13,7 @@ optdepends=('qt: enable built-in crash handler (recompile needed)'
 makedepends=('boost' 'cmake')
 provides=('arx')
 conflicts=('arx-git')
-source=("https://github.com/downloads/arx/ArxLibertatis/$${pkgname}-${pkgver}.tar.xz"
+source=("https://github.com/downloads/arx/ArxLibertatis/${pkgname}-${pkgver}.tar.xz"
         'cmake-2.8.10.patch')
 sha256sums=('5719e1602051f6a6dc13ac0366ff03804f914ffbd855e7e06fdeb0d065fb6d32'
             '98710cb16964dc6e66f4ab93e16985c1ab15d27b010029098b40074c0cdfe8b9')
