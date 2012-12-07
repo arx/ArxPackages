@@ -23,6 +23,7 @@ Summary:        Cross-platform port of Arx Fatalis, a first-person role-playing 
 URL:            http://arx-libertatis.org/
 Group:          Amusements/Games/RPG
 Source:         %{name}-%{version}.tar.xz
+Patch0:         cmake-2.8.10.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 %if 0%{?suse_version}
 BuildRequires:  c++_compiler
@@ -98,6 +99,7 @@ if Arx Libertatis crashes.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 cmake . -DCMAKE_INSTALL_PREFIX=/usr \
