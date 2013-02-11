@@ -147,7 +147,6 @@ echo "See http://wiki.arx-libertatis.org/Getting_the_game_data for more informat
 
 %changelog
 * Thu Jul 31 2012 Daniel Scharrer <daniel@constexpr.org> 1.0.3
-- bump version to 1.0.3:
 - Bump version to 1.0.3:
 - Fixed minor rendering glitches
 - Fixed missing speech in cinematics for the Russian and Italian versions
