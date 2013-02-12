@@ -5,8 +5,8 @@ Maintainer: Daniel Scharrer <daniel@constexpr.org>
 Build-Depends: debhelper (>= 7.0.50), cmake (>= 2.8), libboost-dev, libboost-iostreams-dev , libboost-filesystem-dev, libboost-date-time-dev, libboost-system-dev, libboost-program-options-dev, liblzma-dev
 Standards-Version: 3.9.2
 Homepage: http://constexpr.org/innoextract/
-Vcs-Git: git://github.com/dscharrer/InnoExtract.git
-Vcs-Browser: https://github.com/dscharrer/InnoExtract
+Vcs-Git: git://github.com/dscharrer/innoextract.git
+Vcs-Browser: https://github.com/dscharrer/innoextract
 
 Package: innoextract
 Architecture: any
