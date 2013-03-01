@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Remove '$' and '#' prefixes from commands
+if [ -f "$readme" ] ; then
+	e sed -i 's/^\( *\)\(\$\|\#\) \.\//\1/' "$readme"
+	e sed -i 's/^\( *\)\(\$\|\#\) /\1/' "$readme"
+fi

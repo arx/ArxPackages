@@ -1,0 +1,98 @@
+#!/bin/bash
+
+. "${BASH_SOURCE[0]%/*}/common"
+. "${scriptdir}/changelog"
+. "${scriptdir}/demarkdown"
+
+_outdir="${outdir}/${project}-${version}"
+
+mkdir -p "$_outdir"
+pushd "$_outdir"
+
+_files=( )
+
+for f in "${project}"-* ; do
+	
+	# Ignore directories
+	[ ! -f "$f" ] && continue
+	
+	# Ignore existing signatures
+	[[ "$f" == *.sig ]] && continue
+	
+	# Sign the created archive
+	[ "$f" -nt "${f}.sig" ] && e gpg --detach-sign --no-tty "$f"
+	
+	_files+=( "${f##*/}" )
+	
+done
+
+readarray -t _sfiles < <(for f in "${_files[@]:+${_files[@]}}"; do echo "$f"; done | sort)
+
+_md5sums_file='MD5SUMS'
+_old_md5sums="$(cat "$_md5sums_file" 2> /dev/null || true)"
+if [ ${#_sfiles[@]} = 0 ]
+	then _new_md5sums='' ; echo > "$_md5sums_file"
+	else _new_md5sums="$(md5sum -b "${_sfiles[@]}")"
+fi
+if [ "$_new_md5sums" = "$_old_md5sums" ] ; then
+	_md5sums_changed=0
+else
+	echo "$_new_md5sums" > "$_md5sums_file"
+	_md5sums_changed=1
+fi
+
+_readme_file="README"
+_md_file="${_readme_file}.md"
+if [ ! -f "${_md_file}" ] || [ $_md5sums_changed = 1 ] ; then
+	
+	# Title
+	echo > "$_md_file"
+	echo "# ${project_name} ${version}" >> "$_md_file"
+	
+	# Introduction
+	echo >> "$_md_file"
+	if [ "${#_files[@]}" = 1 ] ; then _and_binaries='' ; else _and_binaries=' and binaries' ; fi
+	echo -n "This folder contains source code${_and_binaries} for version ${version} of [${project_name}](${project_url})" >> "$_md_file"
+	if [ ! -z "${project_tagline-}" ] ; then
+	echo -n ", ${project_tagline}" >> "$_md_file"
+	fi
+	echo "." >> "$_md_file"
+	
+	# Alternate download locations
+	if [ ! -z "${project_downloads_url-}" ] ; then 
+		echo                                   >> "$_md_file"
+		echo "See the main [downloads page](${project_downloads_url}) for ${project_downloads_url_desc}." >> "$_md_file"
+	fi
+	
+	# Checksums
+	echo >> "$_md_file"
+	echo '## MD5 Checksums' >> "$_md_file"
+	echo >> "$_md_file"
+	while IFS= read -r line ; do
+		_checksum="${line%% *}"
+		_file="${line#* }"
+		_file="${line#*\*}"
+		echo "* \`${_checksum}\`  ${_file}" >> "$_md_file"
+	done < "$_md5sums_file"
+	
+	# Changelog
+	echo >> "$_md_file"
+	echo '## Changelog' >> "$_md_file"
+	if [ $is_test_version = 0 ] ; then
+		get_changelog _changelog
+		echo >> "$_md_file"
+		echo "$_changelog" >> "$_md_file"
+	else
+		echo >> "$_md_file"
+		echo "This release is a development snapshot!" >> "$_md_file"
+	fi
+	if [ ! -z "${project_changelog_url-}" ] ; then
+		echo >> "$_md_file"
+		echo "See the full [changelog](${project_changelog_url}) for changes in other versions." >> "$_md_file"
+	fi
+	
+	demarkdown --subsection --subsection < "$_md_file" > "$_readme_file"
+	
+fi
+
+popd

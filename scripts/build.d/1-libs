@@ -1,0 +1,185 @@
+#!/bin/bash
+
+## Get required libraries and generate dependency info
+
+echo "  ${white}:: getting dependencies${reset}" >&2
+
+
+# find_libraries <target> <bindir> <binary>
+find_libraries() {
+	
+	local target="$1"
+	local root="${root_base}/${target}"
+	local bindir="$2"
+	local binary="$3"
+	
+	[ -x "$(which "${target}-objdump")" ] || die "missing ${target}-objdump"
+	
+	# Get all libraries required by the binary
+	local all_libraries=(
+		`"${target}-objdump" -p "${bindir}/$binary" \
+			| grep -P "$objdump_lib_pattern" | sed 's/.* //' | sort | uniq`
+	)
+	echo "${binary}: all libs: ${all_libraries[@]:+${all_libraries[@]}}"
+	
+	# Filter base system libraries
+	local libraries=( )
+	for lib in "${all_libraries[@]:+${all_libraries[@]}}" ; do
+		
+		[ "$case_insensitive_fs" = 1 ] && lib="$(echo "$lib" | tolower)"
+		
+		match_in_array "$lib" "${system_libraries[@]:+${system_libraries[@]}}" && continue
+		
+		match_in_array "$lib" "${forbidden_libraries[@]:+${forbidden_libraries[@]}}" \
+			&& die "${binary} links to blacklisted library ${lib}"
+		
+		libraries+=( "$lib" )
+	done
+	echo "${binary}: user libs: ${libraries[@]:+${libraries[@]}}"
+	
+	for lib in "${libraries[@]:+${libraries[@]}}" ; do
+		
+		# Don't get the library again if we already have it
+		[ -f "${bindir}/${lib}" ] && continue
+		[ -f "${bindir}/libexec/${lib}" ] && continue
+		
+		# Find the required library file
+		local name='name'
+		[ "$case_insensitive_fs" = 1 ] && name='iname'
+		local file=''
+		[ -z "$file" ] && [ -f "${root}/lib/${lib}" ] && file="${root}/lib/${lib}"
+		[ -z "$file" ] && [ -f "${root}/usr/lib/${lib}" ] && file="${root}/usr/lib/${lib}"
+		[ -z "$file" ] && [ -f "${root}/bin/${lib}" ] && file="${root}/bin/${lib}"
+		[ -z "$file" ] && [ -f "${root}/usr/bin/${lib}" ] && file="${root}/usr/bin/${lib}"
+		if [ -z "$file" ] ; then
+			local candidate="$("${target}-g++" -print-file-name="$lib")"
+			[ -f "$candidate" ] && file="$candidate"
+		fi
+		[ -z "$file" ] && die "could not find ${lib} in ${root}"
+		echo "${lib}: using ${file}"
+		
+		# Resolve symlinks
+		if [ -L "$file" ] ; then
+			local target="$(readlink -f "$file")"
+			local targetlib="${target##*/}"
+			if [ ! "$targetlib" = "$lib" ] ; then
+				e ln -sT "$targetlib" "${bindir}/${lib}"
+				lib="$targetlib"
+				[ -f "${bindir}/${lib}" ] && continue
+				[ -f "${bindir}/libexec/${lib}" ] && continue
+			fi
+			[ -f "$target" ] || die "bad symlink: ${file} -> ${target}"
+			file="$target"
+		fi
+		
+		# Check that we didn't pick up a linker script instead of the actual library
+		[[ "$(file -i "$file")" == *:\ text/* ]] && die "$file is a linker script"
+		
+		# Copy the library in our target directory
+		e cp -a "$file" "${bindir}/${lib}"
+		
+		# Recursively get the library's dependencies
+		find_libraries "$target" "$bindir" "$lib"
+		
+	done
+}
+
+
+get_max_symbol_versions() {
+	local symvers=($(
+		"${target}-objdump" -p "$1" \
+			| tolower \
+			| sed -n '/version references:/,$p' \
+			| tail -n+2 \
+			| grep '^    ' \
+			| sed 's/.* //'
+	))
+	for symver in "${symvers[@]:+${symvers[@]}}" ; do
+		library="${symver%_*}"
+		version="${symver##*_}"
+		[ "$library" = '' ] && continue
+		[ "$version" = '' ] && continue
+		required_symbol_versions["$library"]="$(
+			version_max "${required_symbol_versions["$library"]-}" "$version"
+		)"
+		echo "$library $version -> ${required_symbol_versions["$library"]}"
+	done
+}
+
+
+check_dependencies() {
+	local arch="$1"
+	
+	local target="${targets["${pkgtype}-${arch}"]}"
+	local root="${root_base}/${target}"
+	
+	local bindir="${bindir}/${arch}"
+	
+	# Get required libraries
+	for binary in "${bindir}"/* ; do
+		find_libraries "$target" "$bindir" "${binary##*/}"
+	done
+	
+	# Remove debugging symbols to save disk space
+	for binary in "${bindir}"/* ; do
+		[ -L "${binary}" ] || e "${target}-strip" "${binary}"
+	done
+	
+	# Sanity check: did we build all required libraries
+	for binary in "${required_binaries[@]}" ; do
+		[ -f "${bindir}/${binary}${exe_suffix}" ] \
+			|| die "missing ${binary}${exe_suffix} for ${arch}"
+	done
+	
+	# Find required symbol versions
+	declare -A required_symbol_versions
+	for binary in "${bindir}"/* ; do
+		[ -L "${binary}" ] || e get_max_symbol_versions "${binary}"
+	done
+	
+	# Sanity check: did we get all required symbols
+	for library in \
+		"${required_versioned_libraries[@]:+${required_versioned_libraries[@]}}" ; do
+		[ "${required_symbol_versions["$library"]-}" = '' ] \
+			&& die "expected versioned symbols from $library"
+	done
+	
+	# Check maximum versions
+	for library in "${!required_symbol_versions[@]}" ; do
+		local ver="${required_symbol_versions["$library"]}"
+		local maxver="${maximum_library_versions["${library}-${arch}"]-}"
+		[ "$maxver" = '' ] && maxver="${maximum_library_versions["$library"]-}"
+		[ ! "$maxver" = '' ] \
+			&& version_greater "$ver" "$maxver" \
+			&& die "${library} ${ver} required, maximum allowed is ${maxver}"
+	done
+	
+	# Force minimum required symbol versions
+	for spec in "${!force_minimum_library_versions[@]}" ; do
+		local library="${spec%%-*}"
+		local sarch="${spec#"$library"}"
+		[ "$sarch" = '' ] || [ "$sarch" = "-$arch" ] || continue
+		local minver="${force_minimum_library_versions["$spec"]}"
+		if version_greater "$minver" "${required_symbol_versions["$library"]-}" ; then
+			required_symbol_versions["$library"]="$minver"
+		fi
+	done
+	
+	# Generate a list of required library versions
+	local requirements=''
+	for library in "${!required_symbol_versions[@]}" ; do
+		match_in_array "${library}-${version}" \
+			"${provided_versioned_libraries[@]:+${provided_versioned_libraries[@]}}" \
+			&& continue
+		[ "$requirements" = '' ] || requirements="${requirements}, "
+		requirements="${requirements}${library} ${required_symbol_versions["$library"]}+"
+	done
+	[ "$requirements" = '' ] || echo "${arch}: ${requirements}" >> "$requirements_file"
+	
+}
+
+
+# Get required libraries for all architectures
+for architecture in "${architectures[@]}" ; do
+	e check_dependencies "$architecture"
+done

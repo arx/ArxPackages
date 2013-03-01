@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Verify that we didn't do anything stupid
+
+echo "  ${white}:: verifying results${reset}" >&2
+
+
+# Check symbolic links
+check_symlink() {
+	local symlink="$1"
+	
+	local target="$(readlink "$symlink")"
+	local ctarget="$(readlink -m "$symlink")"
+	echo "checking symlink ${symlink} -> ${target}"
+	
+	[[ "$target" == /* ]] && die "bad symlink: ${symlink} -> ${target} (absolute target)"
+	
+	[ -e "$ctarget" ] || die "bad symlink: ${symlink} -> ${target} (target missing)"
+	
+	if [ "${ctarget##"${outdir}/"}" = "$ctarget" ] ; then
+		die "bad symlink: ${symlink} -> ${target} (target out of tree)"
+	fi
+	
+}
+
+for symlink in `find ${outdir} -type l` ; do
+	e check_symlink "$symlink"
+done

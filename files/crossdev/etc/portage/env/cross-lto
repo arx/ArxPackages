@@ -1,0 +1,7 @@
+
+lto_CFLAGS="-O2 -pipe -flto"
+CFLAGS_armv6j_hardfloat_linux_gnueabi="${lto_CFLAGS}"
+CFLAGS_i686_bindist_linux_gnu="${lto_CFLAGS}"
+CFLAGS_i686_w64_mingw32="${lto_CFLAGS}"
+CFLAGS_x86_64_bindist_linux_gnu="${lto_CFLAGS}"
+BOOT_CFLAGS="${lto_CFLAGS}"

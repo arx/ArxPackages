@@ -1,0 +1,5 @@
+cross-i686-bindist-linux-gnu/binutils cross-i686-bindist-linux-gnu/binutils.conf
+cross-i686-bindist-linux-gnu/gcc cross-i686-bindist-linux-gnu/gcc.conf
+cross-i686-bindist-linux-gnu/linux-headers cross-i686-bindist-linux-gnu/linux-headers.conf
+cross-i686-bindist-linux-gnu/glibc cross-i686-bindist-linux-gnu/glibc.conf
+cross-i686-bindist-linux-gnu/gdb cross-i686-bindist-linux-gnu/gdb.conf

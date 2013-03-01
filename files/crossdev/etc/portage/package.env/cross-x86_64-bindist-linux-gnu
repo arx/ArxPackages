@@ -1,0 +1,5 @@
+cross-x86_64-bindist-linux-gnu/binutils cross-x86_64-bindist-linux-gnu/binutils.conf
+cross-x86_64-bindist-linux-gnu/gcc cross-x86_64-bindist-linux-gnu/gcc.conf
+cross-x86_64-bindist-linux-gnu/linux-headers cross-x86_64-bindist-linux-gnu/linux-headers.conf
+cross-x86_64-bindist-linux-gnu/glibc cross-x86_64-bindist-linux-gnu/glibc.conf
+cross-x86_64-bindist-linux-gnu/gdb cross-x86_64-bindist-linux-gnu/gdb.conf

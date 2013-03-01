@@ -1,0 +1,58 @@
+Disable wcin, wcout, wcerr and wclog.
+We can't leave it up to the linker/compiler to remove them in static builds as they are explicitly initialized.
+
+diff -ur gcc-4.7.2.old/libstdc++-v3/src/c++98/ios_init.cc gcc-4.7.2/libstdc++-v3/src/c++98/ios_init.cc
+--- gcc-4.7.2.old/libstdc++-v3/src/c++98/ios_init.cc	2013-03-02 19:42:13.000000000 +0100
++++ gcc-4.7.2/libstdc++-v3/src/c++98/ios_init.cc	2013-03-02 19:43:20.066360605 +0100
+@@ -44,11 +44,6 @@
+   stdio_sync_filebuf<char> buf_cin_sync(stdin);
+   stdio_sync_filebuf<char> buf_cerr_sync(stderr);
+ 
+-#ifdef _GLIBCXX_USE_WCHAR_T
+-  stdio_sync_filebuf<wchar_t> buf_wcout_sync(stdout);
+-  stdio_sync_filebuf<wchar_t> buf_wcin_sync(stdin);
+-  stdio_sync_filebuf<wchar_t> buf_wcerr_sync(stderr);
+-#endif
+ } // namespace __gnu_internal
+ 
+ namespace std _GLIBCXX_VISIBILITY(default)
+@@ -62,13 +57,6 @@
+   ostream cerr(&buf_cerr_sync);
+   ostream clog(&buf_cerr_sync);
+ 
+-#ifdef _GLIBCXX_USE_WCHAR_T
+-  wistream wcin(&buf_wcin_sync);
+-  wostream wcout(&buf_wcout_sync);
+-  wostream wcerr(&buf_wcerr_sync);
+-  wostream wclog(&buf_wcerr_sync);
+-#endif
+-
+   ios_base::Init::Init()
+   {
+     if (__gnu_cxx::__exchange_and_add_dispatch(&_S_refcount, 1) == 0)
+@@ -84,12 +72,6 @@
+ 	// 455. cerr::tie() and wcerr::tie() are overspecified.
+ 	cerr.tie(&cout);
+ 
+-#ifdef _GLIBCXX_USE_WCHAR_T
+-	wcin.tie(&wcout);
+-	wcerr.setf(ios_base::unitbuf);
+-	wcerr.tie(&wcout);	
+-#endif
+-	
+ 	// NB: Have to set refcount above one, so that standard
+ 	// streams are not re-initialized with uses of ios_base::Init
+ 	// besides <iostream> static object, ie just using <ios> with
+@@ -112,12 +94,6 @@
+ 	    cout.flush();
+ 	    cerr.flush();
+ 	    clog.flush();
+-    
+-#ifdef _GLIBCXX_USE_WCHAR_T
+-	    wcout.flush();
+-	    wcerr.flush();
+-	    wclog.flush();    
+-#endif
+ 	  }
+ 	__catch(...)
+ 	  { }

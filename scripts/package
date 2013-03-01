@@ -1,0 +1,34 @@
+#!/bin/bash
+
+. "${BASH_SOURCE[0]%/*}/common"
+. "${scriptdir}/changelog"
+
+[ ! -z "${1-}" ] && pkgtype="$1"
+
+mkdir -p "$builddir"
+mkdir -p "$outdir"
+
+elog "${white}packaging ${project}-${version}${reset}"
+
+# Update source version and changelog data
+if [ $is_test_version = 0 ] ; then
+	make_changelog
+	runall update-version
+fi
+
+# Build the source archives
+run source build
+runscript finalize
+
+# Send build jobs for Linux packages to the repective build servers
+if [ $is_test_version = 0 ] ; then
+	runall prepare
+	runall dispatch
+fi
+
+# Build (portable) binary archives
+runall build
+runall test
+runscript finalize
+
+git status

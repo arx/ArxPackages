@@ -1,0 +1,379 @@
+#!/bin/bash
+
+if [ "${scriptdir-}" = "" ] ; then
+	project='/'
+	version='.'
+	. "${BASH_SOURCE[0]%/*}/common"
+	_demarkdown_is_sourced=0
+else
+	_demarkdown_is_sourced=1
+fi
+
+demarkdown_print_title() {
+	prefix="$1"
+	title="$2"
+	
+	[ -z "$title" ] && return
+	
+	case "$prefix_prefix$prefix" in
+		\#)     echo " $title " | sed 's/./\=/g'
+		        echo " $title"
+		        echo " $title " | sed 's/./\=/g' ;;
+		\#\#)   [ $first_section = 0 ] && echo
+		        echo " $title"
+		        echo " $title " | sed 's/./\=/g' ;;
+		\#\#\#) echo " $title"
+		        echo " $title " | sed 's/./\-/g' ;;
+		*)      echo "$title:" ;;
+	esac
+}
+
+demarkdown_flush_whitespace() {
+	
+	if [ ! -z "$empty_lines" ] ; then
+		echo -n "$empty_lines" >> "$section_buffer"
+		empty_lines=''
+	fi
+	
+}
+
+demarkdown_is_list() {
+	local buffer="$1"
+	if [[ "$buffer" == '* '* ]] || [[ "$buffer" == '  * '* ]] || [[ "$buffer" == '** '* ]]
+		then return 0
+		else return 1
+	fi
+}
+
+demarkdown_flush() {
+	
+	[ -z "$buffer" ] && return
+	
+	demarkdown_flush_whitespace
+	
+	# Change list syntax
+	
+	local width=80
+	local list=''
+	if [[ "$buffer" == '* '* ]] ; then
+		list=' '
+		buffer="${buffer#\* }"
+		width=77
+	else if demarkdown_is_list "$buffer" ; then
+		list='   '
+		buffer="${buffer# }"
+		buffer="${buffer# }"
+		buffer="${buffer#\*}"
+		buffer="${buffer#\*}"
+		buffer="${buffer# }"
+		width=75
+	fi ; fi
+	
+	if [ ! -z "$section_name" ] && [ -z "$section_url" ] ; then
+		section_name="$(escape_sed "$section_name")"
+		section_url="$(
+			echo "$buffer" | grep -Po "\\[$section_name\\]\\([^\\)]*\\)" | head -1
+		)"
+		section_url="${section_url##*(}"
+		section_url="${section_url%)}"
+	fi
+	if [ ! -z "$section_name" ] && [ ! -z "$section_url" ] ; then
+		local surl="$(escape_sed "$section_url")"
+		buffer="$(echo "$buffer" | perl -pe "s/\\[($section_name)\\]\\($surl\\)/\\1/g")"
+	fi
+	
+	buffer="$(echo "$buffer" \
+		| perl -pe 's/\[(.*?)\]\(\1\/?\)/\1/g' \
+		| perl -pe 's/^\[(.*?)\]\((.*?)\)$/\1: \2/' \
+		| perl -pe 's/\[(.*?)\]\(http\:\/\/\1\/?\)/\1/g' \
+		| perl -pe 's/([Ss]ee[^\.\?\]\[\]\(\)\,]*?)\[(.*? page)\]\((.*?)\)/\1\2 at \3/g' \
+		| perl -pe 's/([Ss]ee the (?:[^ \.\?\]\[\]\(\)\,]* )?)\[(.*?)\]\((.*?)\)/\1\2 at \3/g' \
+		| perl -pe 's/\[(.*?)\]\((.*?)\)/\1 (\2)/g' \
+		| perl -pe 's/^([^ ].*?)\\#/\1#/g' \
+		| perl -pe 's/`([^ ]*)`/\1/g' \
+		| perl -pe 's/<br> */\n/g' \
+		| perl -pe 's/\*\*(.*?)\*\*/_\1_/g' \
+		| fmt -sw $width
+	)"
+	
+	if [ ! -z "$list" ] ; then
+		buffer="$(echo "$buffer" | sed "s/^/${list}  /")"
+		buffer="${list}- ${buffer#${list}  }"
+	fi
+	
+	echo "$buffer" >> "$section_buffer"
+	
+	buffer=''
+	
+}
+
+demarkdown_start_section() {
+	local prefix="$1"
+	local title="$2"
+	
+	section_prefix="$prefix"
+	section_lead="$empty_lines"
+	empty_lines=''
+	section_title="$title"
+	section_name="$(echo "$title" | sed 's/ [0-9].*$//')"
+	section_name="$(escape_sed "$section_name")"
+	section_url=''
+	
+}
+
+demarkdown_insert() {
+	i=$1
+	
+	[ ! -z "${insert_texts[$i]}" ] || [ ! -z "${insert_files[$i]}" ] || continue
+	
+	if [ "$pmode" = 'discard' ] ; then
+		section_lead="$empty_lines"
+		empty_lines=""
+		stitle="$title"
+		demarkdown_start_section "$prefix" "${insert_names[$i]:-$title}"
+		pmode='normal'
+		[ -z "$empty_lines" ] && empty_lines="
+"
+	fi
+	
+	local old_buffer="$buffer"
+	local old_empty_lines="$empty_lines"
+	
+	echo >> "$section_buffer"
+	buffer="${insert_texts[$i]}"
+	empty_lines=''
+	demarkdown_flush
+	
+	buffer="$old_buffer"
+	empty_lines="$old_empty_lines"
+	
+	insert_texts[$i]=''
+	insert_patterns[$i]=''
+	
+}
+
+demarkdown_flush_section() {
+	
+	demarkdown_flush
+	
+	for i in ${appends[@]:+${appends[@]}} ; do
+		demarkdown_insert $i
+	done
+	appends=( )
+	
+	if [ ! -z "$section_title" ] && [ -s "$section_buffer" ] ; then
+		
+		echo -n "$section_lead"
+		[ ! -z "$section_url" ] && section_title="${section_title} (${section_url})"
+		demarkdown_print_title "$section_prefix" "$section_title"
+		
+		first_section=0
+		
+	fi
+	
+	cat "$section_buffer"
+	truncate --size=0 "$section_buffer"
+	
+}
+
+demarkdown() {
+	
+	local prefix_prefix=''
+	local discard_sections=( )
+	local insert_patterns=( )
+	local insert_texts=( )
+	local insert_files=( )
+	local insert_names=( )
+	local insert_modes=( )
+	
+	while [ ! $# = 0 ] ; do
+		case "${1-}" in
+			'-h'|'--help')
+				echo "Usage: demarkdown [options]
+
+-s, --subsection                    Decrease section header emphasis by one level.
+-d, --discard PATTERN               Discard a section and its subsections.
+-p, --prepend PATTERN TEXT          Prepend text to a section.
+--prepend-file PATTERN FILE         Prepend the contents of a file to a section.
+--prepend-remove-file PATTERN FILE  Like --prepend-file, but removes the file if used.
+-p, --append PATTERN TEXT           Append text to a section.
+--append-file PATTERN FILE          Append the contents of a file to a section.
+--append-remove-file PATTERN FILE   Like --append-file, but removes the file if used.
+
+PATTERN is matched against lowercased section names.
+To make it easier to test agains full keywords, PATTERN
+is also matched against the section name with a space
+prepended and/or appended.
+"
+				return
+				;;
+			'-s'|'--subsection')             prefix_prefix="${prefix_prefix}#" ;;
+			'-d'|'--discard')        shift ; discard_sections+=( "$1" ) ;;
+			'-p'|'--prepend')        shift ; insert_patterns+=( "$1" )
+			                         shift ; insert_texts+=( "$1" )
+			                                 insert_files+=( '' )
+			                                 insert_files+=( '' )
+			                                 insert_modes+=( 'prepend' )
+			                                 insert_names+=( '' ) ;;
+			'--prepend-file')        shift ; insert_patterns+=( "$1" )
+			                         shift ; insert_texts+=( "$(cat "$1")" )
+			                                 insert_files+=( '' )
+			                                 insert_modes+=( 'prepend' )
+			                                 insert_names+=( '' ) ;;
+			'--prepend-remove-file') shift ; insert_patterns+=( "$1" )
+			                                 insert_texts+=( '' )
+			                         shift ; insert_files+=( "$1" )
+			                                 insert_modes+=( 'prepend' )
+			                                 insert_names+=( '' ) ;;
+			'-a'|'--append')         shift ; insert_patterns+=( "$1" )
+			                         shift ; insert_texts+=( "$1" )
+			                                 insert_files+=( '' )
+			                                 insert_files+=( '' )
+			                                 insert_modes+=( 'append' )
+			                                 insert_names+=( '' ) ;;
+			'--append-file')         shift ; insert_patterns+=( "$1" )
+			                         shift ; insert_texts+=( "$(cat "$1")" )
+			                                 insert_files+=( '' )
+			                                 insert_modes+=( 'append' )
+			                                 insert_names+=( '' ) ;;
+			'--append-remove-file')  shift ; insert_patterns+=( "$1" )
+			                                 insert_texts+=( '' )
+			                         shift ; insert_files+=( "$1" )
+			                                 insert_modes+=( 'append' )
+			                                 insert_names+=( '' ) ;;
+			'-n'|'--name')           shift ; insert_names[$((${#insert_names[@]}-1))]="$1" ;;
+			*) [ -z "${1-}" ] || die "unexpected arg: ${1}" ;;
+		esac
+		shift
+	done
+	
+	local mode='normal'
+	local prefix
+	local line
+	
+	local buffer=''
+	local appends=( )
+	local pmode='normal'
+	local empty_lines=''
+	local sperix=""
+	local section_lead=''
+	local section_prefix=''
+	local section_title=''
+	local section_name=''
+	local section_url=''
+	local section_buffer="$(mktemp)"
+	local first_section=1
+	
+	while IFS= read -r line ; do
+		
+		if [ "$mode" == 'discard' ] && [ "$prefix" = '*' ] && [ -z "$line" ] ; then
+			mode='normal'
+			continue
+		fi
+		
+		if [[ "$line" == \#* ]] || [[ "$line" == \*\**: ]] ;  then
+			
+			if [[ "$line" == \*\**: ]] ; then
+				demarkdown_flush
+				local title="$(echo "${line%:}" | perl -pe 's/\*\*//g')"
+				local line_prefix='*'
+			else
+				demarkdown_flush_section
+				local title="$(echo "${line#\#*\ }" | perl -pe 's/\*\*//g')"
+				local line_prefix="${line%% *}"
+			fi
+			local ltitle="$(echo "$title" | tolower)"
+			
+			if [ "$mode" = 'discard' ] ; then
+				
+				local p="$prefix"
+				while [[ "$p" == \#* ]] ; do
+					[[ "$line" == "$p "* ]] && mode='normal'
+					p="${p#\#}"
+				done
+				
+			fi
+			
+			[ $mode = 'discard' ] || if \
+			      match_in_array "$ltitle" "${discard_sections[@]:+${discard_sections[@]}}" \
+			   || match_in_array " $ltitle " "${discard_sections[@]:+${discard_sections[@]}}" \
+			   || match_in_array "$ltitle " "${discard_sections[@]:+${discard_sections[@]}}" \
+			   || match_in_array " $ltitle" "${discard_sections[@]:+${discard_sections[@]}}"
+			then
+				mode='discard'
+				prefix="$line_prefix"
+				line=''
+			fi
+			
+			if [ ! "$mode" = 'discard' ] ; then
+				if [[ "$line" == \*\**: ]] ; then
+					demarkdown_flush_whitespace
+					demarkdown_print_title "$line_prefix" "$title" >> "$section_buffer"
+				else
+					demarkdown_start_section "$line_prefix" "$title"
+				fi
+			fi
+			
+			pmode="$mode"
+			
+			for i in "${!insert_patterns[@]}" ; do
+				
+				local pattern="${insert_patterns[$i]}"
+				[[ "$ltitle" == $pattern ]] || [[ " $ltitle " == $pattern ]] \
+					|| [[ " $ltitle" == $pattern ]] || [[ "$ltitle " == $pattern ]] \
+					|| continue
+				
+				if [ ! -z "${insert_files[$i]}" ] ; then
+					insert_texts[$i]="$(cat "${insert_files[$i]}" 2> /dev/null || true)"
+					rm "${insert_files[$i]}"
+					insert_files[$i]=''
+				fi
+				
+				if [ "${insert_modes[$i]}" == 'prepend' ] ; then
+					demarkdown_insert $i
+				else
+					appends+=( $i )
+				fi
+				
+			done
+			
+		else if [ "$mode" = 'discard' ] ; then
+			
+			continue
+			
+		else if [ -z "$line" ] ; then
+			
+			demarkdown_flush
+			empty_lines="${empty_lines}
+"
+			
+		else if [[ "$line" == '    '* ]] ; then
+			
+			demarkdown_flush
+			demarkdown_flush_whitespace
+			echo "$line" >> "$section_buffer"
+			
+		else
+			
+			if demarkdown_is_list "$line" ; then
+				demarkdown_flush
+			else
+				line="$(echo "$line" | sed 's/^ *//')"
+			fi
+			
+			if [ -z "$buffer" ]
+				then buffer="$line"
+				else buffer="$buffer $line"
+			fi
+			
+		fi ; fi ; fi ; fi
+		
+	done
+	
+	demarkdown_flush_section
+	
+	rm "$section_buffer"
+	
+}
+
+if [ $_demarkdown_is_sourced = 0 ] ; then demarkdown "$@" ; fi

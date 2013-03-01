@@ -1,0 +1,7 @@
+#!/bin/bash
+
+test_run_impl() {
+	WINEDEBUG=-all wine "${@}"
+}
+
+. "${BASH_SOURCE[0]%/*}/../test"

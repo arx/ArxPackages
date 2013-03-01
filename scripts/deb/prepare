@@ -1,0 +1,45 @@
+#!/bin/bash
+
+. "${BASH_SOURCE[0]%/*}/../common"
+
+_deb_version="$(head -1 "${pkgsrcdir}/changelog" | sed 's/^.*(\([^\-]*\)-.*$/\1/')"
+echo "debian version is ${_deb_version}"
+
+get_output _source _sourcedir "$_deb_version" 'source'
+
+e cp "$_source" "${project}_${_deb_version}.orig.tar.${_source##*.}"
+
+e extract "$_source"
+
+pushd "$_sourcedir"
+	
+	e rsync -a "${pkgsrcdir}/" 'debian'
+	
+	echo "  ${white}:: building source package for debian${reset}" >&2
+	
+	e dpkg-buildpackage -S -us -uc -d -p'gpg --no-tty' 2>&1
+	e require_file *.dsc
+	e require_file *_source.changes
+	e require_file *.debian.tar.*
+	
+	for ubuntu_ver in "${ubuntu_versions[@]}" ; do
+		
+		echo "  ${white}:: building source package for ubuntu ${ubuntu_ver}${reset}" >&2
+		
+		# Change the debian version to an ubuttu ppa version
+		e cp "$pkgsrcdir/changelog" 'debian/changelog'
+		e sed -i "s/^\\([^ ]*\\) (\\([^\\-]*\\)-\\([0-9]*\\)\\.\\([0-9]*\\)) \\([^;]*\\);/\\1 (\\2-\\3ppa\\4~${ubuntu_ver}) ${ubuntu_ver};/" 'debian/changelog'
+		
+		e dpkg-buildpackage -S -d -p'gpg --no-tty' 2>&1
+		e require_file foobar*~${ubuntu_ver}*.dsc
+		e require_file *~${ubuntu_ver}_source.changes
+		e require_file *~${ubuntu_ver}.debian.tar.*
+		
+	done
+	
+popd
+
+# Preserve the output files
+get_output _output
+e mkdir "$_output"
+e find -mindepth 1 -maxdepth 1 -type f -exec mv {} "$_output/" \;

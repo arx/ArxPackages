@@ -1,0 +1,5 @@
+- New upstream release 1.3:
+- Respect --quiet and --silent for multi-file installers
+- Compile in C++11 mode if supported
+- Warn about unsupported setup data versions
+- Add support for Inno Setup 5.5.0 installers

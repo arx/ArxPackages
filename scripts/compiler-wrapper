@@ -1,0 +1,101 @@
+#!/bin/bash
+
+depsfile="$(mktemp --tmpdir="$depsdir" XXXXXXXXXX)"
+
+die() {
+	echo "[wrapper] $@"
+	exit 1
+}
+
+add_library_file() {
+	echo "$(readlink -m -- "$1")" >> "$depsfile"
+}
+
+search_paths=( )
+
+find_file() {
+	[ ! -z "$file" ] && return
+	for path in "${search_paths[@]}" ; do
+		[ -f "${path}/${1}" ]       && file="${path}/${1}"         && return
+	done
+	[ -f "${root}/lib/${1}" ]     && file="${root}/lib/${1}"     && return
+	[ -f "${root}/usr/lib/${1}" ] && file="${root}/usr/lib/${1}" && return
+	[ -f "${root}/bin/${1}" ]     && file="${root}/bin/${1}"     && return
+	[ -f "${root}/usr/bin/${1}" ] && file="${root}/usr/bin/${1}" && return
+}
+
+add_library() {
+	local mode="$2"
+	
+	local file=""
+	if [[ "$1" = :* ]] ; then
+		find_file "${1#:}"
+	else if [ "$mode" = "dynamic" ] ; then
+		find_file "lib$1.so"
+		find_file "lib$1.dll"
+		find_file "lib$1.a"
+	else
+		find_file "lib$1.a"
+		find_file "lib$1.so"
+		find_file "lib$1.dll"
+	fi ; fi
+	
+	[ -z "$file" ] && die "could not find -l$1"
+	
+	add_library_file "$file"
+}
+
+# Parse and filter compiler parameters
+is_search_path=0
+is_library=0
+mode="dynamic"
+args=( )
+for arg in "$@" ; do
+	
+	if [ $is_search_path = 1 ] ; then search_paths+=( "$arg" ) ; is_search_path=0 ; fi
+	if [ $is_library = 1 ]     ; then add_library "$arg"       ; is_library=0     ; fi
+	
+	case "$arg" in
+		
+		# add library serach path
+		-L|--library-path)    is_search_path=1                             ;;
+		-L*)                  search_paths+=( "${arg#-L}" )                ;;
+		--library-path=*)     search_paths+=( "${arg#--library-path=}" )   ;;
+		
+		# add library dependency
+		-l|--library)         is_library=1                                 ;;
+		-l*)                  add_library      "${arg#-l}"         "$mode" ;;
+		--library=*)          add_library      "${arg#--library=}" "$mode" ;;
+		-Wl,--out-implib,*)   true                                         ;; # not a lib!
+		*.a|*.so|*.dll|*.lib) add_library_file "$arg"                      ;;
+		
+		# track static/dynamic library modes
+		-Wl,-Bstatic)         mode="static"                                ;;
+		-Wl,-Bdynamic)        mode="dynamic"                               ;;
+		
+		# add fake dependency if libstdc++ is used
+		-static-libstdc++)    echo "${root}/libstdc++" >> "$depsfile"      ;;
+		
+		# filter flags
+		-rdynamic)            continue                                     ;;
+		
+	esac
+	
+	args+=( "$arg" )
+done
+
+# Collect used include files
+localdepsfile="$(mktemp)"
+args+=(
+	-MD -MF "$localdepsfile"
+)
+
+"$compiler" "${args[@]}"
+status=$?
+
+# Save used include files as dependencies
+head -n1  "$localdepsfile" | sed "s/^.*: *//;s/ *\\\\\$//;s/ \$//" >> "$depsfile"
+tail -n+2 "$localdepsfile" | sed "s/^ *//;s/ *\\\\\$//"            >> "$depsfile"
+rm "$localdepsfile"
+
+exit $status

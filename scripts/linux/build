@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cmake_platform='Linux'
+
+required_versioned_libraries=( 'glibc' )
+
+. "${BASH_SOURCE[0]%/*}/../build"

@@ -1,0 +1,20 @@
+#!/bin/bash
+
+. "${BASH_SOURCE[0]%/*}/../common"
+
+_deb_version="$(head -1 "${pkgsrcdir}/changelog" | sed 's/^.*(\([^\-]*\)-.*$/\1/')"
+echo "debian version is ${_deb_version}"
+_deb_release="$(head -1 "${pkgsrcdir}/changelog" | sed 's/^.*(\([^)]*\)).*$/\1/')"
+echo "debian release is ${_deb_release}"
+
+get_output _debsource _sourcedir "$version" "$pkgtype" 'prepare'
+
+e execute deploy-obs \
+	--del "${project}_*.orig.*" \
+	--del "${project}_*.debian.*" \
+	--add "${_debsource}/${project}_${_deb_version}.orig".* \
+	--add "${_debsource}/${project}_${_deb_release}.debian".*
+
+for changes in "${_debsource}/${project}_${_deb_version}"-*ppa*~*_source.changes ; do
+	e dput "$launchpad_ppa" "$changes"
+done

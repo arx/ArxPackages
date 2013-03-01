@@ -1,0 +1,5 @@
+#!/bin/bash
+
+for symlink in `find ${outdir} -type l` ; do
+	die "symlinks not allowed in windows builds: ${symlink}"
+done

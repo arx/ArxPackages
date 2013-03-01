@@ -1,0 +1,5 @@
+#!/bin/bash
+
+. "${BASH_SOURCE[0]%/*}/scripts/common"
+
+execute "${1:-package}" "${@:2}"

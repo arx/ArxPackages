@@ -1,0 +1,90 @@
+#!/bin/bash
+
+## Copy files from the source tree
+
+echo "  ${white}:: copying files from source${reset}" >&2
+
+
+. "${scriptdir}/demarkdown"
+
+do_copy_files() {
+	local srcglob="$1"
+	local dst="$2"
+	
+	# Files starting with a '*' are optional
+	if [[ "$dst" == \** ]] ; then dst="${dst#\*}" ; required=0 ; else required=1 ; fi
+	
+	if [[ "$srcglob" == :* ]] ; then
+		local srcglob="${srcglob#:}"
+		local sourcedir="$filesdir"
+	fi
+	
+	# Find the file
+	local src=''
+	for f in `eval "echo $(escape_args "$sourcedir")/${srcglob}"` ; do
+		[ -f "$f" ] || continue
+		if [ -z "$src" ]
+			then src="$f"
+			else die "${srcglob} is ambiguous: ${src} vs. ${f}"
+		fi
+	done
+	
+	# Handle missing files
+	if [ -z "$src" ] ; then
+		[ $required = 0 ] && continue
+		die "missing ${srcglob}"
+	fi
+	
+	# Add source filename to destination
+	local ddst="$dst"
+	if [[ "$dst" == */ ]] || [[ "$dst" == *. ]] ; then
+		[ "$dst" = '/' ] && dst=''
+		ddst="${src%.md}"
+		dst="${dst}${ddst##*/}"
+		forcetext=1
+	fi
+	
+	local nm="$(echo ${dst##*/} | sed 's/\./_/g' | tolower)"
+	
+	# Add text suffix if needed
+	if [ ! -z "$text_suffix" ] && [[ "$ddst" != *.* ]] \
+			&& [[ "$(file -i "${src}")" == *": text/"* ]] ; then
+		dst="${dst}${text_suffix}"
+	fi
+	
+	# Create directory if needed
+	[[ ${dst} == */* ]] && mkdir -p "${outdir}/${dst%/*}"
+	
+	dst="${outdir}/${dst}"
+	
+	if [[ ${src} == *.md ]] && [[ ${dst} != *.md ]] ; then
+		
+		eval "local demarkdown_params=( \
+			\"\${${nm}_transforms[@]:+\${${nm}_transforms[@]}}\" \
+		)"
+		eval "local requirements_sections=( \
+			\"\${${nm}_requirements_sections[@]:+\${${nm}_requirements_sections[@]}}\"
+		)"
+		
+		if [ -f "$requirements_file" ] ; then
+			for pattern in "${requirements_sections[@]:+${requirements_sections[@]}}" ; do
+				demarkdown_params+=(
+					--prepend-remove-file "$pattern" "$requirements_file" --name 'Requirements'
+				)
+			done
+		fi
+		
+		demarkdown "${demarkdown_params[@]:+${demarkdown_params[@]}}" < "$src" > "$dst"
+		
+	else
+		
+		e cp -a "$src" "$dst"
+		
+	fi
+	
+}
+
+
+for srcglob in "${!copy_files[@]}" ; do
+	e do_copy_files "$srcglob" "${copy_files["$srcglob"]}"
+done

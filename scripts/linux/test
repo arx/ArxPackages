@@ -1,0 +1,11 @@
+#!/bin/bash
+
+test_run_impl() {
+	case "$arch" in
+		amd64|x86_64|i*86|x86) "$@" ;;
+		arm*)                  qemu-arm -L "$root" "$@" ;;
+		*)                     die "unimplemented"
+	esac
+}
+
+. "${BASH_SOURCE[0]%/*}/../test"

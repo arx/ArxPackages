@@ -1,0 +1,43 @@
+#!/bin/bash
+
+. "${BASH_SOURCE[0]%/*}/common"
+
+_repodir="${builddir}/${project}.osc"
+[ -e "$_repodir" ] || e osc checkout --output-dir="$_repodir" "$obs_project" "$obs_package"
+pushd "$_repodir" > /dev/null
+
+e osc update
+
+mode=''
+for arg in "$@" ; do
+	
+	if [ -z "$mode" ] ; then
+		case "$arg" in
+			-a|--add)             mode='add' ; continue ;;
+			-d|-r|--del|--remove) mode='del' ; continue ;;
+			--)                   mode='--'  ; continue ;;
+			-*)                   die "uknown option ${arg}" ;;
+		esac
+	fi
+	
+	if [ "$mode" = 'del' ] ; then
+		
+		for f in "$_repodir"/* ; do
+			name="${f##*/}"
+			[[ "$name" == $arg ]] && e rm "$f"
+		done
+		
+	else
+		
+		e cp "$arg" "$_repodir"/
+		
+	fi
+	
+	[ "$mode" = '--' ] || mode=''
+done
+
+e osc addremove
+
+e osc commit
+
+popd > /dev/null

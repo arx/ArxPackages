@@ -1,0 +1,4 @@
+cross-i686-bindist-linux-gnu/binutils -selinux -multilib
+cross-i686-bindist-linux-gnu/linux-headers -selinux -multilib
+cross-i686-bindist-linux-gnu/glibc -selinux -multilib
+cross-i686-bindist-linux-gnu/gcc -selinux -boundschecking -d -gtk -gcj -libffi -mudflap -objc -objc++ -objc-gc -multilib

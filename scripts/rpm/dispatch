@@ -1,0 +1,10 @@
+#!/bin/bash
+
+. "${BASH_SOURCE[0]%/*}/../common"
+
+get_output _source _sourcedir "$version" 'source'
+
+e execute deploy-obs \
+	--del "${project}-*.tar.*" \
+	--add "$_source" \
+	--add "${pkgsrcdir}/${project}.spec"

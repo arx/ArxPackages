@@ -1,0 +1,317 @@
+#!/bin/bash
+
+# Global default config - sourced before everything else
+# After this the following config files will be sourced (if they exist)
+# 1. $root/config
+# 2. $root/config.$pkgtype           (if a pkgtype has been selected)
+# 3. $root/$package/config
+# 4. $root/$package/config.$pkgtype  (if a pkgtype has been selected)
+
+# Defined by the wrapper:
+# $root
+# $project
+# $projectdir ($root/$project)
+# $pkgtype
+# $pkgsrcdir  ($projectdir/$pkgsrcdir)
+
+################################################################################
+# File locations
+
+# Don't build DEB and RPM packages for git snapshots
+is_test_version=0
+[[ "${version-}" != *.* ]]        && is_test_version=1
+[ "${version-}" != "${commit-}" ] && is_test_version=1
+
+# Where are project-specific test/input files stored?
+filesdir="$projectdir/files"
+
+# Directory containing license files for third-party libraries (see $licenses)
+licensedir="$root/files/licenses"
+
+# Where to put temporary build files and non-final output files
+builddir="$root/build"
+
+# Where to log build output that is normally hidden
+buildlog="$builddir/build.log"
+
+# Where to store the final output
+if [ $is_test_version = 1 ]
+	then outdir="$root/out/test"
+	else outdir="$root/out/$project"
+fi
+
+# Where to store changelog files
+if [ $is_test_version = 1 ]
+	then changelogdir="$builddir/changes/$project"
+	else changelogdir="$projectdir/changes"
+fi
+
+# Filename suffixes for output files
+declare -A archives=(
+	['source-build']='.tar.gz'
+	['linux-build']='-linux.tar.xz'
+	['windows-build']='-windows.zip'
+	['freebsd-build']='-freebsd.tar.xz'
+	['deb-prepare']='-source.deb'
+)
+
+################################################################################
+# Project configuration
+
+# Git repository URL for the project source code
+#git_repository='git://example.com/foobar.git'
+
+# Friendly projected name (may contain uppercases, spaces)
+project_name="$project"
+
+# URL for the project website
+#project_url='http://example.com/'
+
+# Project description as in "$project_name, ..." (OPTIONAL)
+#project_tagline='a complete useless program'
+
+# URL for alternate downloads (OPTIONAL)
+#project_downloads_url='http://example.com/download'
+
+# URL for the full changelog (OPTIONAL)
+#project_changelog_url='http://example.com/changelog'
+
+################################################################################
+# Build configuration
+
+# Additional options to pass to CMake
+declare -a cmake_options
+
+# C compiler flags
+c_flags=(
+	
+	# Disable debug information
+	-DNDEBUG
+	-g0
+	
+	# Enable optimization
+	-O3
+	
+)
+
+# C++ compiler flags
+cxx_flags=( "${c_flags[@]}" )
+
+# Shared library linker flags
+shared_linker_flags=(
+	
+	# Enable optimization
+	-Wl,-O1
+	
+	# Reduce size and avoid unnecessary exports
+	-Wl,--exclude-libs,ALL # Don't export symbols from the static libs
+	-Wl,--as-needed
+	-Wl,--no-export-dynamic # note: the build scripts always removes any -rdynamic flags
+	
+	# Load libraries from the same directory
+	-Wl,-rpath,\$ORIGIN
+	
+)
+
+# Executable linker flags
+exe_linker_flags=( "${shared_linker_flags[@]}" )
+
+# List of architectures to build binaries for
+declare -a architectures
+
+# Taret names for used architectures (see $architectures)
+# Syntax: [ARCHITECTURE]=TARGET
+# We expect $target-gcc, $target-g++, $target-objdump, and $root_base/$target
+declare -A targets
+
+# Base directory where cross compilation prefixes are installed
+# Prefixes are located at $root_base/$target (see $targets)
+root_base='/usr'
+
+# Target-specific compiler and linker flags
+#c_flags_<target>
+#cxx_flags_<target>
+#shared_linker_flags_<target>
+#exe_linker_flags_<target>
+# where target is the $target with dashes replaced by underscores (see $targets)
+
+################################################################################
+# Wrapper configuration
+
+# case-patterns to match for each architecture in wrapper scripts
+# Syntax: [ARCHITECTURE]=PATTERN
+declare -A architecture_aliases
+
+# Set $PATH in wrapper scripts - always disabled if there is only one executable
+wrapper_use_path=1
+
+# Set ${command}_PATH to the directory containing the wrapper script
+wrapper_use_cmd_path=0
+
+# Set ${command}_COMMAND to the string used to invoke the wrapper script
+wrapper_use_command=0
+
+# Libraries that are not included in binary distributions, but may be linked against
+system_libraries=(
+	
+	# glibc
+	'ld-linux*.so*'
+	'libanl.so*'
+	'libcidn.so*'
+	'libcrypt.so*'
+	'libc.so*'
+	'libdl.so*'
+	'libm.so*'
+	'libnsl.so*'
+	'libnss_*.so*'
+	'libpthread.so*'
+	'libresolv.so*'
+	'librt.so*'
+	'libthread_db.so*'
+	'libutil.so*'
+	
+	# windows
+	'kernel32.dll'
+	'msvc*.dll'
+	'user32.dll'
+	'gdi32.dll'
+	'winspool.dll'
+	'shell32.dll'
+	'ole32.dll'
+	'oleaut32.dll'
+	'uuid.dll'
+	'comdlg32.dll'
+	'advapi32.dll'
+	
+	# OpenGL
+	'libGL.so*'
+	
+)
+
+################################################################################
+# Sanity checks
+
+# List of binaries that must be present in binary packages
+declare -a required_binaries
+
+# List of versioned libraries (such as glibc) and their maximum allowed versions
+# Syntax:
+#  [LIBRARY]=MAXIMUM_VERSION
+#  [LIBRARY-ARCHITECTURE]=MAXIMUM_VERSION
+declare -A maximum_library_versions
+
+# Libraries that should not be linked
+forbidden_libraries=(
+	
+	# ALSA - don't link directly, use dlopen
+	'libasound.so*'
+	
+	# PulseAudio - don't link directly, use dlopen
+	'libpulse*.so*'
+	
+)
+
+# Tests to be executed
+# use `test_run <binary> [args...]` to run a binary
+# use `expect_success <binary> [args...]` to run and check for exit code 0
+# use `expect_failure <binary> [args...]` to run and check for exit code != 0
+# Both expect_success and expect_failure fail if the program crashed.
+test_binaries() { echo "no tests defined" ; }
+
+################################################################################
+# Documentation output
+
+# Text in file list README files: "See the main downloas page for ..."
+project_downloads_url_desc="alternate download locations and Linux packages"
+
+# Packager name and address to add to package logs entries
+#packager="Packager Name <email@example.com>"
+
+# Copy files [SOURCE]=DESTINATION
+#
+# If SOURCE starts with a :, then the rest specifies a path relative to $filesdir.
+# Else, SOURCE specifies a relative path in the source archive.
+# SOURCE may contain bash glob expressions.
+#
+# If DESTINATION starts with a *, then the copy is optional.
+#
+# If DESTINATION ends with a / or a ., the filename component of the source file is
+# appended, with any .md extension removed.
+#
+# Text files that don't have any extension will automatically get a .txt extension
+# in windows builds
+#
+# If the source file has a .md extension, but the destination file doesn't, it is
+# automatically converted from markdown to a more readable plain text.
+# This can be customized using the following variables:
+#
+#  - <dst>_requirements_sections specifies sections where any autogenerated dependency
+#    information should be prepended. The information is prepended to the first match.
+#
+#  - <dst>_transform specifies additional arguments to demarkdown.
+#    See `demarkdown --help` for more information.
+#
+# In both cases, <dst> is the lowercased filename component of the destination
+# (without any added .txt suffix) with dots replaced by underscores.
+#
+declare -A copy_files=(
+	['CHANGELOG*']='*/'
+	['VERSION*']='*/'
+	['README*']='*/'
+	['*{LICENSE,COPYING}*']="license/${project}."
+)
+
+# Sections in README.md where autogenerated dependency information should be prepended
+readme_requirements_sections=(
+	'* dependencies *'
+	'* requirements *'
+)
+
+# Additional arguments to demarkdown for README.md
+readme_transforms=(
+	--discard '* dependencies *'
+	--discard '* compile *'
+	--discard '* install *'
+	--discard '* developer information *'
+)
+
+# List of version libraries that should not be documented
+provided_versioned_libraries=( )
+
+# Minimum version to document for versioned libraries (see maximum_library_versions)
+declare -A force_minimum_library_versions=(
+	[glibc-armv6j-hardfloat]='2.14'
+)
+
+# Map of source files to licenses
+# Syntax: [SOURCE]=LICENSE
+# SOURCE can be a shell glob pattern
+# SOURCE paths are relative to the cross-compile root ($root_base/$target)
+# If LICENSE is the empty string, no license file is included.
+# Otherwise, all files in $licensedir starting with "$LICENSE." are included.
+declare -A licenses=(
+	
+	['/libstdc++']='libstdc++'
+	
+	# Ignore system stufff
+	['/usr/include/bits/*']=''
+	['/usr/include/linux/*']=''
+	['/usr/include/asm/*']=''
+	['/usr/include/asm-generic/*']=''
+	['/usr/include/sys/*']=''
+	['/usr/include/std*.h']=''
+	['/usr/include/win*.h']=''
+	
+)
+
+################################################################################
+# Deployment information
+
+# OpenSUSE Build Service project to push RPM and DEB packages to
+#obs_project='home:foobar'
+
+# Launchpad project to push RPM and DEB packages to
+#launchpad_ppa='ppa:foobar/release'
+
+# Ubuntu versions for which to push build jobs to Launchpad
+declare -a ubuntu_versions

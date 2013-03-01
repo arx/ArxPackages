@@ -1,0 +1,160 @@
+#!/bin/bash
+
+# Default config - sourced after scripts/config and before everything else
+# After this the following config files will be sourced (if they exist)
+# 1. $root/config
+# 2. $root/config.$pkgtype           (if a pkgtype has been selected)
+# 3. $root/$package/config
+# 4. $root/$package/config.$pkgtype  (if a pkgtype has been selected)
+
+# See scripts/config for documentation on possible values
+
+EDITOR='kwrite'
+
+################################################################################
+# Build configuration
+
+# C / C++ compiler flags
+_compiler_flags=( -flto )
+c_flags+=( "${_compiler_flags[@]}" )
+cxx_flags+=( "${_compiler_flags[@]}" )
+
+# Linker flags
+_linker_flags=(
+	
+	# Enable link-time optimizations
+	"${c_flags[@]}"
+	-flto
+	-fuse-linker-plugin
+	
+)
+shared_linker_flags+=( "${_linker_flags[@]}" )
+exe_linker_flags+=(
+	
+	"${_linker_flags[@]}" 
+	
+	# Since we use LTO, get rid of as much unneeded cruft as possible
+	-fwhole-program
+	-fvisibility=hidden
+	-fvisibility-inlines-hidden
+	
+	# Statically link the standard libraries
+	-static-libstdc++
+	-static-libgcc
+	
+)
+
+# Taret names for used architectures (see $architectures)
+# Syntax: [ARCHITECTURE]=TARGET
+# We expect $target-gcc, $target-g++, $target-objdump, and $root_base/$target
+targets+=(
+	[linux-i686]='i686-bindist-linux-gnu'
+	[linux-amd64]='x86_64-bindist-linux-gnu'
+	[linux-armv6j-hardfloat]='armv6j-hardfloat-linux-gnueabi'
+	[windows-i686]='i686-w64-mingw32'
+	[freebsd-i686]='i686-gentoo-freebsd'
+	[freebsd-amd64]='x86_64-gentoo-freebsd'
+)
+
+# Target-specific compiler flags
+c_flags_linux_armv6j_hardfloat=( -mfpu=vfp -mfloat-abi=hard -Os )
+cxx_flags_linux_armv6j_hardfloat=( -mfpu=vfp -mfloat-abi=hard -Os -Wno-uninitialized )
+
+################################################################################
+# Wrapper script configuration
+
+# case-patterns to match for each architecture
+# Syntax: [ARCHITECTURE]=PATTERN
+architecture_aliases+=(
+	[i686]='i686|x86'
+	[amd64]='amd64|x86_64'
+	[armv6j-hardfloat]='arm*'
+)
+
+################################################################################
+# Sanity checks
+
+# List of versioned libraries (such as glibc) and their maximum allowed versions
+# Syntax:
+#  [LIBRARY]=MAXIMUM_VERSION
+#  [LIBRARY-ARCHITECTURE]=MAXIMUM_VERSION
+maximum_library_versions+=(
+	[glibc]='2.6'
+	[glibc-armv6j-hardfloat]='2.14'
+)
+
+# Libraries that should not be linked
+forbidden_libraries+=(
+	
+	# GCC/C++ stuff - link statically
+	'libgcc*.so*'
+	'libgcc_*.dll'
+	'libstdc++.so*'
+	'libstdc++-*.dll'
+	'libc++.so*'
+	
+)
+
+# List of libraries to be referenced in project-specific configs
+all_libraries=(
+	
+	'libboost_*'
+	'libz.so*'
+	'zlib*.dll'
+	'libbz2.so*'
+	'liblzma.so*'
+	'liblzma-*.dll'
+	'libiconv.so*'
+	'libiconv-*.dll'
+	
+	'*'
+	
+)
+
+################################################################################
+# Documentation output
+
+# Packager name and address to add to package logs entries
+packager="Daniel Scharrer <daniel@constexpr.org>"
+
+# Map of source files to licenses
+# Syntax: [SOURCE]=LICENSE
+# SOURCE can be a shell glob pattern
+# SOURCE paths are relative to the cross-compile root ($root_base/$target)
+# If LICENSE is the empty string, no license file is included.
+# Otherwise, all files in $licensedir starting with "$LICENSE." are included.
+licenses+=(
+	
+	['/usr/include/boost/*']='Boost'
+	['/usr/lib/libboost_*']='Boost'
+	
+	['/usr/lib/libz.*']='zlib'
+	
+	['/usr/lib/libbz2.*']='libbz2'
+	
+	['/usr/include/lzma.h']='liblzma'
+	['/usr/include/lzma/*']='liblzma'
+	['/usr/lib/liblzma.*']='liblzma'
+	
+	['/usr/include/iconv.h']='' # may come from glibc
+	['/usr/lib/libiconv.*']='libiconv'
+	
+)
+
+################################################################################
+# Deployment information
+
+# OpenSUSE Build Service project to push RPM and DEB packages to
+obs_project='home:dscharrer'
+
+# Launchpad project to push RPM and DEB packages to
+launchpad_ppa='ppa:arx/release'
+
+# Ubuntu versions for which to push build jobs to Launchpad
+ubuntu_versions+=(
+	'lucid'   # EOL: April 2013 (Desktop)
+	'oneiric' # EOL: April 2013
+	'precise' # EOL: April 2017
+	'quantal' # EOL: April 2014
+	'raring'  # EOL: October 2014
+)

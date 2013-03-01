@@ -1,0 +1,47 @@
+#!/bin/bash
+
+curscript="${BASH_SOURCE[1]}"
+. "${BASH_SOURCE[0]%/*}/common"
+
+# Set default target configutation
+library_pattern="${library_pattern:-'*.so*'}"
+case_insensitive_fs="${case_insensitive_fs:-0}"
+convert_man_to_text="${convert_man_to_text:-0}"
+create_wrapper_scripts="${create_wrapper_scripts:-1}"
+objdump_lib_pattern="${objdump_lib_pattern:-' NEEDED '}"
+exe_suffix="${exe_suffix-}"
+text_suffix="${text_suffix-}"
+
+# Remove obsolete test results
+_phony="${builddir}/done/${project}-${version}-${pkgtype}-test"
+[ -f "$_phony" ] && rm "$_phony"
+
+# Extract the source tarball
+get_output _source _sourcedir "$version" 'source'
+e mkdir source
+pushd source
+	e extract "${_source}"
+	sourcedir="${PWD}/${_sourcedir}"
+popd
+
+# Set output directories
+get_output _out _outdir
+outdir="${PWD}/${_outdir}"
+bindir="${outdir}/bin"
+mandir="${outdir}/doc"
+readme="${outdir}/README${text_suffix}"
+requirements_file="${outdir}/REQUIREMENTS${text_suffix}"
+e mkdir "${outdir}"
+
+# Run build scripts
+for script in "$scriptdir/build.d/"* ; do
+	_scriptname="${scriptpkgdir}/build.${script##*-}"
+	[ -f "${_scriptname}.pre" ] && . "${_scriptname}.pre"
+	. "$script"
+	[ -f "$_scriptname" ] && . "$_scriptname"
+done
+
+# Create the binary tarball
+make_archive ${_out} "${_outdir}"
+
+echo >&2

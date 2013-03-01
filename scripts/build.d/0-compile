@@ -1,0 +1,212 @@
+#!/bin/bash
+
+## Compile binaries and get dependencies
+
+
+# Create a dummy gcc wrapper that just calls the base compiler.
+# This is used during the configure step as we are not interested in config dependencies.
+generate_dummy_toolchain_wrapper() {
+	local file="$1"
+	local compiler="$2"
+	echo "#!/bin/bash
+$(escape_args "$compiler") \"\$@\"" > "$file"
+	chmod +x "$file"
+}
+
+# Create a gcc wrapper that records which includes and libraries are used.
+#
+# It also filters the -rdynamic flag as CMake always sneakily adds it to the linker flags
+# for Linux builds - but it's not needed if we don't use dlopen and makes the builds
+# less portable.
+# Manually add -Wl,--export-dynamic to the default CMake behaviour of it's really needed.
+generate_toolchain_wrapper() {
+	local file="$1"
+	local compiler="$2"
+	local root="$3"
+	local depsdir="$4"
+	
+	echo "#!/bin/bash
+compiler=$(escape_args "$compiler")
+root=$(escape_args "$root")
+depsdir=$(escape_args "$depsdir")
+" > "$file"
+	
+	tail -n+2 "${scriptdir}/compiler-wrapper" >> "$file"
+	
+	chmod +x "$file"
+}
+
+# Generate a CMake toolchain file
+generate_toolchain_file() {
+	local file="$1"
+	local target="$2"
+	local root="$3"
+	local system="$4"
+	
+	echo "
+
+# name of the target operating system
+set(CMAKE_SYSTEM_NAME ${system})
+
+# compilers to use for C and C++
+set(CMAKE_C_COMPILER \"${PWD}/gcc\")
+set(CMAKE_CXX_COMPILER \"${PWD}/g++\")
+
+# location of the target environment
+set(CMAKE_FIND_ROOT_PATH \"${root}\")
+
+# adjust the default behaviour of the find_xxx() commands:
+# search headers and libraries in the target environment, search 
+# programs in the host environment
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+
+" > "$file"
+	type "${target}-windres" &>/dev/null && echo "
+
+set(CMAKE_RC_COMPILER \"${target}-windres\")
+
+" >> "$file" || true
+	
+}
+
+
+build() {
+	local arch="$1"
+	
+	local osarch="${pkgtype/-/_}_${arch/-/_}"
+	
+	local target="${targets["${pkgtype}-${arch}"]}"
+	local root="${root_base}/${target}"
+	
+	local bindir="${bindir}/${arch}"
+	
+	echo "  ${white}:: building for ${arch}${reset}" >&2
+	echo "target=${target} root=${root} bindir=${bindir}"
+	
+	local builddir="${PWD}/build-${arch}"
+	e mkdir "$builddir"
+	pushd "$builddir"
+		
+		local depsdir="$builddir/deps"
+		mkdir -p "$depsdir"
+		
+		e generate_dummy_toolchain_wrapper 'gcc' "${target}-gcc"
+		e generate_dummy_toolchain_wrapper 'g++' "${target}-g++"
+		
+		e generate_toolchain_file 'toolchain.cmake' "$target" "$root" "$cmake_platform"
+		
+		# Set CMake options
+		local options=(
+			
+			--no-warn-unused-cli
+			-DCMAKE_TOOLCHAIN_FILE="toolchain.cmake"
+			-DCMAKE_BUILD_TYPE=Release
+			
+			-DCMAKE_INSTALL_PREFIX="${outdir}"
+			-DCMAKE_INSTALL_DATAROOTDIR="${outdir}"
+			-DCMAKE_INSTALL_MANDIR="${mandir}"
+			-DCMAKE_INSTALL_BINDIR="${bindir}"
+			-DCMAKE_INSTALL_LIBDIR="${bindir}"
+			-DCMAKE_INSTALL_LIBEXECDIR="${bindir}/libexec"
+			
+			"${cmake_options[@]:+${cmake_options[@]}}"
+			
+		)
+		
+		eval "options+=( "\${cmake_options_${osarch}[@]:+\${cmake_options_${osarch}[@]}}" )"
+		
+		add_cmake_option() {
+			local cmake_flag="$1"
+			local name="$2"
+			local escaped_flags="$(
+				eval escape_args \
+					"\"\${${name}[@]:+\${${name}[@]}}\"" \
+					"\"\${${name}_${osarch}[@]:+\${${name}_${osarch}[@]}}\""
+			)"
+			options+=( "${cmake_flag}=${escaped_flags}" )
+		}
+		
+		add_cmake_option -DCMAKE_C_FLAGS_RELEASE     c_flags
+		add_cmake_option -DCMAKE_CXX_FLAGS_RELEASE   cxx_flags
+		add_cmake_option -DCMAKE_EXE_LINKER_FLAGS    exe_linker_flags
+		add_cmake_option -DCMAKE_SHARED_LINKER_FLAGS shared_linker_flags
+		
+		VERBOSE=1 e cmake "${sourcedir}" "${options[@]}"
+		
+		e generate_toolchain_wrapper 'gcc' "${target}-gcc" "$root" "$depsdir"
+		e generate_toolchain_wrapper 'g++' "${target}-g++" "$root" "$depsdir"
+		
+		VERBOSE=1 e make -j`getconf _NPROCESSORS_ONLN`
+		
+		VERBOSE=1 e make install
+		
+	popd
+	
+	
+	# Get licenses for dependencies
+	local license_outdir="${outdir}/license"
+	for dependency in `cat "$depsdir"/* | sort | uniq` ; do
+		
+		# Ignore dependencies from the build dir
+		[[ "$dependency" == "$builddir"/* ]] && continue
+		
+		# Ignore dependencies from the source dir
+		[[ "$dependency" == "$sourcedir"/* ]] && continue
+		
+		# Ignore dependencies from gcc
+		[[ "$dependency" == /usr/lib/gcc/* ]] && continue
+		
+		# All other dependencies should be in the build root
+		[[ "$dependency" == "$root"/* ]] || die "dependency outside root: ${dependency}"
+		
+		raw_dependency="$dependency"
+		dependency="${dependency#"$root"}"
+		
+		local license_found=0
+		local license=''
+		for pattern in "${!licenses[@]}" ; do
+			if [[ "$dependency" == $pattern ]] ; then
+				license_found=1
+				license="${licenses["$pattern"]}"
+				break
+			fi
+		done
+		if [ $license_found = 0 ] ; then
+			
+			# Ignore system stuff
+			local package="$(qfile --nocolor "$raw_dependency")"
+			package="${package%% *}"
+			package="${package##*/}"
+			[ "$package" = 'glibc' ] && continue
+			[ "$package" = 'linux-headers' ] && continue
+			[ "$package" = 'mingw64-runtime' ] && continue
+			
+			[ "$package" = '' ] || die "no license for dependency: ${dependency} (${package})"
+			die "no license for dependency: ${dependency}"
+			
+		fi
+		[ "$license" = '' ] && continue
+		
+		mkdir -p "$license_outdir"
+		
+		local license_found=0
+		for license_file in "${licensedir}/${license}".* ; do
+			[ -f "$license_file" ] || continue
+			license_found=1
+			local license_outfile="${license_outdir}/${license_file##*/}${text_suffix}"
+			[ -f "$license_outfile" ] || e cp "$license_file" "$license_outfile"
+		done
+		[ $license_found = 0 ] && die "missing license file for ${license}"
+		
+	done
+	
+	true
+}
+
+
+# Build binaries for all architectures
+for architecture in "${architectures[@]}" ; do
+	e build "$architecture"
+done

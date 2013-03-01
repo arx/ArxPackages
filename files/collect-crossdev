@@ -1,0 +1,9 @@
+#!/bin/bash
+
+here="${BASH_SOURCE[0]%/*}"
+
+rsync --archive --verbose --delete --relative "$@" \
+	/./etc/portage/*/cross-* \
+	/./etc/portage/*/crossdev \
+	/./usr/*/etc/portage \
+	"$here/crossdev/"

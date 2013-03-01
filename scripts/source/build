@@ -1,0 +1,50 @@
+#!/bin/bash
+
+. "${BASH_SOURCE[0]%/*}/../common"
+
+# Update our git repository to make sure we have the requested version if it exists
+_repodir="${builddir}/${project}.git"
+if [ ! -e "$_repodir" ] ; then
+	e mkdir -p "$_repodir"
+	if ! e git clone --bare "$git_repository" "$_repodir" 2>&1 ; then
+		erm -r "$_repodir"
+		die "could not clone git repo at ${git_repository}"
+	fi
+fi
+e git --git-dir="$_repodir" fetch 2>&1
+e git --git-dir="$_repodir" remote prune origin 2>&1
+
+# Create the source directory - name will be include in the source tarball
+get_output _out _outdir
+e mkdir "$_outdir"
+
+# Checkout the source from git into our working directory
+e git --git-dir="$_repodir" --work-tree="$_outdir" checkout "$commit" -f 2>&1
+
+# Sanity check
+[ -e '.git' ] && die 'bad git, bad'
+
+_version_file="${_outdir}/VERSION"
+[ -f "$_version_file" ] || die 'missing version file'
+if [ $is_test_version = 0 ] ; then
+	_vername="$(head --lines=1 "$_version_file")"
+	_version="${_vername##* }"
+	[ "$version" = "$_version" ] || die "version file says ${_vername}"
+	for changelog in "${_outdir}/"*CHANGELOG* ; do
+		grep "$(escape_sed "$version")" "$changelog" > /dev/null \
+			|| die "version ${version} not in ${changelog}"
+	done
+else
+	_vername="$(head --lines=1 "$_version_file")"
+	if [[ "${version-}" == *.* ]]
+		then _vername="${_vername% *} ${version}"
+		else _vername="${_vername}+${version}"
+	fi
+	_rest="$(tail -n+2 "$_version_file")"
+	[ ! -z "$_rest" ] && _vername="$_vername
+$_rest"
+	echo "$_vername" > "$_version_file"
+fi
+
+# Build the source tarball
+e make_archive "$_out" "$_outdir"

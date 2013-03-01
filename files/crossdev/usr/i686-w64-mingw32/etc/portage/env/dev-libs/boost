@@ -1,0 +1,6 @@
+
+post_src_configure() {
+	elog "Enabling MinGW cross-compile"
+	OPTIONS+=" toolset=gcc target-os=windows --without-wave"
+	OPTIONS=" link=static $(echo "$OPTIONS" | perl -pe 's/(^| )link=[^ ]*/ /g')"
+}

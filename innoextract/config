@@ -1,0 +1,83 @@
+#!/bin/bash
+
+################################################################################
+# Project configuration
+
+# Git repository URL for the project source code
+git_repository='git://github.com/dscharrer/innoextract.git'
+
+# URL for the project website
+project_url='http://constexpr.org/innoextract/'
+
+# Project description as in "$project_name, ..." (OPTIONAL)
+project_tagline='a tool to unpack installers created by [Inno Setup](http://www.jrsoftware.org/isinfo.php)'
+
+# URL for alternate downloads (OPTIONAL)
+project_downloads_url='http://constexpr.org/innoextract/#download'
+
+# URL for the full changelog (OPTIONAL)
+project_changelog_url='http://constexpr.org/innoextract/changelog'
+
+################################################################################
+# Build configuration
+
+# Additional options to pass to CMake
+cmake_options+=(
+	-DUNITY_BUILD=1
+	-DUSE_STATIC_LIBS=1
+)
+
+################################################################################
+# Wrapper configuration
+
+# Set ${command}_COMMAND to the string used to invoke the wrapper script
+wrapper_use_command=1
+
+################################################################################
+# Sanity checks
+
+# List of binaries that must be present in binary packages
+required_binaries+=(
+	innoextract
+)
+
+# This is a 100% static build (except system stuff) - don't allow any linked libraries.
+forbidden_libraries+=( "${all_libraries[@]}" )
+
+test_binaries() {
+	
+	# Test that the program runs at all
+	expect_success innoextract
+	
+	# Check the version number
+	local ver="$(test_run innoextract --silent --version)"
+	if [ $is_test_version = 0 ] ; then
+		[ "$ver" = "$version" ] || die "version mismatch: '$ver'"
+	fi
+	
+	# Check that missing values are not ignored
+	expect_failure innoextract --data-dir
+	
+	# Check that invalid arguments are not ignored
+	expect_failure innoextract --foobar --version
+	
+	# Check that opening directories fails, but doesn't crash/abort
+	expect_failure innoextract "/"
+	
+	# Check that opening non-existant files fails, but doesn't crash/abort
+	expect_failure innoextract "$PWD/foobarswgn9pi23yu"
+	
+	# Check that opening files in forbidden directories fails, but doesn't crash/abort
+	expect_failure innoextract "/root/foobar"
+	
+	# Check that opening unreadable files fails, but doesn't crash/abort
+	e touch 'foobar'
+	e chmod ugo-rwx 'foobar'
+	expect_failure innoextract "foobar"
+	
+	for setup in "$filesdir"/*.exe ; do
+		expect_success innoextract --extract "$setup"
+	done
+	
+	true
+}

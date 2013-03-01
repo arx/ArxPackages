@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cmake_platform='FreeBSD'
+
+. "${BASH_SOURCE[0]%/*}/../build"

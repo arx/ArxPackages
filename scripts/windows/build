@@ -1,0 +1,13 @@
+#!/bin/bash
+
+cmake_platform='Windows'
+case_insensitive_fs=1
+convert_man_to_text=1
+create_wrapper_scripts=0
+allow_symlinks=0
+library_pattern='*.dll'
+objdump_lib_pattern='DLL Name: '
+exe_suffix='.exe'
+text_suffix='.txt'
+
+. "${BASH_SOURCE[0]%/*}/../build"

@@ -1,0 +1,29 @@
+#!/bin/bash
+
+. "${BASH_SOURCE[0]%/*}/../common"
+. "${scriptdir}/changelog"
+
+_changelogfile="${pkgsrcdir}/changelog"
+
+_current_version="$(
+	head -1 "$_changelogfile" | sed 's/^.*(\([^\-]*\)-.*$/\1/'
+)"
+[ -z "$_current_version" ] && die "could not get current version"
+version_greater "$version" "$_current_version" \
+	|| die "accitental downgrade? new version ${version} <= ${_current_version}"
+
+get_shortlog _changelog
+_changelog="$(echo "$_changelog" | sed 's/^-/*/;s/^/  /')"
+
+_tmpfile="${PWD}/changelog.temp"
+
+echo "${project} (${version}-0.1) stable; urgency=low
+
+${_changelog:?bad changelog}
+
+ -- ${packager}  $(date --rfc-2822)
+" > "$_tmpfile"
+
+cat "$_changelogfile" >> "$_tmpfile"
+
+e mv "$_tmpfile" "$_changelogfile"

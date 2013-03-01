@@ -1,0 +1,178 @@
+#!/bin/bash
+
+## Adjust the binary directory hierarchy and create wrapper scripts
+
+if [ "$create_wrapper_scripts" = 1 ] ; then
+	echo "  ${white}:: generating wrapper scripts${reset}" >&2
+fi
+
+
+# Flatten excessive directory trees
+flatten_bindirs() {
+	
+	[ "${#architectures[@]}" -gt 1 ] && return 0
+	
+	local archbindir="${bindir}/${architectures[0]}"
+	
+	# only one arch -> flatten arch dir
+	e rsync -a "$archbindir"/* "$bindir"/
+	e rm -r "$archbindir"
+	
+	local num_binaries=`find "$bindir" -mindepth 1 | wc -l`
+	if [ $num_binaries = 1 ] || [ "$create_wrapper_scripts" = 0 ] ; then
+		# only one binary -> flatten bin dir
+		e mv "$bindir"/* "$outdir"/
+		e rmdir "$bindir" 2> /dev/null
+	fi
+	
+}
+
+
+# Create wrapper scripts for executables
+create_wrapper() {
+	local wrapper="$1"
+	local use_path="$2"
+	local prefixes=( "${@:3}" )
+	
+	local fallback_arch="${architectures[0]}"
+	
+	echo '#!/bin/sh'                                                           > "$wrapper"
+	echo                                                                      >> "$wrapper"
+	echo 'here="$(readlink -f "$(which "$0")")" ; here="${here%/*}"'          >> "$wrapper"
+	echo 'command="${0##*/}"'                                                 >> "$wrapper"
+	echo                                                                      >> "$wrapper"
+	
+	# If there are multiple architectures, select the right one
+	if [ "${#architectures[@]}" -gt 1 ] ; then
+		echo 'case "$(uname -m)" in'                                            >> "$wrapper"
+		for archid in "${architectures[@]}" ; do
+			echo "	${architecture_aliases[$archid]:-$archid}) arch='$archid' ;;" >> "$wrapper"
+		done
+		echo '	*) echo "Unsupported architecture \"$(uname -m)\"," \'          >> "$wrapper"
+		echo "	        \"using ${fallback_arch} binaries!\" >&2"               >> "$wrapper"
+		echo "	   arch='$fallback_arch' ;;"                                    >> "$wrapper"
+		echo 'esac'                                                             >> "$wrapper"
+		echo                                                                    >> "$wrapper"
+	fi
+	
+	# If there are multiple binaries/scripts, set the PATH in the wrappers
+	if [ $wrapper_use_path = 1 ] && [ $use_path = 1 ] ; then
+		local path=''
+		for prefix in "${prefixes[@]}" ; do
+			path="${path}${prefix}:"
+		done
+		echo "export PATH=\"${path}\$PATH\""                                    >> "$wrapper"
+		echo                                                                    >> "$wrapper"
+	fi
+	
+	# Pass the location of the wrapper script to the target executable
+	if [ $wrapper_use_cmd_path = 1 ] ; then
+		echo 'export ${command}_PATH="$here"'                                   >> "$wrapper"
+	fi
+	# Pass the command invocation to the target executable (to use as argv[0])
+	# bash has exec -a <name> for this, but other POSIX shells don't
+	# Also, we can't rely on $0 being the string the user entered if called via $PATH
+	if [ $wrapper_use_command = 1 ] ; then
+		echo 'if [ "$0" = "$(which --show-dot "$command" 2> /dev/null)" ]'      >> "$wrapper"
+		echo '	then export ${command}_COMMAND="$command"'                      >> "$wrapper"
+		echo '	else export ${command}_COMMAND="$0"'                            >> "$wrapper"
+		echo 'fi'                                                               >> "$wrapper"
+	fi
+	if [ $wrapper_use_command = 1 ] || [ $wrapper_use_path = 1 ] ; then
+		echo                                                                    >> "$wrapper"
+	fi
+	
+	# Execute the arch-specific or generic executable
+	e=$((${#prefixes[@]} - 1))
+	for prefix in "${prefixes[@]:0:$e}" ; do
+		echo "[ -x \"\$here/${prefix}/\$command\" ] && exec \"${prefix}/\$command\" \"\$@\"" \
+		                                                                        >> "$wrapper"
+	done
+	local prefix="${prefixes[$e]}"
+	echo "exec \"\$here/${prefix}/\$command\" \"\$@\""                        >> "$wrapper"
+	
+}
+
+create_wrappers() {
+	
+	[ "$create_wrapper_scripts" = 1 ] || return 0
+	[ -d "$bindir" ] || return 0
+	
+	pushd "$outdir"
+	local bindirname="${bindir#"$outdir"/}"
+	
+	local use_path=0
+	
+	local prefixes=( )
+	local files=( )
+	
+	local candidate_prefixes=( )
+	[ "${#architectures[@]}" -gt 1 ] && candidate_prefixes+=( "${bindirname}/\$arch" )
+	                                    candidate_prefixes+=( "$bindirname" )
+	for prefix in "${candidate_prefixes[@]}" ; do
+		
+		local arch="${architectures[0]}"
+		eval "local prefix_path=\"$prefix\""
+		
+		local prefix_files=(
+			`find "$prefix_path" -maxdepth 1 -executable -type f ! -name "$library_pattern" `
+		)
+		
+		if [ -d "$prefix_path/libexec" ]
+			then use_path=1
+			else [ "${#prefix_files[@]}" -gt 0 ] || continue
+		fi
+		
+		prefixes+=( "$prefix" )
+		files+=( "${prefix_files[@]:+${prefix_files[@]}}" )
+		
+	done
+	
+	[ "${#files[@]}" -gt 1 ] && use_path=1
+	
+	local primary_wrapper=''
+	for binary in `ls -LSG "${files[@]}"` ; do
+		local binary="${binary##*/}"
+		local wrapper="${outdir}/${binary}"
+		
+		# Don't overwrite already generated wrappers
+		[ -e "$wrapper" ] && continue
+		
+		if [ -z "$primary_wrapper" ] ; then
+			primary_wrapper="$binary"
+			e create_wrapper "$wrapper" "$use_path" "${prefixes[@]}"
+			e chmod +x "$wrapper"
+		else
+			e ln -sT "$primary_wrapper" "$wrapper"
+		fi
+		
+	done
+	
+	popd
+	
+}
+
+
+# Remove libexec subdirs, move files into the normal bindirs
+flatten_libexec() {
+	
+	[ -d "$bindir" ] || return 0
+	
+	for archname in "${architectures[@]}" "" ; do
+		local dir="${bindir}/${archname}"
+		dir="${dir%/}"
+		edir="${dir}/libexec"
+		if [ -d "$edir" ] ; then
+			e mv "$edir"/* "$dir"/
+			e rmdir "$edir"
+		fi
+	done
+	
+}
+
+
+e flatten_bindirs
+
+e create_wrappers
+
+e flatten_libexec

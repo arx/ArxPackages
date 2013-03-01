@@ -1,0 +1,85 @@
+#!/bin/bash
+
+curscript="${BASH_SOURCE[1]}"
+. "${BASH_SOURCE[0]%/*}/common"
+
+# Extract the binary tarball
+get_output _source _sourcedir "$version" "$pkgtype" 'build'
+e mkdir source
+pushd source
+	e extract "${_source}"
+	sourcedir="${PWD}/${_sourcedir}"
+popd
+
+bindir="${sourcedir}"
+[ -d "${sourcedir}/bin" ] && bindir="${sourcedir}/bin"
+
+test_run() {
+	local arch="$__current_test_architecture"
+	local bindir="$__current_test_bindir"
+	local archbindir="$__current_test_archbindir"
+	local target="${targets["${pkgtype}-${arch}"]}"
+	local root="${root_base}/${target}"
+	local binary="${archbindir}/${1}"
+	echo "$(escape_args '$' "${@}")" >> "$buildlog"
+	PATH="${archbindir}:${bindir}:$PATH" \
+		test_run_impl "$binary" "${@:2}"
+}
+
+check_abnormal_termination() {
+	exit_code="$1"
+	if [ $exit_code -gt 128 ] ; then
+		signal_number=$(($exit_code - 128))
+		die "porgram crashed with signal $signal_number ($(kill -l $signal_number 2>&1 || true))
+command was: $(escape_args "${@:2}")"
+	fi
+}
+
+expect_success() {
+	if test_run "$@" 2>&1 ; then true ; else
+		exit_code=$?
+		check_abnormal_termination $exit_code "$@"
+		die "program failed with exit status $exit_code
+command was: $(escape_args "$@")"
+	fi
+}
+
+expect_failure() {
+	if test_run "$@" 2>&1 ; then
+		die "program should have failed but succeeded
+command was: $(escape_args "$@")"
+	else
+		check_abnormal_termination $? "$@"
+		true
+	fi
+}
+
+test() {
+	local arch="$1"
+	
+	local exit_code
+	
+	local archbindir="$bindir"
+	[ -d "${bindir}/${arch}" ] && archbindir="${bindir}/${arch}"
+	
+	echo "  ${white}:: testing ${arch} binaries${reset}" >&2
+	
+	local testdir="${PWD}/test-${arch}"
+	e mkdir "$testdir"
+	pushd "$testdir"
+		
+		__current_test_architecture="$arch"
+		__current_test_bindir="$bindir"
+		__current_test_archbindir="$archbindir"
+		test_binaries
+		
+	popd
+	
+}
+
+# Run tests for all architectures
+for architecture in "${architectures[@]}" ; do
+	e test "$architecture"
+done
+
+echo >&2

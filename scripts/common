@@ -1,0 +1,322 @@
+#!/bin/bash
+
+red=`printf '\033[1;31m'`
+white=`printf '\033[1;37m'`
+reset=`printf '\033[0m'`
+
+set -e
+set -u
+
+backtrace() {
+	i=${1:-0}
+	while [ "${FUNCNAME[$(($i+1))]}" = 'e' ] ; do i=$(($i+1)) ; done
+	echo "${red}error${reset}" \
+		"at ${BASH_SOURCE[$(($i+1))]}:${BASH_LINENO[$i]} in ${FUNCNAME[$(($i+1))]}" >&2
+	i=$(($i+1))
+	while [ ! -z "${BASH_SOURCE[$(($i+1))]-}" ] ; do
+		i=$(($i+1))
+		if [ "${FUNCNAME[$i]}" != 'e' ] ; then
+			echo "- called from ${BASH_SOURCE[$i]}:${BASH_LINENO[$(($i-1))]} in ${FUNCNAME[$i]}" >&2
+		fi
+	done
+}
+
+die() {
+	[ -z "${1-}" ] || echo "${red}ERROR: $1${reset}" >&2
+	backtrace 1
+	_no_backtrace=1
+	exit 1
+}
+
+trap '[ $? != 0 ] && [ ${_no_backtrace:-0} = 0 ] && backtrace' EXIT
+
+while [ $# != 0 ] ; do
+	case "$1" in
+		--root=*)    project="${1#*=}" ;;
+		--project=*) project="${1#*=}" ;;
+		--pkgtype=*) pkgtype="${1#*=}" ;;
+		--version=*) version="${1#*=}" ;;
+		--commit=*)  commit="${1#*=}" ;;
+		-p) shift ; project="$1" ;;
+		-t) shift ; pkgtype="$1" ;;
+		-v) shift ; version="$1" ;;
+		-c) shift ; commit="$1" ;;
+		--) shift ; break ;;
+		*) break ;;
+	esac
+	shift
+done
+
+[ -z "${commit-}" ] && [ ! -z "${version-}" ] && commit="$version"
+[ -z "${version-}" ] && [ ! -z "${commit-}" ] && version="$commit"
+
+# Logging functions
+
+elog() { echo "$@" ; echo "$@" >> "$buildlog" ; }
+e()    {
+	echo "$(escape_args "$@")"
+	"$@"
+}
+# make_archive <archive> <source> [<source>...]
+make_archive() {
+	file="${1?missing file arg}"
+	
+	# Clean old files
+	[ -f "$file" ]     && e rm "$file"
+	[ -f "$file.sig" ] && e rm "$file.sig"
+	
+	# Fix group/other permissions
+	chmod -R go-w,go+rX "${@:2}"
+	
+	# Create the archive
+	case "$file" in
+		*.zip) e zip -9r "$file" "${@:2}" ;;
+		*)     e tar -caf "$file" --numeric-owner "${@:2}" ;;
+	esac
+}
+# extract <archive>
+extract() {
+	file="${1?missing file arg}"
+	case "$file" in
+		*.zip) e unzip "$file" ;;
+		*)     e tar -xf "$file" ;;
+	esac
+}
+
+# Stuff
+
+require() {
+	[ $# -gt 2 ] && eval "$1=\"$2\""
+	if [ -z "${!1-}" ] ; then
+		die "missing \$$1"
+	fi
+}
+
+## get_output [version] [pkgtype]
+get_output() {
+	[ ! -z "${3-}" ] && local version="$3"
+	if [ ! -z "${4-}" ] ; then
+		local pkgtype="$4"
+		local stage="${5:-build}"
+	else
+		local pkgtype="$pkgtype"
+		local stage="${5:-"${stage:-build}"}"
+	fi
+	local name="${project}-${version}${archives["${pkgtype}-${stage}"]}"
+	if [ "$stage" = 'build' ]
+		then local outdir="${outdir}/${project}-${version}"
+		else local outdir="${builddir}/done"
+	fi
+	mkdir -p "$outdir"
+	eval "$1=\"${outdir}/${name}\""
+	if [ ! -z "${2-}" ] ; then
+		local dirname="${name%.*}"
+		eval "$2=\"${dirname%.tar}\""
+	fi
+}
+
+execute() {
+	"${scriptdir}/${1}" \
+		--root="$root" \
+		--project="$project" \
+		--version="$version" \
+		--commit="$commit" \
+		"${@:2}"
+}
+
+runscript() {
+	e execute "$@" >> "$buildlog" 2> >(tee -a "$buildlog" >&2)
+}
+
+run() {
+	
+	local _pkgtype="$1"
+	local _stage="$2"
+	[ ! -z "${3-}" ] && local version="$3"
+	
+	local _name="${project}-${version}: ${_pkgtype}.${_stage}"
+	local _script="$_pkgtype/$_stage"
+	local _target="${project}-${version}-${_pkgtype}-${_stage}"
+	
+	# Skip non-existant targets
+	[ -x "${scriptdir}/${_script}" ] || return 0
+	
+	local _donedir="${builddir}/done"
+	mkdir -p "$_donedir"
+	local _phony="${_donedir}/${_target}"
+	local _out=''
+	if [ ! -z "${archives["$_pkgtype-$_stage"]-}" ] ; then
+		get_output _out _outdir "$version" "$_pkgtype" "$_stage"
+		_phony="$_out"
+	fi
+	
+	if [ -e "$_phony" ] ; then
+		elog "- ${_name} (skipped)"
+		return 0;
+	fi
+	
+	elog "- ${white}${_name}${reset}"
+	
+	# Prepare the target build directory
+	local _builddir="${builddir}/${_target}"
+	[ -e "$_builddir" ] && e rm -rf "$_builddir" >> "$buildlog"
+	e mkdir -p "$_builddir" >> "$buildlog"
+	
+	pushd "$_builddir" >> "$buildlog"
+	
+	if runscript "$_script" "${@:4}" && ( [ -z "$_out" ] || [ -e "$_out" ] ) ; then
+		
+		popd >> "$buildlog"
+		
+		# Target succeeded - clean up
+		e rm -rf "$_builddir" >> "$buildlog"
+		
+		# Mark success, don't run again
+		[ -e "$_phony" ] || touch "$_phony"
+		
+		return 0
+		
+	else
+		
+		popd >> "$buildlog"
+		
+		# Mark failure, run again
+		[ ! -z "$_out" ] && [ -e "$_out" ] && e rm -rf "$_out" >> "$buildlog"
+		
+		# Target failed
+		elog "${red}${_name} failed${reset}" >&2
+		
+		return 1
+		
+	fi
+	
+}
+
+runall() {
+	if [ -z "${pkgtype-}" ] ; then
+		for _pkgtype in "${pkgtypes[@]}" ; do
+			run "$_pkgtype" "$@" || return 1
+		done
+	else
+		run "$pkgtype" "$@" || return 1
+	fi
+}
+
+edit() {
+	"$EDITOR" "$1" &> /dev/null && [ -s "$1" ]
+}
+
+# Escape for use in a sed replacement string
+escape_sed() {
+	echo -n "$1" | sed 's/\([\\\*\.\^\$\/]\|\[\|\]\)/\\\1/g' | perl -pe 's/\n/\\\n/'
+}
+
+subdirs() {
+	for f in "$1"/* ; do
+		[ -d "$f" ] && echo "${f##*/}"
+		[[ "$f" == "$1/config".* ]] && echo "${f##*.}"
+	done
+}
+
+require_file() {
+	[ -f "$0" ] || die "missing $0"
+}
+
+escape_args() {
+	local command=""
+	for arg in "$@" ; do
+		arg="${arg//\\/\\\\}"
+		arg="${arg// /\\ }"
+		arg="${arg//\"/\\\"}"
+		arg="${arg//\'/\\\'}"
+		if [ -z "$command" ] ; then command="$arg" ; else command="$command $arg" ; fi
+	done
+	echo "$command";
+}
+
+match_in_array() {
+	
+	for pattern in "${@:2}" ; do
+		[[ "$1" == $pattern ]] && return 0 # true
+	done
+	
+	return 1 # false
+}
+
+version_greater() {
+	[ "$1" = '' ] && return 1
+	[ "$2" = '' ] && return 0
+	major1="${1%%.*}"
+	major2="${2%%.*}"
+	[ "$major1" -gt "$major2" ] && return 0
+	[ "$major2" -gt "$major1" ] && return 1
+	minor1="${1#"$major1"}"
+	minor2="${2#"$major2"}"
+	if version_greater "${minor1#.}" "${minor2#.}" ; then return 0 ; else return 1 ; fi
+}
+
+version_max() {
+	if version_greater "$1" "$2" ; then echo "$1" ; else echo "$2" ; fi
+}
+
+tolower() {
+	tr '[A-Z]' '[a-z]'
+}
+
+# Determine paths
+[ -z "${curscript-}" ] && curscript="${BASH_SOURCE[1]}"
+curscriptdir="$(readlink -f "${curscript%/*}")"
+scriptdir="$(readlink -f "${BASH_SOURCE[0]%/*}")"
+[ -z "${root-}" ] && root="$(readlink -f "$scriptdir/..")"
+
+if [ -z "${project-}" ] && [ "${PWD##"$root"/}" != "${PWD}" ] ; then
+	project="${PWD##"$root"/}"
+	project="${project%%/*}"
+	require project
+fi
+
+if [ ! -z "${project-}" ] ; then
+	projectdir="$root/$project"
+	pkgtypes=($(subdirs "$projectdir" | sort | uniq))
+	obs_package=${obs_package:-"$project"}
+fi
+
+# Make sure package-type specific scripts are called from the $pkgsrcdir
+if [ -z "${pkgtype-}" ] && [ "${curscriptdir##"$scriptdir"/}" != "$curscriptdir" ] ; then
+	pkgtype="${curscriptdir##"$scriptdir"/}"
+	pkgtype="${pkgtype%%/*}"
+	stage="${curscript##*/}"
+	require pkgtype
+fi
+
+if [ ! -z "${pkgtype-}" ] ; then
+	
+	if [ ! -z "${projectdir-}" ] ; then
+		pkgsrcdir="$projectdir/$pkgtype"
+	fi
+	
+	scriptpkgdir="$scriptdir/$pkgtype"
+	
+fi
+
+source_if_exists() {
+	[ -f "$1" ] && . "$1" || true
+}
+
+# Read default config
+. "${scriptdir}/config"
+
+# Read global config
+source_if_exists "${root}/config"
+
+# Read pkgtype-specific config
+[ ! -z "${pkgtype-}" ]    && source_if_exists "${root}/config.${pkgtype}"
+
+# Read project-specific config
+[ ! -z "${projectdir-}" ] && source_if_exists "${projectdir}/config"
+
+# Read package-specific config
+[ ! -z "${projectdir-}" ]  && [ ! -z "${pkgtype-}" ]  \
+	&& source_if_exists "${projectdir}/config.${pkgtype}"
+
+true

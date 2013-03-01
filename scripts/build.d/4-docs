@@ -1,0 +1,81 @@
+#!/bin/bash
+
+# Adjust documentation files
+
+echo "  ${white}:: adjusting documentation${reset}" >&2
+
+
+# Flatten the man files directory structure
+flatten_mandir() {
+	
+	[ -d "$mandir" ] || return
+	
+	e find "$mandir" -mindepth 2 -type f -exec mv {} "${mandir}/" \;
+	e find "$mandir" -mindepth 1 ! -type f -delete
+	
+}
+
+
+# Convert man pages if required and update references in the readme file
+convert_man_pages() {
+	
+	[ -d "$mandir" ] || return 0
+	
+	for manpage in "${mandir}/"* ; do
+		
+		local manfile="${manpage##*/}"
+		local section="$(escape_sed "${manfile##*.}")" # manpage section
+		local command="$(escape_sed "${manfile%.*}")"
+		manfile="$(escape_sed "$manfile")"
+		
+		if [ "$convert_man_to_text" = 1 ] ; then
+			
+			echo "converting manpage ${manpage}..."
+			man "$manpage" \
+				| sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" \
+				| col -xb \
+				> "${manpage}.txt"
+			e rm "$manpage"
+			
+			local replacement="    see doc\\/${manfile}.txt"
+			
+		else
+			
+			local replacement="\\1 doc\\/${manfile}"
+			
+		fi
+		
+		if [ -f "$readme" ] ; then
+			e sed -i "s/^\\( *\\\$ man\\) ${section} ${command}\$/${replacement}/" "$readme"
+			e sed -i "s/^\\( *\\\$ man\\) ${command}\$/${replacement}/" "$readme"
+			e sed -i "s/\`\\(man\\) ${section} ${command}\`/\`${replacement}\`/" "$readme"
+			e sed -i "s/\`\\(man\\) ${command}\`/\`${replacement}\`/" "$readme"
+		fi
+		
+	done
+	
+}
+
+
+# Adjust commands in the readme
+adjust_readme_commands() {
+	
+	[ -f "$readme" ] || return 0
+	
+	# Use relative paths for commands using local binaries
+	for f in "${outdir}/"* ; do
+		[ -d "$f" ] && continue
+		[ -x "$f" ] || continue
+		local cmd="${f%"$exe_suffix"}"
+		local cmd="$(escape_sed "${cmd##*/}")"
+		e sed -i "s/^\\( *\\\$ \\)\\(${cmd}\\( \\|\$\\)\\)/\\1.\\/\\2/" "$readme"
+	done
+	
+}
+
+
+e flatten_mandir
+
+e convert_man_pages
+
+e adjust_readme_commands

@@ -1,0 +1,28 @@
+#!/bin/bash
+
+. "${BASH_SOURCE[0]%/*}/../common"
+. "${scriptdir}/changelog"
+
+_specfile="${pkgsrcdir}/${project}.spec"
+
+_current_version="$(
+	grep '^Version\:' "$_specfile" | sed 's/^Version\: *\([^ ]*\) *$/\1/'
+)"
+[ -z "$_current_version" ] && die "could not get current version"
+version_greater "$version" "$_current_version" \
+	|| die "accitental downgrade? new version ${version} <= ${_current_version}"
+
+get_shortlog _changelog
+
+_changelog_entry="
+* $(date --utc '+%a %b %d %Y') ${packager} ${version}
+${_changelog:?bad changelog}"
+
+e sed -i "s/^\\(Version\:[ \\t][ \\t]*\\).*$/\\1$(escape_sed "$version")/" \
+	"$_specfile" || die "failed to set new version"
+
+e sed -i "s/^\\(Release\:[ \\t][ \\t]*\\).*$/\\10/" \
+	"$_specfile" || die "failed to set new release"
+
+e sed -i "s/^%changelog$/\\0$(escape_sed "$_changelog_entry")/" \
+	"$_specfile" || die "failed add changelog entry"

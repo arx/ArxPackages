@@ -1,0 +1,76 @@
+#!/bin/bash
+
+if [ "${scriptdir-}" = "" ] ; then
+	. "${BASH_SOURCE[0]%/*}/common"
+	_changelog_is_sourced=0
+else
+	_changelog_is_sourced=1
+fi
+
+. "${scriptdir}/demarkdown"
+
+_get_changelog() {
+	suffix="$1"
+	
+	local out="${2:?missing output}"
+	[ ! -z "${3-}" ] && local version="3"
+	
+	local changelogfile="${changelogdir}/${version}${suffix}"
+	
+	[ ! -f "$changelogfile" ] && die "missing changelog ${changelogfile}"
+	
+	eval "$out=\"\$(cat \"\$changelogfile\")\""
+	return 0
+	
+}
+
+get_changelog() {
+	_get_changelog '.md' "$@"
+}
+
+get_shortlog() {
+	_get_changelog '.shortlog' "$@"
+}
+
+_make_changelog() {
+	local file="$1"
+	local type="$2"
+	local c="$3"
+	local cc="$c$c$c$c$c$c$c$c$c$c"
+	local contents="$4"
+	
+	# Prepare a changelog
+	echo "$c Bumping version for ${project} to ${version}"    > "$file"
+	echo "$c Provide a ${type} - save empty file to abort."  >> "$file"
+	echo "$cc$cc$cc$cc$cc$cc$cc$cc"                          >> "$file"
+	echo "$contents"                                         >> "$file"
+	
+	if ! edit "$file" ; then rm "$file" ; die "aborting due to empty ${type}" ; fi
+	
+	contents="$( grep -v "^$c" "$file" | sed -e :a -e '/./,$!d;/^\n*$/{$d;N;};/\n$/ba' )"
+	if [ -z "$contents" ] ; then rm "$file" ; die "aborting due to empty ${type}" ; fi
+	echo "$contents" > $file
+	
+	elog "- ${white}${project}-${version}: created new ${type}${reset}"
+	
+}
+
+make_changelog() {
+	
+	[ ! -z "${1-}" ] && local version="$1"
+	
+	mkdir -p "$changelogdir"
+	local file="${changelogdir}/${version}"
+	
+	[ -f "$file.md" ] || _make_changelog "$file.md" 'changelog' '%' '* ...'
+	
+	file="${file}.shortlog"
+	[ -f "$file" ] && return
+	
+	get_changelog changelog
+	shortlog="- Bump version to $version (new upstream release):
+$( echo "$changelog" | demarkdown | grep -P '^ ( |\-)' | sed 's/^ //' )"
+	_make_changelog "$file" 'package log' '#' "$shortlog"
+}
+
+if [ $_changelog_is_sourced = 0 ] ; then make_changelog "$@" ; fi
