@@ -48,23 +48,17 @@ BuildRequires:  xz
 %if 0%{?suse_version}
 BuildRequires:  update-desktop-files
 %endif
-Requires:       arx
-Requires:       arxcrashreporter
+Obsoletes:      arx
+Recommends:     arxcrashreporter
+Suggests:       arxunpak
+Suggests:       arxsavetool
+Suggests:       innoextract
+Summary:        Cross-platform port of Arx Fatalis, a first-person role-playing game
+Group:          Amusements/Games/RPG
 %description
 Cross-platform port of Arx Fatalis, a first-person role-playing game.
 This package only includes the game executable - you will also need
 the data files from the original game.
-
-%package -n arx
-Summary:        Cross-platform port of Arx Fatalis, a first-person role-playing game
-Group:          Amusements/Games/RPG
-%description -n arx
-Cross-platform port of Arx Fatalis, a first-person role-playing game.
-This package only includes the game executable - you will also need
-the data files from the original game.
-
-Besides the data files, this is all that is needed to run the game, but installing
-the main arx-libertatis package to get the arxcrashreporter is recommended.
 
 %package -n arxunpak
 Summary:        Tool to extract the Arx Fatalis .pak files containing the game assets
@@ -110,11 +104,7 @@ make DESTDIR=%{buildroot} install
 %suse_update_desktop_file %name
 %endif
 
-%if !0%{?suse_version}
 %files
-%endif
-
-%files -n arx
 %defattr(-,root,root)
 %{_bindir}/arx
 %doc README.md AUTHORS CHANGELOG ARX_PUBLIC_LICENSE.txt
