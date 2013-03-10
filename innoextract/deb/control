@@ -13,5 +13,5 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Tool to extract installers created by Inno Setup
  Inno Setup is a tool to create installers for Microsoft Windows applications.
- Inno Extracts allows one to extract such installers under non-windows systems
+ innoextract allows one to extract such installers under non-windows systems
  without running the actual installer using wine.
