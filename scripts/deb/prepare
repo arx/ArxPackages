@@ -4,6 +4,8 @@
 
 _deb_version="$(head -1 "${pkgsrcdir}/changelog" | sed 's/^.*(\([^\-]*\)-.*$/\1/')"
 echo "debian version is ${_deb_version}"
+_deb_release="$(head -1 "${pkgsrcdir}/changelog" | sed 's/^.*(\([^)]*\)).*$/\1/')"
+echo "debian release is ${_deb_release}"
 
 get_output _source _sourcedir "$_deb_version" 'source'
 
@@ -38,6 +40,8 @@ pushd "$_sourcedir"
 	done
 	
 popd
+
+e cp "${project}-${_deb_release}.dsc" "${project}.dsc"
 
 # Preserve the output files
 get_output _output
