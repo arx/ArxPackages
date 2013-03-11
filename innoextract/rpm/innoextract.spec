@@ -1,7 +1,7 @@
 #
 # spec file for package innoextract
 #
-# Copyright (c) 2012 Daniel Scharrer <daniel@constexpr.org>
+# Copyright (c) 2012-2013 Daniel Scharrer <daniel@constexpr.org>
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -16,7 +16,7 @@
 #
 
 Name:           innoextract
-Version:        1.3
+Version:        1.4
 Release:        0
 License:        Zlib
 Summary:        A tool to extract installers created by Inno Setup
@@ -55,6 +55,21 @@ make DESTDIR=%{buildroot} install
 %{_bindir}/innoextract
 
 %changelog
+* Mon Mar 11 2013 Daniel Scharrer <daniel@constexpr.org> 1.4
+- Bump version to 1.4 (new upstream release):
+- Fixed issues with the progress bar in sandbox environments
+- Fixed extracting very large installers with 32-bit innoextract builds
+- Improved handling
+- The --list command-line option can now combined with --test or --extract
+- The --version command-line option can now be modified with --quiet
+  or --silent
+- Added support for preserving timestamps of extracted files
+  (enabled by default)
+- Added a --timestamps (-T) command-line options to control or disable
+  file timestamps
+- Added an --output-dir (-d) command-line option to control where files
+  are extracted
+- Various bug fixes and tweaks
 * Tue Jul 03 2012 Daniel Scharrer <daniel@constexpr.org>
 - bump version to 1.3:
 - Respect --quiet and --silent for multi-file installers
