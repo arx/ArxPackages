@@ -23,7 +23,9 @@ test_run() {
 	local binary="${archbindir}/${1}"
 	echo "$(escape_args '$' "${@}")" >> "$buildlog"
 	PATH="${archbindir}:${bindir}:$PATH" \
-		test_run_impl "$binary" "${@:2}"
+		test_run_impl "$binary" "${@:2}" \
+			>  >( perl -pe 's/\r//g' ) 2> >( perl -pe 's/\r//g' >&2)
+	return ${PIPESTATUS[0]}
 }
 
 check_abnormal_termination() {

@@ -12,6 +12,7 @@ if [ ! -e "$_repodir" ] ; then
 	fi
 fi
 e git --git-dir="$_repodir" fetch 2>&1
+e git --git-dir="$_repodir" fetch --tags 2>&1
 e git --git-dir="$_repodir" remote prune origin 2>&1
 
 # Create the source directory - name will be include in the source tarball
