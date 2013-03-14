@@ -151,6 +151,9 @@ wrapper_use_cmd_path=0
 # Set ${command}_COMMAND to the string used to invoke the wrapper script
 wrapper_use_command=0
 
+# Replace dashes with underscores in command names in the above two cases
+wrapper_use_cmd_dash=0
+
 # Libraries that are not included in binary distributions, but may be linked against
 system_libraries=(
 	

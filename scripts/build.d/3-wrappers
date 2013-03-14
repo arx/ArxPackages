@@ -38,7 +38,7 @@ create_wrapper() {
 	
 	echo '#!/bin/sh'                                                           > "$wrapper"
 	echo                                                                      >> "$wrapper"
-	echo 'here="$(readlink -f "$(which "$0")")" ; here="${here%/*}"'          >> "$wrapper"
+	echo 'here="$(readlink -f "$(command -v "$0")")" ; here="${here%/*}"'     >> "$wrapper"
 	echo 'command="${0##*/}"'                                                 >> "$wrapper"
 	echo                                                                      >> "$wrapper"
 	
@@ -65,17 +65,25 @@ create_wrapper() {
 		echo                                                                    >> "$wrapper"
 	fi
 	
+	scommand='command'
+	if [ $wrapper_use_cmd_path = 1 ] || [ $wrapper_use_path = 1 ] ; then
+		if [ $wrapper_use_cmd_dash = 1 ] ; then
+			scommand='scommand';
+			echo 'scommand="$(echo "$command" | tr - _)"'                         >> "$wrapper"
+		fi
+	endif
+	
 	# Pass the location of the wrapper script to the target executable
 	if [ $wrapper_use_cmd_path = 1 ] ; then
-		echo 'export ${command}_PATH="$here"'                                   >> "$wrapper"
+		echo "export \${${scommand}}_PATH=\"\$here\""                           >> "$wrapper"
 	fi
 	# Pass the command invocation to the target executable (to use as argv[0])
 	# bash has exec -a <name> for this, but other POSIX shells don't
 	# Also, we can't rely on $0 being the string the user entered if called via $PATH
 	if [ $wrapper_use_command = 1 ] ; then
-		echo 'if [ "$0" = "$(which --show-dot "$command" 2> /dev/null)" ]'      >> "$wrapper"
-		echo '	then export ${command}_COMMAND="$command"'                      >> "$wrapper"
-		echo '	else export ${command}_COMMAND="$0"'                            >> "$wrapper"
+		echo 'if [ "$0" = "$(readlink -f "$(command -v "$command")")" ]'        >> "$wrapper"
+		echo "	then export \${${scommand}}_COMMAND=\"\$command\""              >> "$wrapper"
+		echo "	else export \${${scommand}}_COMMAND=\"\$0\""                    >> "$wrapper"
 		echo 'fi'                                                               >> "$wrapper"
 	fi
 	if [ $wrapper_use_command = 1 ] || [ $wrapper_use_path = 1 ] ; then
