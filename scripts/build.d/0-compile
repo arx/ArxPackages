@@ -179,9 +179,8 @@ build() {
 			local package="$(qfile --nocolor "$raw_dependency")"
 			package="${package%% *}"
 			package="${package##*/}"
-			[ "$package" = 'glibc' ] && continue
-			[ "$package" = 'linux-headers' ] && continue
-			[ "$package" = 'mingw64-runtime' ] && continue
+			
+			match_in_array "$package" "${system_packages[@]:+${system_packages[@]}}" && continue
 			
 			[ "$package" = '' ] || die "no license for dependency: ${dependency} (${package})"
 			die "no license for dependency: ${dependency}"

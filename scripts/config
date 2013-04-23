@@ -307,6 +307,13 @@ declare -A licenses=(
 	
 )
 
+system_packages=(
+	'glibc'
+	'linux-headers'
+	'mingw64-runtime'
+	'freebsd-lib'
+)
+
 ################################################################################
 # Deployment information
 
