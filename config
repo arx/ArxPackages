@@ -52,8 +52,8 @@ targets+=(
 	[linux-amd64]='x86_64-bindist-linux-gnu'
 	[linux-armv6j-hardfloat]='armv6j-hardfloat-linux-gnueabi'
 	[windows-i686]='i686-w64-mingw32'
-	[freebsd-i686]='i686-gentoo-freebsd'
-	[freebsd-amd64]='x86_64-gentoo-freebsd'
+	[freebsd-i686]='i686-gentoo-freebsd9.1'
+	[freebsd-amd64]='x86_64-gentoo-freebsd9.1'
 )
 
 # Target-specific compiler flags
