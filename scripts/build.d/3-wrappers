@@ -49,7 +49,7 @@ create_wrapper() {
 			echo "	${architecture_aliases[$archid]:-$archid}) arch='$archid' ;;" >> "$wrapper"
 		done
 		echo "	*) arch='$fallback_arch'"                                       >> "$wrapper"
-		echo "	   printf 'Unsupported architecture \"%s\", %s' \\"             >> "$wrapper"
+		echo "	   printf 'Unsupported architecture \"%s\", %s\n' \\"           >> "$wrapper"
 		echo '	          "$(uname -m)" "using $arch binaries!" >&2 ;;'         >> "$wrapper"
 		echo 'esac'                                                             >> "$wrapper"
 		echo                                                                    >> "$wrapper"
