@@ -127,9 +127,6 @@ demarkdown_insert() {
 	[ ! -z "${insert_texts[$i]}" ] || [ ! -z "${insert_files[$i]}" ] || continue
 	
 	if [ "$pmode" = 'discard' ] ; then
-		section_lead="$empty_lines"
-		empty_lines=""
-		stitle="$title"
 		demarkdown_start_section "$prefix" "${insert_names[$i]:-$title}"
 		pmode='normal'
 		[ -z "$empty_lines" ] && empty_lines="
