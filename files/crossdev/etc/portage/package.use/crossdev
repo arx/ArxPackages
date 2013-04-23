@@ -3,5 +3,7 @@ cross-i686-bindist-linux-gnu/glibc        glibc-omitfp
 
 cross-i686-bindist-linux-gnu/gcc          graphite mudflap
 cross-x86_64-bindist-linux-gnu/gcc        graphite mudflap
+cross-i686-gentoo-freebsd9.1/gcc          graphite mudflap
+cross-x86_64-gentoo-freebsd9.1/gcc        graphite mudflap
 cross-armv6j-hardfloat-linux-gnueabi/gcc  graphite mudflap
-cross-i686-w64-mingw32/gcc                graphite mudflap
+cross-i686-w64-mingw32/gcc                graphite

@@ -3,7 +3,11 @@
 <cross-i686-w64-mingw32/gcc-4.7.2
 <cross-i686-bindist-linux-gnu/gcc-4.7.2
 <cross-x86_64-bindist-linux-gnu/gcc-4.7.2
+<cross-i686-gentoo-freebsd9.1/gcc-4.7.2
+<cross-x86_64-gentoo-freebsd9.1/gcc-4.7.2
 >=cross-armv6j-hardfloat-linux-gnueabi/gcc-4.7.3
 >=cross-i686-w64-mingw32/gcc-4.7.3
 >=cross-i686-bindist-linux-gnu/gcc-4.7.3
 >=cross-x86_64-bindist-linux-gnu/gcc-4.7.3
+>=cross-i686-gentoo-freebsd9.1/gcc-4.7.3
+>=cross-x86_64-gentoo-freebsd9.1/gcc-4.7.3

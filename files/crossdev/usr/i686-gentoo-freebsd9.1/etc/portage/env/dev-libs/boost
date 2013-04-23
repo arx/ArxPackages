@@ -1,0 +1,13 @@
+
+post_src_configure() {
+	elog "Enabling FreeBSD cross-compile"
+	OPTIONS+=" toolset=gcc target-os=freebsd --without-wave"
+	OPTIONS=" link=static $(echo "$OPTIONS" | perl -pe 's/(^| )link=[^ ]*/ /g')"
+}
+
+# Ugly hack to work around boost ebuilds expecting shared libraries.
+dosym() {
+	if [ $# = 2 ]
+		then command dosym "$@"
+	fi
+}

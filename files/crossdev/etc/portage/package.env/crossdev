@@ -1,4 +1,6 @@
 # broken with lto: cross-armv6j-hardfloat-linux-gnueabi/gcc cross-lto
-cross-i686-bindist-linux-gnu/gcc    cross-lto
 cross-i686-w64-mingw32/gcc          cross-lto
+cross-i686-bindist-linux-gnu/gcc    cross-lto
 cross-x86_64-bindist-linux-gnu/gcc  cross-lto
+cross-i686-gentoo-freebsd9.1/gcc    cross-lto
+cross-x86_64-gentoo-freebsd9.1/gcc  cross-lto
