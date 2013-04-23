@@ -48,9 +48,9 @@ create_wrapper() {
 		for archid in "${architectures[@]}" ; do
 			echo "	${architecture_aliases[$archid]:-$archid}) arch='$archid' ;;" >> "$wrapper"
 		done
-		echo '	*) echo "Unsupported architecture \"$(uname -m)\"," \'          >> "$wrapper"
-		echo "	        \"using ${fallback_arch} binaries!\" >&2"               >> "$wrapper"
-		echo "	   arch='$fallback_arch' ;;"                                    >> "$wrapper"
+		echo "	*) arch='$fallback_arch'"                                       >> "$wrapper"
+		echo "	   printf 'Unsupported architecture \"%s\", %s' \\"             >> "$wrapper"
+		echo '	          "$(uname -m)" "using $arch binaries!" >&2 ;;'         >> "$wrapper"
 		echo 'esac'                                                             >> "$wrapper"
 		echo                                                                    >> "$wrapper"
 	fi
@@ -61,7 +61,8 @@ create_wrapper() {
 		for prefix in "${prefixes[@]}" ; do
 			path="${path}${prefix}:"
 		done
-		echo "export PATH=\"${path}\$PATH\""                                    >> "$wrapper"
+		echo "PATH=\"${path}\$PATH\""                                           >> "$wrapper"
+		echo "export PATH"                                                      >> "$wrapper"
 		echo                                                                    >> "$wrapper"
 	fi
 	
@@ -69,22 +70,24 @@ create_wrapper() {
 	if [ $wrapper_use_cmd_path = 1 ] || [ $wrapper_use_path = 1 ] ; then
 		if [ $wrapper_use_cmd_dash = 1 ] ; then
 			scommand='scommand';
-			echo 'scommand="$(echo "$command" | tr - _)"'                         >> "$wrapper"
+			echo "scommand=\"\$(printf '%s' \"\$command\" | tr - _)\""            >> "$wrapper"
 		fi
-	endif
+	fi
 	
 	# Pass the location of the wrapper script to the target executable
 	if [ $wrapper_use_cmd_path = 1 ] ; then
-		echo "export \${${scommand}}_PATH=\"\$here\""                           >> "$wrapper"
+		echo "eval \${${scommand}}_PATH='\"\$here\"'"                           >> "$wrapper"
+		echo "export \${${scommand}}_PATH"                                      >> "$wrapper"
 	fi
 	# Pass the command invocation to the target executable (to use as argv[0])
 	# bash has exec -a <name> for this, but other POSIX shells don't
 	# Also, we can't rely on $0 being the string the user entered if called via $PATH
 	if [ $wrapper_use_command = 1 ] ; then
 		echo 'if [ "$0" = "$(readlink -f "$(command -v "$command")")" ]'        >> "$wrapper"
-		echo "	then export \${${scommand}}_COMMAND=\"\$command\""              >> "$wrapper"
-		echo "	else export \${${scommand}}_COMMAND=\"\$0\""                    >> "$wrapper"
+		echo "	then eval \${${scommand}}_COMMAND='\"\$command\"'"              >> "$wrapper"
+		echo "	else eval \${${scommand}}_COMMAND='\"\$0\"'"                    >> "$wrapper"
 		echo 'fi'                                                               >> "$wrapper"
+		echo "export \${${scommand}}_COMMAND"                                   >> "$wrapper"
 	fi
 	if [ $wrapper_use_command = 1 ] || [ $wrapper_use_path = 1 ] ; then
 		echo                                                                    >> "$wrapper"
