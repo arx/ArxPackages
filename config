@@ -66,7 +66,7 @@ cxx_flags_linux_armv6j_hardfloat=( -mfpu=vfp -mfloat-abi=hard -Os -Wno-uninitial
 # case-patterns to match for each architecture
 # Syntax: [ARCHITECTURE]=PATTERN
 architecture_aliases+=(
-	[i686]='i686|x86'
+	[i686]='i[3-6]86|x86'
 	[amd64]='amd64|x86_64'
 	[armv6j-hardfloat]='arm*'
 )
