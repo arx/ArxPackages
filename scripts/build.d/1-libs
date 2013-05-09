@@ -113,6 +113,7 @@ check_dependencies() {
 	local target="${targets["${pkgtype}-${arch}"]}"
 	local root="${root_base}/${target}"
 	
+	local scriptbindir="$bindir"
 	local bindir="${bindir}/${arch}"
 	
 	# Get required libraries
@@ -128,6 +129,7 @@ check_dependencies() {
 	# Sanity check: did we build all required libraries
 	for binary in "${required_binaries[@]}" ; do
 		[ -f "${bindir}/${binary}${exe_suffix}" ] \
+			|| [ -f "${scriptbindir}/${binary}${exe_suffix}" ] \
 			|| die "missing ${binary}${exe_suffix} for ${arch}"
 	done
 	
