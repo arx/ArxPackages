@@ -173,7 +173,7 @@ system_libraries=(
 	'libthread_db.so*'
 	'libutil.so*'
 	
-	# windows
+	# Windows
 	'kernel32.dll'
 	'msvc*.dll'
 	'user32.dll'
@@ -185,6 +185,9 @@ system_libraries=(
 	'uuid.dll'
 	'comdlg32.dll'
 	'advapi32.dll'
+	
+	# FreeBSD
+	'libthr.so*'
 	
 	# OpenGL
 	'libGL.so*'
