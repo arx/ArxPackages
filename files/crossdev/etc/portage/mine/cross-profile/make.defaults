@@ -1,0 +1,13 @@
+USE="zlib bindist make-symlinks minimal static-libs \
+     -nls -classic -egl -gallium -llvm -shared-glapi -X -pulseaudio -ipv6 -uuid"
+
+CFLAGS="-O2 -pipe -fomit-frame-pointer -flto"
+CXXFLAGS="${CFLAGS}"
+LDFLAGS="${LDFLAGS} -Wl,-O1 -Wl,--as-needed"
+
+FEATURES="-collision-protect sandbox noman noinfo nodoc"
+
+PORTDIR="/usr/portage"
+DISTDIR="/usr/portage/distfiles"
+MAKEOPTS=" -j5"
+GENTOO_MIRRORS="http://distfiles.gentoo.org"
