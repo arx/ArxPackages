@@ -264,6 +264,7 @@ declare -A copy_files=(
 	['CHANGELOG*']='*/'
 	['VERSION*']='*/'
 	['README*']='*/'
+	['AUTHORS*']='*/'
 	['*{LICENSE,COPYING}*']="license/${project}."
 )
 
