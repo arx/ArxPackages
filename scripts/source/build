@@ -6,12 +6,12 @@
 _repodir="${builddir}/${project}.git"
 if [ ! -e "$_repodir" ] ; then
 	e mkdir -p "$_repodir"
-	if ! e git clone --bare "$git_repository" "$_repodir" 2>&1 ; then
+	if ! e git clone --mirror "$git_repository" "$_repodir" 2>&1 ; then
 		erm -r "$_repodir"
 		die "could not clone git repo at ${git_repository}"
 	fi
 fi
-e git --git-dir="$_repodir" fetch 2>&1
+e git --git-dir="$_repodir" fetch --all 2>&1
 e git --git-dir="$_repodir" fetch --tags 2>&1
 e git --git-dir="$_repodir" remote prune origin 2>&1
 
