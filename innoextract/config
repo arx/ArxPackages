@@ -23,7 +23,6 @@ project_changelog_url='http://constexpr.org/innoextract/changelog'
 
 # Additional options to pass to CMake
 cmake_options+=(
-	-DUNITY_BUILD=1
 	-DUSE_STATIC_LIBS=1
 )
 
@@ -42,7 +41,7 @@ required_binaries+=(
 )
 
 # This is a 100% static build (except system stuff) - don't allow any linked libraries.
-forbidden_libraries+=( "${all_libraries[@]}" )
+forbidden_libraries+=( '*' )
 
 test_binaries() {
 	
