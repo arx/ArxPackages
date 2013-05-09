@@ -1,0 +1,6 @@
+#!/bin/bash
+
+readme_transforms+=(
+	--discard '* windows *'
+	--discard '* os x *'
+)
