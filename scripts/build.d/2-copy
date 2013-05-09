@@ -74,6 +74,7 @@ do_copy_files() {
 			done
 		fi
 		
+		echo demarkdown "${demarkdown_params[@]:+${demarkdown_params[@]}}" \< "$src" \> "$dst"
 		demarkdown "${demarkdown_params[@]:+${demarkdown_params[@]}}" < "$src" > "$dst"
 		
 	else

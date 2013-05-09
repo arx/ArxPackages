@@ -307,7 +307,7 @@ source_if_exists() {
 . "${scriptdir}/config"
 
 # Read pkgtype-specific default config
-[ ! -z "${pkgtype-}" ]    && source_if_exists "${root}/config.${pkgtype}"
+[ ! -z "${pkgtype-}" ]    && source_if_exists "${scriptdir}/config.${pkgtype}"
 
 # Read global config
 source_if_exists "${root}/config"
