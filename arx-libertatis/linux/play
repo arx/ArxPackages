@@ -1,5 +1,0 @@
-#!/bin/sh
-
-cd "$(dirname "$(readlink -f "$(which "$0")")")"
-
-exec "./arx" --no-data-dir --user-dir=. --config-dir=. "$@"

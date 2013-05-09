@@ -1,0 +1,1 @@
+We have included an `arx-portable` wrapper that sets these options for you. Combine this with installing the data files into this directory (the one containing this README and the wrapper scripts) to get one portable install.

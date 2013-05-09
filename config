@@ -125,6 +125,10 @@ licenses+=(
 	
 )
 
+provided_versioned_libraries+=(
+	'gcc'
+)
+
 ################################################################################
 # Deployment information
 

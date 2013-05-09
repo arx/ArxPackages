@@ -1,0 +1,94 @@
+#!/bin/bash
+
+################################################################################
+# Project configuration
+
+project_name='Arx Libertatis'
+
+# Git repository URL for the project source code
+git_repository='git://github.com/arx/ArxLibertatis.git'
+
+# URL for the project website
+project_url='http://arx-libertatis.org/'
+
+# Project description as in "$project_name, ..." (OPTIONAL)
+project_tagline='a cross-platform, open source port of [Arx Fatalis](http://www.arkane-studios.com/uk/arx.php)'
+
+# URL for alternate downloads (OPTIONAL)
+project_downloads_url='http://wiki.arx-libertatis.org/Download'
+
+# URL for the full changelog (OPTIONAL)
+project_changelog_url='http://wiki.arx-libertatis.org/Changelog'
+
+################################################################################
+# Build configuration
+
+# Additional options to pass to CMake
+cmake_options+=(
+	-DUNITY_BUILD=1
+	-DUSE_STATIC_LIBS=1
+	-DBUILD_CRASHREPORTER=0 # it's a bit wasteful to include Qt just for the crash reporter
+	-DSCRIPTDIR='bin'
+	-DAPPDIR='.'
+	-DICONDIR='.'
+)
+
+################################################################################
+# Wrapper configuration
+
+# Set ${command}_COMMAND to the string used to invoke the wrapper script
+wrapper_use_command=1
+
+# Set arx_PATH to Add the package root as a potential data directory
+wrapper_use_cmd_path=1
+
+# TODO can this be enabled automatically?
+wrapper_use_cmd_dash=1
+
+# Include the arx-portable wrapper
+copy_files+=( [':arx-portable']='/' )
+
+################################################################################
+# Adjust documentation
+
+readme_transforms+=(
+	--append-file '* data *' "$filesdir/README.data.md"
+)
+
+################################################################################
+# Sanity checks
+
+# List of binaries that must be present in binary packages
+required_binaries+=(
+	arx
+	arxunpak
+	arxsavetool
+	arx-install-data
+)
+
+# Libraries that should not be linked
+forbidden_libraries+=(
+	
+	# C++ stdlib - link statically
+	'libstdc++.so*'
+	'libstdc++-*.dll'
+	'libc++.so*'
+	
+	# We link Boost and GLEW statically - check for that
+	'libboost_*'
+	'libGLEW*'
+	
+)
+
+test_binaries() {
+	
+	# Test that the program runs at all
+	expect_success arx --help
+	expect_success arx --list-dirs
+	
+	# Exit code 1 if no files given
+	expect_failure arxunpak
+	expect_failure arxsavetool
+	
+	true
+}
