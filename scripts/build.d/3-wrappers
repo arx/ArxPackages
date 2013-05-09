@@ -96,8 +96,8 @@ create_wrapper() {
 	# Execute the arch-specific or generic executable
 	e=$((${#prefixes[@]} - 1))
 	for prefix in "${prefixes[@]:0:$e}" ; do
-		echo "[ -x \"\$here/${prefix}/\$command\" ] && exec \"${prefix}/\$command\" \"\$@\"" \
-		                                                                        >> "$wrapper"
+		echo "[ -x \"\$here/${prefix}/\$command\" ]" \
+			"&& exec \"\$here/${prefix}/\$command\" \"\$@\""                      >> "$wrapper"
 	done
 	local prefix="${prefixes[$e]}"
 	echo "exec \"\$here/${prefix}/\$command\" \"\$@\""                        >> "$wrapper"
