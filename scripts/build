@@ -4,11 +4,11 @@ curscript="${BASH_SOURCE[1]}"
 . "${BASH_SOURCE[0]%/*}/common"
 
 # Set default target configutation
-library_pattern="${library_pattern:-'*.so*'}"
+library_pattern="${library_pattern:-"*.so*"}"
 case_insensitive_fs="${case_insensitive_fs:-0}"
 convert_man_to_text="${convert_man_to_text:-0}"
 create_wrapper_scripts="${create_wrapper_scripts:-1}"
-objdump_lib_pattern="${objdump_lib_pattern:-' NEEDED '}"
+objdump_lib_pattern="${objdump_lib_pattern:-" NEEDED "}"
 exe_suffix="${exe_suffix-}"
 text_suffix="${text_suffix-}"
 

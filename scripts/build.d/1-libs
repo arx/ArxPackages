@@ -79,7 +79,7 @@ find_libraries() {
 		e cp -a "$file" "${bindir}/${lib}"
 		
 		# Recursively get the library's dependencies
-		find_libraries "$target" "$bindir" "$lib"
+		e find_libraries "$target" "$bindir" "$lib"
 		
 	done
 }
@@ -118,7 +118,7 @@ check_dependencies() {
 	
 	# Get required libraries
 	for binary in "${bindir}"/* ; do
-		find_libraries "$target" "$bindir" "${binary##*/}"
+		e find_libraries "$target" "$bindir" "${binary##*/}"
 	done
 	
 	# Remove debugging symbols to save disk space
