@@ -59,7 +59,7 @@ create_wrapper() {
 	if [ $wrapper_use_path = 1 ] && [ $use_path = 1 ] ; then
 		local path=''
 		for prefix in "${prefixes[@]}" ; do
-			path="${path}${prefix}:"
+			path="${path}\$here/${prefix}:"
 		done
 		echo "PATH=\"${path}\$PATH\""                                           >> "$wrapper"
 		echo "export PATH"                                                      >> "$wrapper"
