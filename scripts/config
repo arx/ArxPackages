@@ -189,6 +189,9 @@ system_libraries=(
 	# OpenGL
 	'libGL.so*'
 	
+	# Xlib
+	'libX11.so*'
+	
 )
 
 ################################################################################
@@ -304,6 +307,8 @@ declare -A licenses=(
 	['/usr/include/sys/*']=''
 	['/usr/include/std*.h']=''
 	['/usr/include/win*.h']=''
+	['/usr/lib/opengl/xorg-x11/lib/libGL.so*']=''
+	['/usr/lib/libX11.so*']=''
 	
 )
 
