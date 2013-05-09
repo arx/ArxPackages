@@ -60,16 +60,16 @@ find_libraries() {
 		
 		# Resolve symlinks
 		if [ -L "$file" ] ; then
-			local target="$(readlink -f "$file")"
-			local targetlib="${target##*/}"
+			local link_target="$(readlink -f "$file")"
+			local targetlib="${link_target##*/}"
 			if [ ! "$targetlib" = "$lib" ] ; then
 				e ln -sT "$targetlib" "${bindir}/${lib}"
 				lib="$targetlib"
 				[ -f "${bindir}/${lib}" ] && continue
 				[ -f "${bindir}/libexec/${lib}" ] && continue
 			fi
-			[ -f "$target" ] || die "bad symlink: ${file} -> ${target}"
-			file="$target"
+			[ -f "$link_target" ] || die "bad symlink: ${file} -> ${link_target}"
+			file="$link_target"
 		fi
 		
 		# Check that we didn't pick up a linker script instead of the actual library
