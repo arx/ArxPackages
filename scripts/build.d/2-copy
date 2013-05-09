@@ -39,7 +39,7 @@ do_copy_files() {
 	local ddst="$dst"
 	if [[ "$dst" == */ ]] || [[ "$dst" == *. ]] ; then
 		[ "$dst" = '/' ] && dst=''
-		ddst="${src%.md}"
+		ddst="${src%.md}" ; ddst="${ddst%.txt}"
 		dst="${dst}${ddst##*/}"
 		forcetext=1
 	fi
