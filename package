@@ -2,4 +2,9 @@
 
 . "${BASH_SOURCE[0]%/*}/scripts/common"
 
+# Example usage:
+# $ ./package -p innoextract -v 1.4
+# $ ./package -p innoextract -c 1.4-windows-r1 -v 1.4-r1 package windows
+# $ ./package -p innoextract -v 1.4 finalize
+
 execute "${1:-package}" "${@:2}"
