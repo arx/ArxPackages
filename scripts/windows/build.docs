@@ -5,3 +5,6 @@ if [ -f "$readme" ] ; then
 	e sed -i 's/^\( *\)\(\$\|\#\) \.\//\1/' "$readme"
 	e sed -i 's/^\( *\)\(\$\|\#\) /\1/' "$readme"
 fi
+
+# Add carriage returns in text files because Windows is a typewriter OS
+find "$PWD" -type f -name '*.txt' -exec unix2dos {} \;
