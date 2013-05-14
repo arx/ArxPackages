@@ -39,15 +39,15 @@ do_copy_files() {
 	local ddst="$dst"
 	if [[ "$dst" == */ ]] || [[ "$dst" == *. ]] ; then
 		[ "$dst" = '/' ] && dst=''
-		ddst="${src%.md}" ; ddst="${ddst%.txt}"
-		dst="${dst}${ddst##*/}"
-		forcetext=1
+		ddst="${src%.md}" ; ddst="${ddst%.txt}" ; ddst="${ddst##*/}"
+		dst="${dst}${ddst}"
 	fi
 	
-	local nm="$(echo ${dst##*/} | sed 's/\./_/g' | tolower)"
+	local nm="$(echo "${dst##*/}" | sed 's/\./_/g' | tolower)"
 	
 	# Add text suffix if needed
-	if [ ! -z "$text_suffix" ] && [[ "$ddst" != *.* ]] \
+	local dnm="${ddst##*/}"
+	if [ ! -z "$text_suffix" ] && [[ "$dnm" != *.* ]] \
 			&& [[ "$(file -i "${src}")" == *": text/"* ]] ; then
 		dst="${dst}${text_suffix}"
 	fi
