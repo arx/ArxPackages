@@ -29,3 +29,40 @@ post_src_install() {
 if [[ $EBUILD_PHASE == "postinst" ]]; then
 	[[ $SYSROOT == $ROOT ]] && cross-fix-root ${CHOST}
 fi
+
+function rename_func() {
+	local old="$1"
+	local new="$2"
+	eval "$(echo "$new()"; declare -f "$old" | tail -n +2)"
+}
+
+if [ "$PN" = "libarchive" ] ; then
+	rename_func econf orig_econf
+	econf() {
+		orig_econf "$@" \
+			--without-xml2 --without-expat --without-openssl \
+			--disable-acl --disable-xattr \
+			--disable-bsdcpio --enable-bsdtar=static 
+	}
+	LDFLAGS="$LDFLAGS -Wl,-rpath,\\\$\$ORIGIN"
+fi
+
+if [ "$PN" = "libsdl" ] ; then
+	rename_func econf orig_econf
+	econf() {
+		orig_econf "$@" \
+			--disable-cdrom --disable-threads --disable-timers --disable-file --disable-cpuinfo
+	}
+fi
+
+if [ "$PN" = "freetype" ] ; then
+	post_src_prepare() {
+		disable_option FT_CONFIG_OPTION_USE_LZW
+		disable_option FT_CONFIG_OPTION_USE_ZLIB
+		enable_option  FT_CONFIG_OPTION_DISABLE_STREAM_SUPPORT
+		disable_option FT_CONFIG_OPTION_MAC_FONTS
+		disable_option FT_CONFIG_OPTION_INCREMENTAL
+		disable_option TT_CONFIG_OPTION_EMBEDDED_BITMAPS
+		disable_option TT_CONFIG_OPTION_SFNT_NAMES
+	}
+fi

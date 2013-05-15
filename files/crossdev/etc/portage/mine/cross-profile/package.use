@@ -9,3 +9,6 @@ media-libs/freetype -bzip2
 media-libs/mesa -pic shared-glapi
 
 app-arch/innoextract c++0x static
+
+app-arch/libarchive -acl -bzip2 -e2fsprogs -iconv -lzma zlib
+dev-libs/libxml2 -readline
