@@ -23,6 +23,9 @@ project_changelog_url='http://wiki.arx-libertatis.org/Changelog'
 ################################################################################
 # Build configuration
 
+# Arx is not a small project, use better source compression
+archives['source-build']='.tar.xz'
+
 # Additional options to pass to CMake
 cmake_options+=(
 	-DUNITY_BUILD=1
