@@ -5,4 +5,5 @@
 
 here="$(readlink -f "$(command -v "$0")")" ; here="${here%/*}"
 
-exec "$here/arx" --no-data-dir --user-dir="$here" --config-dir="$here" "$@"
+exec "$here/arx" --no-data-dir --data-dir="$here/data" \
+	--user-dir="$here" --config-dir="$here" "$@"

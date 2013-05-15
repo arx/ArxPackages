@@ -45,17 +45,27 @@ wrapper_use_command=1
 # Set arx_PATH to Add the package root as a potential data directory
 wrapper_use_cmd_path=1
 
+# What to set ${command}_PATH to ($here is the directory containing the wrapper script)
+wrapper_cmd_path='$here/data'
+
 # TODO can this be enabled automatically?
 wrapper_use_cmd_dash=1
 
-# Include the arx-portable wrapper
-copy_files+=( [':arx-portable']='/' )
+copy_files+=(
+	
+	# Include the arx-portable wrapper
+	[':arx-portable']='/'
+	
+	# Create a data subdirectory (with a README)
+	[':data/README.md']='data/'
+	
+)
 
 ################################################################################
 # Adjust documentation
 
 readme_transforms+=(
-	--append-file '* data *' "$filesdir/README.data.md"
+	--append-file '* data * locations *' "$filesdir/README.data.md"
 )
 
 ################################################################################

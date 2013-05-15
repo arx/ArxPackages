@@ -148,6 +148,9 @@ wrapper_use_path=1
 # Set ${command}_PATH to the directory containing the wrapper script
 wrapper_use_cmd_path=0
 
+# What to set ${command}_PATH to ($here is the directory containing the wrapper script)
+wrapper_cmd_path='$here'
+
 # Set ${command}_COMMAND to the string used to invoke the wrapper script
 wrapper_use_command=0
 
