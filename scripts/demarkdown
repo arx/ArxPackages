@@ -91,14 +91,15 @@ demarkdown_flush() {
 		| perl -pe 's/\[(.*?)\]\((.*?)\)/\1 (\2)/g' \
 		| perl -pe 's/^([^ ].*?)\\#/\1#/g' \
 		| perl -pe 's/`([^ ]*)`/\1/g' \
-		| perl -pe 's/<br> */\n/g' \
+		| perl -pe 's/ *<br> */\n/g' \
+		| perl -pe 's/[ \t]+/ /g' \
 		| perl -pe 's/\*\*(.*?)\*\*/_\1_/g' \
 		| fmt -sw $width
 	)"
 	
 	if [ ! -z "$list" ] ; then
 		buffer="$(echo "$buffer" | sed "s/^/${list}  /")"
-		buffer="${list}- ${buffer#${list}  }"
+		buffer="${list}- ${buffer#"${list}  "}"
 	fi
 	
 	echo "$buffer" >> "$section_buffer"
@@ -344,7 +345,7 @@ prepended and/or appended.
 			empty_lines="${empty_lines}
 "
 			
-		else if [[ "$line" == '    '* ]] ; then
+		else if [ -z "$buffer" ] && [[ "$line" == '    '* ]] ; then
 			
 			demarkdown_flush
 			demarkdown_flush_whitespace
