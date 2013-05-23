@@ -109,6 +109,7 @@ shared_linker_flags=(
 	-Wl,--no-export-dynamic # note: the build scripts always removes any -rdynamic flags
 	
 	# Load libraries from the same directory
+	-Wl,-z,origin
 	-Wl,-rpath,\$ORIGIN
 	
 )
