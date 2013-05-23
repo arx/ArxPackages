@@ -145,4 +145,5 @@ ubuntu_versions+=(
 	'precise' # EOL: April 2017
 	'quantal' # EOL: April 2014
 	'raring'  # EOL: October 2014
+	'saucy'   # EOL: July 2014
 )
