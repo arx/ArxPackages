@@ -23,11 +23,15 @@ e mkdir "$_outdir"
 e git --git-dir="$_repodir" --work-tree="$_outdir" checkout "$commit" -f 2>&1
 
 # Sanity check
-[ -e '.git' ] && die 'bad git, bad'
+[ -e "${_outdir}/.git" ] && die 'bad git, bad'
+
+# Remove dotfiles
+e find "$_outdir" -name '.*' -exec rm -rvf {} \;
 
 _version_file="${_outdir}/VERSION"
 [ -f "$_version_file" ] || die 'missing version file'
 if [ $is_test_version = 0 ] ; then
+	# Check version number for stable releases
 	_vername="$(head --lines=1 "$_version_file")"
 	_version="${_vername##* }"
 	[ "$version" = "$_version" ] || die "version file says ${_vername}"
@@ -36,6 +40,7 @@ if [ $is_test_version = 0 ] ; then
 			|| die "version ${version} not in ${changelog}"
 	done
 else
+	# Adjust version for test/patch releases
 	_vername="$(head --lines=1 "$_version_file")"
 	if [[ "${version-}" == *.* ]]
 		then _vername="${_vername% *} ${version}"
