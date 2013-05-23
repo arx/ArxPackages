@@ -1,8 +1,3 @@
 #!/bin/bash
 
 architectures=( 'i686' 'amd64' )
-
-cmake_options+=(
-	# FreeBSD headers use features not yet supported by gcc if they detect C++11 support
-	-DUSE_CXX11=0
-)
