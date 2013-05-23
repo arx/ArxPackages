@@ -41,7 +41,7 @@ pushd "$_sourcedir"
 	
 popd
 
-e cp "${project}-${_deb_release}.dsc" "${project}.dsc"
+e cp "${project}_${_deb_release}.dsc" "${project}.dsc"
 
 # Preserve the output files
 get_output _output
