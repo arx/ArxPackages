@@ -44,7 +44,7 @@ if [ "$PN" = "libarchive" ] ; then
 			--disable-acl --disable-xattr \
 			--disable-bsdcpio --enable-bsdtar=static 
 	}
-	LDFLAGS="$LDFLAGS -Wl,-rpath,\\\$\$ORIGIN"
+	LDFLAGS="$LDFLAGS -Wl,-z,origin -Wl,-rpath,\\\$\$ORIGIN"
 fi
 
 if [ "$PN" = "libsdl" ] ; then

@@ -1,0 +1,2 @@
+# broken, -r2 works
+=x11-proto/xcb-proto-1.8-r3
