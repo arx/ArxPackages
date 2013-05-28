@@ -231,6 +231,9 @@ forbidden_libraries=(
 # Both expect_success and expect_failure fail if the program crashed.
 test_binaries() { echo "no tests defined" ; }
 
+# Check that binaries have the correct RUNPATH set
+has_elf_rpath=0
+
 ################################################################################
 # Documentation output
 

@@ -17,7 +17,7 @@ find_libraries() {
 	
 	# Get all libraries required by the binary
 	local all_libraries=(
-		`"${target}-objdump" -p "${bindir}/$binary" \
+		`"${target}-objdump" -p "${bindir}/${binary}" \
 			| grep -P "$objdump_lib_pattern" | sed 's/.* //' | sort | uniq`
 	)
 	echo "${binary}: all libs: ${all_libraries[@]:+${all_libraries[@]}}"
@@ -36,6 +36,16 @@ find_libraries() {
 		libraries+=( "$lib" )
 	done
 	echo "${binary}: user libs: ${libraries[@]:+${libraries[@]}}"
+	
+	# Check that the runpath is set correctly
+	if [ $has_elf_rpath = 1 ] && [ "${#libraries[@]}" -gt 0 ] && [[ $binary != *.so* ]] ; then
+		local runpath="$(
+			readelf -d "${bindir}/${binary}" \
+				| grep ' (RUNPATH) ' | sed 's/^.*\[\([^]]*\)\]$/\1/' || true
+		)"
+		[ "$runpath" = "\$ORIGIN" ] \
+			|| die "${binary} does not have runpath set to \$ORIGIN: \"$runpath\""
+	fi
 	
 	for lib in "${libraries[@]:+${libraries[@]}}" ; do
 		
