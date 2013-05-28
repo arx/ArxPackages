@@ -32,7 +32,8 @@ flatten_bindirs() {
 create_wrapper() {
 	local wrapper="$1"
 	local use_path="$2"
-	local prefixes=( "${@:3}" )
+	local cmd_dash="$3"
+	local prefixes=( "${@:4}" )
 	
 	local fallback_arch="${architectures[0]}"
 	
@@ -68,7 +69,7 @@ create_wrapper() {
 	
 	scommand='command'
 	if [ $wrapper_use_cmd_path = 1 ] || [ $wrapper_use_path = 1 ] ; then
-		if [ $wrapper_use_cmd_dash = 1 ] ; then
+		if [ $cmd_dash = 1 ] ; then
 			scommand='scommand';
 			echo "scommand=\"\$(printf '%s' \"\$command\" | tr - _)\""            >> "$wrapper"
 		fi
@@ -141,6 +142,12 @@ create_wrappers() {
 	
 	[ "${#files[@]}" -gt 1 ] && use_path=1
 	
+	local cmd_dash=0
+	for binary in "${files[@]}" ; do
+		local binary="${binary##*/}"
+		[[ "$binary" == *-* ]] && cmd_dash=1 && break
+	done
+	
 	local primary_wrapper=''
 	for binary in `ls -LSG "${files[@]}"` ; do
 		local binary="${binary##*/}"
@@ -151,7 +158,7 @@ create_wrappers() {
 		
 		if [ -z "$primary_wrapper" ] ; then
 			primary_wrapper="$binary"
-			e create_wrapper "$wrapper" "$use_path" "${prefixes[@]}"
+			e create_wrapper "$wrapper" "$use_path" "$cmd_dash" "${prefixes[@]}"
 			e chmod +x "$wrapper"
 		else
 			e ln -sT "$primary_wrapper" "$wrapper"
