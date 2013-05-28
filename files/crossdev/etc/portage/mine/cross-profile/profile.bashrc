@@ -50,7 +50,18 @@ fi
 if [ "$PN" = "libsdl" ] ; then
 	rename_func econf orig_econf
 	econf() {
-		orig_econf "$@" \
+		local args=( )
+		for arg in "$@" ; do
+			case "$arg" in
+				--enable-cdrom) continue ;;
+				--enable-threads) continue ;;
+				--enable-timers) continue ;;
+				--enable-file) continue ;;
+				--enable-cpuinfo) continue ;;
+				*) args+=( "$arg" )
+			esac
+		done
+		orig_econf "${args[@]}" \
 			--disable-cdrom --disable-threads --disable-timers --disable-file --disable-cpuinfo
 	}
 fi

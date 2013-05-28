@@ -2,7 +2,7 @@ media-libs/openal alsa oss pulseaudio
 media-plugins/alsa-plugins -pulseaudio
 media-sound/pulseaudio -alsa -asyncns -caps -gdbm -glib -orc -ssl -tcpd -udev -webrtc-aec
 
-media-libs/libsdl X xinerama opengl -audio -joystick
+media-libs/libsdl X xinerama opengl -audio -joystick custom-cflags
 
 media-libs/freetype -bzip2
 

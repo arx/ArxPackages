@@ -3,7 +3,7 @@ USE="zlib bindist make-symlinks minimal static-libs \
 
 CFLAGS="-O2 -pipe -fomit-frame-pointer -flto"
 CXXFLAGS="${CFLAGS}"
-LDFLAGS="${LDFLAGS} -Wl,-O1 -Wl,--as-needed"
+LDFLAGS="${LDFLAGS} -O2 -flto -fuse-linker-plugin -Wl,-O1 -Wl,--as-needed"
 
 FEATURES="-collision-protect sandbox noman noinfo nodoc"
 
