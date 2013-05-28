@@ -145,6 +145,14 @@ build() {
 	popd
 	
 	
+	# Copy binaries from the crossdev tree
+	for binary in "${copy_from_tree[@]:+${copy_from_tree[@]}}" ; dp
+		[ -f "${root}/${binary}" ] || die "missing ${binary} in ${root}"
+		cp --preserve=all "${root}/${binary}" "${bindir}/"
+		echo "${root}/${binary}" >> "$depsdir/copy_from_tree"
+	done
+	
+	
 	# Get licenses for dependencies
 	local license_outdir="${outdir}/license"
 	for dependency in `cat "$depsdir"/* | sort | uniq` ; do

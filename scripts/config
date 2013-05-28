@@ -136,6 +136,9 @@ root_base='/usr'
 #exe_linker_flags_<target>
 # where target is the $target with dashes replaced by underscores (see $targets)
 
+# Additional files to copy from the crossdev tree
+copy_from_tree=( )
+
 ################################################################################
 # Wrapper configuration
 

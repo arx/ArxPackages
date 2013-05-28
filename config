@@ -123,6 +123,8 @@ licenses+=(
 	['/usr/lib/libfreetype.so*']='Freetype'
 	['/usr/include/ft2build.h']='Freetype'
 	
+	['/usr/bin/bsdtar']='libarchive'
+	
 )
 
 provided_versioned_libraries+=(
