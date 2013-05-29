@@ -18,7 +18,6 @@ fi
 
 # Build the source archives
 run source build
-runscript finalize
 
 # Send build jobs for Linux packages to the repective build servers
 if [ $is_test_version = 0 ] ; then
@@ -29,6 +28,8 @@ fi
 # Build (portable) binary archives
 runall build
 runall test
+
+# Sign archives and create checksum and readme files
 runscript finalize
 
 git status

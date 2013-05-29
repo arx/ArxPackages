@@ -1,0 +1,46 @@
+#!/bin/bash
+
+is_test_version=0
+. "${BASH_SOURCE[0]%/*}/common"
+
+stage='build'
+
+cd "$outdir"
+
+for dir in $(find . -mindepth 1 -maxdepth 1 -type d | sort --version-sort --reverse) ; do
+	version="${dir##*/$project-}"
+	
+	if [ -z "${pkgtype:-}" ] ; then
+		echo "$(readlink -f "$dir")"
+		exit 0
+	fi
+	
+	name="${project}-${version}${archives["${pkgtype}-${stage}"]}"
+	if [ -f "${dir}/${name}" ] ; then
+		echo "$(readlink -f "${dir}/${name}")"
+		exit 0
+	fi
+	
+done
+
+exit 1
+
+	[ ! -z "${3-}" ] && local version="$3"
+	if [ ! -z "${4-}" ] ; then
+		local pkgtype="$4"
+		local stage="${5:-build}"
+	else
+		local pkgtype="$pkgtype"
+		local stage="${5:-"${stage:-build}"}"
+	fi
+	
+	if [ "$stage" = 'build' ]
+		then local outdir="${outdir}/${project}-${version}"
+		else local outdir="${builddir}/done"
+	fi
+	mkdir -p "$outdir"
+	eval "$1=\"${outdir}/${name}\""
+	if [ ! -z "${2-}" ] ; then
+		local dirname="${name%.*}"
+		eval "$2=\"${dirname%.tar}\""
+	fi

@@ -146,10 +146,11 @@ build() {
 	
 	
 	# Copy binaries from the crossdev tree
-	for binary in "${copy_from_tree[@]:+${copy_from_tree[@]}}" ; dp
+	for binary in "${copy_from_tree[@]:+${copy_from_tree[@]}}" ; do
 		[ -f "${root}/${binary}" ] || die "missing ${binary} in ${root}"
-		cp --preserve=all "${root}/${binary}" "${bindir}/"
-		echo "${root}/${binary}" >> "$depsdir/copy_from_tree"
+		e mkdir -p "${bindir}/libexec"
+		e cp --preserve=all "${root}/${binary}" "${bindir}/libexec/"
+		echo "$(readlink -f "${root}/${binary}")" >> "$depsdir/copy_from_tree"
 	done
 	
 	

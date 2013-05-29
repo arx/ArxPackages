@@ -5,6 +5,73 @@
 echo "  ${white}:: getting dependencies${reset}" >&2
 
 
+do_copy_binary() {
+	local f="$1"
+	local target="$2"
+	
+	# Prefer our own binaries/libs
+	[ -e "${bindir}/${f}" ] && return
+	[ -e "${target}/${f}" ] && return
+	[ -e "${bindir}/libexec/${f}" ] && return
+	[ -e "${target}/libexec/${f}" ] && return
+	
+	e mkdir -p "${target}/libexec"
+	e cp -a "${binary}" "${target}/libexec/"
+	
+}
+
+do_inherit_project() {
+	local src_project="$1"
+	
+	# Get the latest tarball of the source project
+	local src="$( "${scriptdir}/latest" --project="$src_project" --pkgtype="$pkgtype" )"
+	if [ -z "$src" ] || [ ! -f "$src" ] ; then
+		die "could not find any ${pkgtype} build of ${src_project}"
+	fi
+	local name="${src##*/}"
+	local dirname="${name%.*}"
+	dirname="${dirname%.tar}"
+	
+	e mkdir -p inherit
+	pushd "inherit"
+		
+		# Extract the source tarball
+		e extract "$src"
+		e cd "$dirname"
+		
+		# Copy binaries
+		pushd bin
+			for f in * ; do
+				if [ -d "$f" ] ; then
+					# Don't include architectures we don't support ourselves
+					[ -d "${bindir}/${f}" ] || continue
+					pushd "$f"
+						for binary in * ; do
+							# Copy arch-dependent binary/library
+							[ ! -d "$f" ] && e do_copy_binary "$binary" "${bindir}/${f}"
+						done
+					popd
+				else
+					# Copy arch-independent script
+					e do_copy_binary "$f" "$bindir"
+				fi
+			done
+		popd
+		
+		# Copy license files
+		local license_outdir="${outdir}/license"
+		pushd license
+			for license in * ; do
+				[ -e "${license_outdir}/${license}" ] && continue
+				e cp -a "$license" "$license_outdir"/
+			done
+		popd
+		
+	popd
+	
+}
+
+
 # find_libraries <target> <bindir> <binary>
 find_libraries() {
 	
@@ -12,15 +79,16 @@ find_libraries() {
 	local root="${root_base}/${target}"
 	local bindir="$2"
 	local binary="$3"
+	local binname="${binary##*/}"
 	
 	[ -x "$(which "${target}-objdump")" ] || die "missing ${target}-objdump"
 	
 	# Get all libraries required by the binary
 	local all_libraries=(
-		`"${target}-objdump" -p "${bindir}/${binary}" \
+		`"${target}-objdump" -p "$binary" \
 			| grep -P "$objdump_lib_pattern" | sed 's/.* //' | sort | uniq`
 	)
-	echo "${binary}: all libs: ${all_libraries[@]:+${all_libraries[@]}}"
+	echo "${binname}: all libs: ${all_libraries[@]:+${all_libraries[@]}}"
 	
 	# Filter base system libraries
 	local libraries=( )
@@ -31,20 +99,20 @@ find_libraries() {
 		match_in_array "$lib" "${system_libraries[@]:+${system_libraries[@]}}" && continue
 		
 		match_in_array "$lib" "${forbidden_libraries[@]:+${forbidden_libraries[@]}}" \
-			&& die "${binary} links to blacklisted library ${lib}"
+			&& die "${binname} links to blacklisted library ${lib}"
 		
 		libraries+=( "$lib" )
 	done
-	echo "${binary}: user libs: ${libraries[@]:+${libraries[@]}}"
+	echo "${binname}: user libs: ${libraries[@]:+${libraries[@]}}"
 	
 	# Check that the runpath is set correctly
-	if [ $has_elf_rpath = 1 ] && [ "${#libraries[@]}" -gt 0 ] && [[ $binary != *.so* ]] ; then
+	if [ $has_elf_rpath = 1 ] && [ "${#libraries[@]}" -gt 0 ] && [[ "$binname" != *.so* ]] ; then
 		local runpath="$(
-			readelf -d "${bindir}/${binary}" \
+			readelf -d "$binary" \
 				| grep ' (RUNPATH) ' | sed 's/^.*\[\([^]]*\)\]$/\1/' || true
 		)"
 		[ "$runpath" = "\$ORIGIN" ] \
-			|| die "${binary} does not have runpath set to \$ORIGIN: \"$runpath\""
+			|| die "${binname} does not have runpath set to \$ORIGIN: \"$runpath\""
 	fi
 	
 	for lib in "${libraries[@]:+${libraries[@]}}" ; do
@@ -89,7 +157,7 @@ find_libraries() {
 		e cp -a "$file" "${bindir}/${lib}"
 		
 		# Recursively get the library's dependencies
-		e find_libraries "$target" "$bindir" "$lib"
+		e find_libraries "$target" "$bindir" "${bindir}/${lib}"
 		
 	done
 }
@@ -127,25 +195,30 @@ check_dependencies() {
 	local bindir="${bindir}/${arch}"
 	
 	# Get required libraries
-	for binary in "${bindir}"/* ; do
-		e find_libraries "$target" "$bindir" "${binary##*/}"
+	for binary in "${bindir}"/*  "${bindir}"/libexec/* ; do
+		[ -f "$binary" ] || continue
+		e find_libraries "$target" "$bindir" "$binary"
 	done
 	
 	# Remove debugging symbols to save disk space
-	for binary in "${bindir}"/* ; do
+	for binary in "${bindir}"/* "${bindir}"/libexec/* ; do
+		[ -f "$binary" ] || continue
 		[ -L "${binary}" ] || e "${target}-strip" "${binary}"
 	done
 	
 	# Sanity check: did we build all required libraries
 	for binary in "${required_binaries[@]}" ; do
 		[ -f "${bindir}/${binary}${exe_suffix}" ] \
+			|| [ -f "${bindir}/libexec/${binary}${exe_suffix}" ] \
 			|| [ -f "${scriptbindir}/${binary}${exe_suffix}" ] \
+			|| [ -f "${scriptbindir}/libexec/${binary}${exe_suffix}" ] \
 			|| die "missing ${binary}${exe_suffix} for ${arch}"
 	done
 	
 	# Find required symbol versions
 	declare -A required_symbol_versions
-	for binary in "${bindir}"/* ; do
+	for binary in "${bindir}"/* "${bindir}"/libexec/* ; do
+		[ -f "$binary" ] || continue
 		[ -L "${binary}" ] || e get_max_symbol_versions "${binary}"
 	done
 	
@@ -189,6 +262,12 @@ check_dependencies() {
 	[ "$requirements" = '' ] || echo "${arch}: ${requirements}" >> "$requirements_file"
 	
 }
+
+
+# Copy binaries from other projects
+for src_project in "${inherit_projects[@]:+${inherit_projects[@]}}" ; do
+	e do_inherit_project "$src_project"
+done
 
 
 # Get required libraries for all architectures
