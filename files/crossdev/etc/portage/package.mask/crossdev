@@ -1,8 +1,8 @@
 # Prevent automatic gcc updates
 <cross-armv6j-hardfloat-linux-gnueabi/gcc-4.7.3
-<cross-i686-w64-mingw32/gcc-4.7.3
-<cross-i686-bindist-linux-gnu/gcc-4.7.3
-<cross-x86_64-bindist-linux-gnu/gcc-4.7.3
+<cross-i686-w64-mingw32/gcc-4.7.0
+<cross-i686-bindist-linux-gnu/gcc-4.7.0
+<cross-x86_64-bindist-linux-gnu/gcc-4.7.0
 <cross-i686-gentoo-freebsd9.1/gcc-4.7.3
 <cross-x86_64-gentoo-freebsd9.1/gcc-4.7.3
 >=cross-armv6j-hardfloat-linux-gnueabi/gcc-4.7.4
@@ -11,3 +11,12 @@
 >=cross-x86_64-bindist-linux-gnu/gcc-4.7.4
 >=cross-i686-gentoo-freebsd9.1/gcc-4.7.4
 >=cross-x86_64-gentoo-freebsd9.1/gcc-4.7.4
+
+# When packaging innoextract
+# /tmp/ccJZmxBk.ltrans1.ltrans.o:ccJZmxBk.ltrans1.o:(.text+0x3a43): undefined reference to `std::_Rb_tree<int, int, std::_Identity<int>, std::less<int>, std::allocator<int> >::_M_erase(std::_Rb_tree_node<int>*)'
+# /tmp/ccJZmxBk.ltrans1.ltrans.o:ccJZmxBk.ltrans1.o:(.text+0x3ab3): undefined reference to `std::_Rb_tree<int, int, std::_Identity<int>, std::less<int>, std::allocator<int> >::_M_erase(std::_Rb_tree_node<int>*)'
+# /usr/libexec/gcc/i686-w64-mingw32/ld: /tmp/ccJZmxBk.ltrans1.ltrans.o: bad reloc address 0x0 in section `.rdata'
+=cross-i686-bindist-linux-gnu/gcc-4.7.3
+=cross-x86_64-bindist-linux-gnu/gcc-4.7.3
+=cross-i686-w64-mingw32/gcc-4.7.3
+
