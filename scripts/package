@@ -18,6 +18,7 @@ fi
 
 # Build the source archives
 run source build
+[ $is_test_version = 0 ] && runscript finalize
 
 # Send build jobs for Linux packages to the repective build servers
 if [ $is_test_version = 0 ] ; then
