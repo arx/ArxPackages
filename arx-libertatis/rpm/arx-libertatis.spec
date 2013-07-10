@@ -95,6 +95,7 @@ cmake . -DCMAKE_INSTALL_PREFIX=/usr \
 	-DCMAKE_INSTALL_MANDIR="%{_mandir}" \
 	-DCMAKE_INSTALL_BINDIR="%{_bindir}" \
 	-DCMAKE_INSTALL_LIBEXECDIR="%{_libexecdir}" \
+	-DUSE_QT5=OFF \
 	-DUNITY_BUILD=ON
 make
 

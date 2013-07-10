@@ -7,6 +7,7 @@
 
 override_dh_auto_configure:
 	dh_auto_configure -- \
+		-DUSE_QT5=OFF \
 		-DUNITY_BUILD=ON \
 		-DCMAKE_INSTALL_LIBEXECDIR=lib/arx \
 		-DGAMESBINDIR=games
