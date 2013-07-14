@@ -1,3 +1,39 @@
+arx-libertatis (1.1-0.2) stable; urgency=low
+
+  * Include arx-install-data script in package
+
+ -- Daniel Scharrer <daniel@constexpr.org>  Sun, 14 Jul 2013 05:26:42 +0200
+
+arx-libertatis (1.1-0.1) stable; urgency=low
+
+  * Bump version to 1.1 (new upstream release):
+  * Added support for multiple simultaneous data directories
+  * Improved error messages for missing data files
+  * Added an error dialog if the user directory could not be created
+  * Enabled up to 8xMSAA (if supported) with the SDL/OpenGL backend
+  * Added universal GUI+CLI data install script to packages
+  * Translated the .desktop file to French, German and Russian
+  * Fixed Am Shaegar accelerating too much during slow frames
+  * Increased jump distance to fix some jumps that have become too hard
+  * Replaced DevIL with stb_image for image loading
+  * Fixed improper handling of set-but-empty $XDG_* variables
+  * Merged remaining fixes from Nuky's arx-fatalis-fixed
+  * Fixed minimap showing a smaller area on higher resolutions
+  * Removed dependency on Boost.Program_options - Boost is now only needed
+    at build-time. We tried to keep the same command-line argument syntax
+    but there might be slight changes in corner cases.
+  * Changed to always create a user/config directory in the user's in home
+    directory unless explicitly changed with the --user-dir and/or --config-dir
+    options or registry keys. Previously, if no data and user directories
+    were found, the current working directory was used as the user directory.
+  * Added /opt as a system data directory prefix (besides $XDG_DATA_DIRS)
+  * Added arx as a system data directory suffix (besides games/arx)
+  * Added the executable directory as a system data directory
+  * Enabled C++11 mode for GNU-compatible compilers, if supported
+  * Various bug fixes and tweaks
+
+ -- Daniel Scharrer <daniel@constexpr.org>  Sun, 14 Jul 2013 04:43:48 +0200
+
 arx-libertatis (1.0.3-0.1) stable; urgency=low
 
   * Bump version to 1.0.3:

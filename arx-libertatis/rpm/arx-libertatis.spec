@@ -16,7 +16,7 @@
 #
 
 Name:           arx-libertatis
-Version:        1.0.3
+Version:        1.1
 Release:        0
 License:        GPL-3.0+
 Summary:        Cross-platform port of Arx Fatalis, a first-person role-playing game
@@ -49,10 +49,16 @@ BuildRequires:  xz
 BuildRequires:  update-desktop-files
 %endif
 Obsoletes:      arx
+%if 0%{?suse_version} >= 1010
 Recommends:     arxcrashreporter
 Suggests:       arxunpak
 Suggests:       arxsavetool
 Suggests:       innoextract
+%else
+# TODO Fedora doesn't know these tags yet as of Fedora 19
+# Drop the hard dependency once we have a sane way to specify the optional one
+Requires:       arxcrashreporter
+%endif
 Summary:        Cross-platform port of Arx Fatalis, a first-person role-playing game
 Group:          Amusements/Games/RPG
 %description
@@ -108,6 +114,7 @@ make DESTDIR=%{buildroot} install
 %files
 %defattr(-,root,root)
 %{_bindir}/arx
+%{_bindir}/arx-install-data
 %doc README.md AUTHORS CHANGELOG ARX_PUBLIC_LICENSE.txt
 %{_datadir}/pixmaps/arx-libertatis.png
 %{_datadir}/applications/arx-libertatis.desktop
@@ -137,6 +144,32 @@ echo "See http://wiki.arx-libertatis.org/Getting_the_game_data for more informat
 %desktop_database_postun
 
 %changelog
+* Sun Jul 14 2013 Daniel Scharrer <daniel@constexpr.org> 1.1
+- Bump version to 1.1 (new upstream release):
+- Added support for multiple simultaneous data directories
+- Improved error messages for missing data files
+- Added an error dialog if the user directory could not be created
+- Enabled up to 8xMSAA (if supported) with the SDL/OpenGL backend
+- Added universal GUI+CLI data install script to packages
+- Translated the .desktop file to French, German and Russian
+- Fixed Am Shaegar accelerating too much during slow frames
+- Increased jump distance to fix some jumps that have become too hard
+- Replaced DevIL with stb_image for image loading
+- Fixed improper handling of set-but-empty $XDG_* variables
+- Merged remaining fixes from Nuky's arx-fatalis-fixed
+- Fixed minimap showing a smaller area on higher resolutions
+- Removed dependency on Boost.Program_options - Boost is now only needed
+  at build-time. We tried to keep the same command-line argument syntax
+  but there might be slight changes in corner cases.
+- Changed to always create a user/config directory in the user's in home
+  directory unless explicitly changed with the --user-dir and/or --config-dir
+  options or registry keys. Previously, if no data and user directories
+  were found, the current working directory was used as the user directory.
+- Added /opt as a system data directory prefix (besides $XDG_DATA_DIRS)
+- Added arx as a system data directory suffix (besides games/arx)
+- Added the executable directory as a system data directory
+- Enabled C++11 mode for GNU-compatible compilers, if supported
+- Various bug fixes and tweaks
 * Thu Jul 31 2012 Daniel Scharrer <daniel@constexpr.org> 1.0.3
 - Bump version to 1.0.3:
 - Fixed minor rendering glitches
