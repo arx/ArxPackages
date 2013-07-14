@@ -143,7 +143,6 @@ launchpad_ppa='ppa:arx/release'
 # Ubuntu versions for which to push build jobs to Launchpad
 ubuntu_versions+=(
 	'lucid'   # EOL: April 2013 (Desktop)
-	'oneiric' # EOL: April 2013
 	'precise' # EOL: April 2017
 	'quantal' # EOL: April 2014
 	'raring'  # EOL: October 2014
