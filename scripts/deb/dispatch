@@ -10,9 +10,10 @@ echo "debian release is ${_deb_release}"
 get_output _debsource _sourcedir "$version" "$pkgtype" 'prepare'
 
 e execute deploy-obs \
+	--del "${project}*.dsc" \
 	--del "${project}_*.orig.*" \
 	--del "${project}_*.debian.*" \
-	--add "${_debsource}/${project}.dsc".* \
+	--add "${_debsource}/${project}_${_deb_release}.dsc" \
 	--add "${_debsource}/${project}_${_deb_version}.orig".* \
 	--add "${_debsource}/${project}_${_deb_release}.debian".*
 
