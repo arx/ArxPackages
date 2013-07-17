@@ -49,6 +49,7 @@ BuildRequires:  xz
 BuildRequires:  update-desktop-files
 %endif
 Obsoletes:      arx
+Provides:       arx
 %if 0%{?suse_version} >= 1010
 Recommends:     arxcrashreporter
 Suggests:       arxunpak
