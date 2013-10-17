@@ -19,8 +19,10 @@ for f in "${project}"-* ; do
 	# Ignore existing signatures
 	[[ "$f" == *.sig ]] && continue
 	
-	# Sign the created archive
-	[ "$f" -nt "${f}.sig" ] && e gpg --detach-sign --no-tty "$f"
+	if [ ! -z "${sign_key-}" ] && [ "$f" -nt "${f}.sig" ] ; then
+		# Sign the created archive
+		e gpg --local-user "0x$sign_key" --detach-sign --no-tty "$f"
+	fi
 	
 	_files+=( "${f##*/}" )
 	

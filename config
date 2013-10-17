@@ -140,6 +140,9 @@ obs_project='home:dscharrer'
 # Launchpad project to push RPM and DEB packages to
 launchpad_ppa='ppa:arx/release'
 
+# GPG key to use for Launchpad uploads
+launchpad_key='28555A66D7E1DEC9'
+
 # Ubuntu versions for which to push build jobs to Launchpad
 ubuntu_versions+=(
 	'lucid'   # EOL: April 2013 (Desktop)

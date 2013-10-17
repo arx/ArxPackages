@@ -18,6 +18,9 @@ project_downloads_url='http://constexpr.org/innoextract/#download'
 # URL for the full changelog (OPTIONAL)
 project_changelog_url='http://constexpr.org/innoextract/changelog'
 
+# GPG key id to sign builds with - empty key disables signing
+sign_key='28555A66D7E1DEC9' # daniel@constexpr.org
+
 ################################################################################
 # Build configuration
 

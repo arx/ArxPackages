@@ -78,6 +78,9 @@ project_name="$project"
 # URL for the full changelog (OPTIONAL)
 #project_changelog_url='http://example.com/changelog'
 
+# GPG key id to sign builds with - empty key disables signing
+sign_key=''
+
 ################################################################################
 # Build configuration
 
@@ -348,6 +351,9 @@ system_packages=(
 
 # Launchpad project to push RPM and DEB packages to
 #launchpad_ppa='ppa:foobar/release'
+
+# GPG key to use for Launchpad uploads
+#launchpad_key=''
 
 # Ubuntu versions for which to push build jobs to Launchpad
 declare -a ubuntu_versions
