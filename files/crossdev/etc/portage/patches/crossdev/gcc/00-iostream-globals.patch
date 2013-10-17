@@ -1,5 +1,5 @@
-libstdc++ defines cin, cout, cerr and clog as char arrays internally so their initialization can be constrolled.
-This results in warnings when statically linking libstdc++ and using -flto and is not needed in that case anyway.
+libstdc++ defines cin, cout, cerr and clog as char arrays internally so their initialization can be controlled.
+This results in warnings when statically linking libstdc++ while using -flto and is not needed in that case anyway.
 This patch changes them to normal global variables.
 Due the way ios_base::sync_with_stdio() was implemented that function now becomes a noop, but meh.
 

@@ -16,7 +16,9 @@
 # /tmp/ccJZmxBk.ltrans1.ltrans.o:ccJZmxBk.ltrans1.o:(.text+0x3a43): undefined reference to `std::_Rb_tree<int, int, std::_Identity<int>, std::less<int>, std::allocator<int> >::_M_erase(std::_Rb_tree_node<int>*)'
 # /tmp/ccJZmxBk.ltrans1.ltrans.o:ccJZmxBk.ltrans1.o:(.text+0x3ab3): undefined reference to `std::_Rb_tree<int, int, std::_Identity<int>, std::less<int>, std::allocator<int> >::_M_erase(std::_Rb_tree_node<int>*)'
 # /usr/libexec/gcc/i686-w64-mingw32/ld: /tmp/ccJZmxBk.ltrans1.ltrans.o: bad reloc address 0x0 in section `.rdata'
-=cross-i686-bindist-linux-gnu/gcc-4.7.3
-=cross-x86_64-bindist-linux-gnu/gcc-4.7.3
-=cross-i686-w64-mingw32/gcc-4.7.3
+=cross-i686-bindist-linux-gnu/gcc-4.7.3-r1
+=cross-x86_64-bindist-linux-gnu/gcc-4.7.3-r1
+=cross-i686-w64-mingw32/gcc-4.7.3-r1
 
+# Keep FreBSD at 9.1
+>=sys-freebsd/freebsd-mk-defs-9.2_rc1
