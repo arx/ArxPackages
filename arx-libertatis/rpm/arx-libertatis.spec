@@ -16,7 +16,7 @@
 #
 
 Name:           arx-libertatis
-Version:        1.1.1
+Version:        1.1.2
 Release:        0
 License:        GPL-3.0+
 Summary:        Cross-platform port of Arx Fatalis, a first-person role-playing game
@@ -145,6 +145,9 @@ echo "See http://wiki.arx-libertatis.org/Getting_the_game_data for more informat
 %desktop_database_postun
 
 %changelog
+* Thu Oct 17 2013 Daniel Scharrer <daniel@constexpr.org> 1.1.2
+- Bump version to 1.1.2 (new upstream release):
+- Fixed a crash when hovering over map markers after the window was resized
 * Wed Jul 17 2013 Daniel Scharrer <daniel@constexpr.org> 1.1.1
 - Bump version to 1.1.1 (new upstream release):
 - Fixed map marker labels not being saved

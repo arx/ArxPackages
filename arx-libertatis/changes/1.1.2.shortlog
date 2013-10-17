@@ -1,0 +1,2 @@
+- Bump version to 1.1.2 (new upstream release):
+- Fixed a crash when hovering over map markers after the window was resized
