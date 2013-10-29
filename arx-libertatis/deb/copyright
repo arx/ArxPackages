@@ -1,6 +1,6 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: Arx Libertatis
-Source: http://wiki.arx-libertatis.org/Download
+Source: http://arx-libertatis.org/
 
 Files: *
 Copyright: Copyright 2011-2013 Arx Libertatis Team (see the AUTHORS file)
@@ -15,6 +15,7 @@ License: GPL-3+
  Thomas Leroy (LordSk)
  Erik Lund (Akhilla)
  Sebastien Lussier (BobJelly)
+ Alex Marginean (Alex M.)
  Jonathan Powell (jfpowell)
  Elliot Rigets (adejr)
  Fabian Roth (Eli2)
@@ -43,25 +44,65 @@ License: GPL-3+
  .
  See /usr/share/common-licenses/GPL-3
  .
- ADDITIONAL TERMS APPLICABLE TO THE ARX FATALIS GPL SOURCE CODE.  
+ ADDITIONAL TERMS APPLICABLE TO THE ARX FATALIS GPL SOURCE CODE.
  .
-  The following additional terms (“Additional Terms”) supplement and modify the GNU General Public License, Version 3 (“GPL”) applicable to the Arx Fatalis GPL Source Code (“Arx Fatalis Source Code”).  In addition to the terms and conditions of the GPL, the Arx Fatalis Source Code is subject to the further restrictions below.
+  The following additional terms (“Additional Terms”) supplement and modify
+ the GNU General Public License, Version 3 (“GPL”) applicable to the Arx
+ Fatalis GPL Source Code (“Arx Fatalis Source Code”).  In addition to the
+ terms and conditions of the GPL, the Arx Fatalis Source Code is subject to
+ the further restrictions below.
  .
- 1. Replacement of Section 15.  Section 15 of the GPL shall be deleted in its entirety and replaced with the following:
+ 1. Replacement of Section 15.  Section 15 of the GPL shall be deleted in
+ its entirety and replaced with the following:
  .
- “15. Disclaimer of Warranty.  
+ “15. Disclaimer of Warranty.
  .
- THE PROGRAM IS PROVIDED WITHOUT ANY WARRANTIES, WHETHER EXPRESSED OR IMPLIED, INCLUDING, WITHOUT LIMITATION, IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, TITLE AND MERCHANTABILITY.  THE PROGRAM IS BEING DELIVERED OR MADE AVAILABLE “AS IS”, “WITH ALL FAULTS” AND WITHOUT WARRANTY OR REPRESENTATION.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.”
+ THE PROGRAM IS PROVIDED WITHOUT ANY WARRANTIES, WHETHER EXPRESSED OR
+ IMPLIED, INCLUDING, WITHOUT LIMITATION, IMPLIED WARRANTIES OF FITNESS FOR A
+ PARTICULAR PURPOSE, NON-INFRINGEMENT, TITLE AND MERCHANTABILITY.  THE
+ PROGRAM IS BEING DELIVERED OR MADE AVAILABLE “AS IS”, “WITH ALL FAULTS” AND
+ WITHOUT WARRANTY OR REPRESENTATION.  THE ENTIRE RISK AS TO THE QUALITY AND
+ PERFORMANCE OF THE PROGRAM IS WITH YOU.  SHOULD THE PROGRAM PROVE
+ DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR
+ CORRECTION.”
  .
- 2. Replacement of Section 16.  Section 16 of the GPL shall be deleted in its entirety and replaced with the following:
+ 2. Replacement of Section 16.  Section 16 of the GPL shall be deleted in
+ its entirety and replaced with the following:
  .
- “16. LIMITATION OF LIABILITY.  
+ “16. LIMITATION OF LIABILITY.
  .
- UNDER NO CIRCUMSTANCES SHALL ANY COPYRIGHT HOLDER OR ITS AFFILIATES, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, FOR ANY DAMAGES OR OTHER LIABILITY, INCLUDING ANY GENERAL, DIRECT, INDIRECT, SPECIAL, INCIDENTAL, CONSEQUENTIAL OR PUNITIVE DAMAGES ARISING FROM, OUT OF OR IN CONNECTION WITH THE USE OR INABILITY TO USE THE PROGRAM OR OTHER DEALINGS WITH THE PROGRAM(INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS), WHETHER OR NOT ANY COPYRIGHT HOLDER OR SUCH OTHER PARTY RECEIVES NOTICE OF ANY SUCH DAMAGES AND WHETHER OR NOT SUCH DAMAGES COULD HAVE BEEN FORESEEN.”
+ UNDER NO CIRCUMSTANCES SHALL ANY COPYRIGHT HOLDER OR ITS AFFILIATES, OR ANY
+ OTHER PARTY WHO MODIFIES AND/OR CONVEYS THE PROGRAM AS PERMITTED ABOVE, BE
+ LIABLE TO YOU, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, FOR ANY
+ DAMAGES OR OTHER LIABILITY, INCLUDING ANY GENERAL, DIRECT, INDIRECT,
+ SPECIAL, INCIDENTAL, CONSEQUENTIAL OR PUNITIVE DAMAGES ARISING FROM, OUT OF
+ OR IN CONNECTION WITH THE USE OR INABILITY TO USE THE PROGRAM OR OTHER
+ DEALINGS WITH THE PROGRAM(INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA
+ BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A
+ FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS), WHETHER OR NOT
+ ANY COPYRIGHT HOLDER OR SUCH OTHER PARTY RECEIVES NOTICE OF ANY SUCH
+ DAMAGES AND WHETHER OR NOT SUCH DAMAGES COULD HAVE BEEN FORESEEN.”
  .
- 3. LEGAL NOTICES; NO TRADEMARK LICENSE; ORIGIN.  You must reproduce faithfully all trademark, copyright and other proprietary and legal notices on any copies of the Program or any other required author attributions.  This license does not grant you rights to use any copyright holder or any other party’s name, logo, or trademarks.  Neither the name of the copyright holder or its affiliates, or any other party who modifies and/or conveys the Program may be used to endorse or promote products derived from this software without specific prior written permission.  The origin of the Program must not be misrepresented; you must not claim that you wrote the original Program.  Altered source versions must be plainly marked as such, and must not be misrepresented as being the original Program.
+ 3. LEGAL NOTICES; NO TRADEMARK LICENSE; ORIGIN.  You must reproduce
+ faithfully all trademark, copyright and other proprietary and legal notices
+ on any copies of the Program or any other required author attributions.
+ This license does not grant you rights to use any copyright holder or any
+ other party’s name, logo, or trademarks.  Neither the name of the copyright
+ holder or its affiliates, or any other party who modifies and/or conveys
+ the Program may be used to endorse or promote products derived from this
+ software without specific prior written permission.  The origin of the
+ Program must not be misrepresented; you must not claim that you wrote the
+ original Program.  Altered source versions must be plainly marked as such,
+ and must not be misrepresented as being the original Program.
  .
- 4. INDEMNIFICATION.  IF YOU CONVEY A COVERED WORK AND AGREE WITH ANY RECIPIENT OF THAT COVERED WORK THAT YOU WILL ASSUME ANY LIABILITY FOR THAT COVERED WORK, YOU HEREBY AGREE TO INDEMNIFY, DEFEND AND HOLD HARMLESS THE OTHER LICENSORS AND AUTHORS OF THAT COVERED WORK FOR ANY DAMAEGS, DEMANDS, CLAIMS, LOSSES, CAUSES OF ACTION, LAWSUITS, JUDGMENTS EXPENSES (INCLUDING WITHOUT LIMITATION REASONABLE ATTORNEYS' FEES AND EXPENSES) OR ANY OTHER LIABLITY ARISING FROM, RELATED TO OR IN CONNECTION WITH YOUR ASSUMPTIONS OF LIABILITY.
+ 4. INDEMNIFICATION.  IF YOU CONVEY A COVERED WORK AND AGREE WITH ANY
+ RECIPIENT OF THAT COVERED WORK THAT YOU WILL ASSUME ANY LIABILITY FOR THAT
+ COVERED WORK, YOU HEREBY AGREE TO INDEMNIFY, DEFEND AND HOLD HARMLESS THE
+ OTHER LICENSORS AND AUTHORS OF THAT COVERED WORK FOR ANY DAMAEGS, DEMANDS,
+ CLAIMS, LOSSES, CAUSES OF ACTION, LAWSUITS, JUDGMENTS EXPENSES (INCLUDING
+ WITHOUT LIMITATION REASONABLE ATTORNEYS' FEES AND EXPENSES) OR ANY OTHER
+ LIABLITY ARISING FROM, RELATED TO OR IN CONNECTION WITH YOUR ASSUMPTIONS OF
+ LIABILITY.
 
 Files: src/grahics/image/stb_image*
 License: public-domain
@@ -123,3 +164,107 @@ License: BSD-3-clause
  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  SUCH DAMAGE.
+
+Files: data/core/misc/dejavusansmono.ttf
+Copyright: Copyright (c) 2003 by Bitstream, Inc. All Rights Reserved.
+ Bitstream Vera is a trademark of Bitstream, Inc.
+ DejaVu changes are in public domain.
+Copyright: Copyright (c) 2006 by Tavmjong Bah
+License:
+ Fonts are (c) Bitstream (see below). DejaVu changes are in public domain.
+ Glyphs imported from Arev fonts are (c) Tavmjong Bah (see below)
+ .
+ Bitstream Vera Fonts Copyright
+ ------------------------------
+ .
+ Copyright (c) 2003 by Bitstream, Inc. All Rights Reserved. Bitstream Vera is
+ a trademark of Bitstream, Inc.
+ .
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of the fonts accompanying this license ("Fonts") and associated
+ documentation files (the "Font Software"), to reproduce and distribute the
+ Font Software, including without limitation the rights to use, copy, merge,
+ publish, distribute, and/or sell copies of the Font Software, and to permit
+ persons to whom the Font Software is furnished to do so, subject to the
+ following conditions:
+ .
+ The above copyright and trademark notices and this permission notice shall
+ be included in all copies of one or more of the Font Software typefaces.
+ .
+ The Font Software may be modified, altered, or added to, and in particular
+ the designs of glyphs or characters in the Fonts may be modified and
+ additional glyphs or characters may be added to the Fonts, only if the fonts
+ are renamed to names not containing either the words "Bitstream" or the word
+ "Vera".
+ .
+ This License becomes null and void to the extent applicable to Fonts or Font
+ Software that has been modified and is distributed under the "Bitstream
+ Vera" names.
+ .
+ The Font Software may be sold as part of a larger software package but no
+ copy of one or more of the Font Software typefaces may be sold by itself.
+ .
+ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF COPYRIGHT, PATENT,
+ TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL BITSTREAM OR THE GNOME
+ FOUNDATION BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, INCLUDING
+ ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES,
+ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
+ THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM OTHER DEALINGS IN THE
+ FONT SOFTWARE.
+ .
+ Except as contained in this notice, the names of Gnome, the Gnome
+ Foundation, and Bitstream Inc., shall not be used in advertising or
+ otherwise to promote the sale, use or other dealings in this Font Software
+ without prior written authorization from the Gnome Foundation or Bitstream
+ Inc., respectively. For further information, contact: fonts at gnome dot
+ org. 
+ .
+ Arev Fonts Copyright
+ ------------------------------
+ .
+ Copyright (c) 2006 by Tavmjong Bah. All Rights Reserved.
+ .
+ Permission is hereby granted, free of charge, to any person obtaining
+ a copy of the fonts accompanying this license ("Fonts") and
+ associated documentation files (the "Font Software"), to reproduce
+ and distribute the modifications to the Bitstream Vera Font Software,
+ including without limitation the rights to use, copy, merge, publish,
+ distribute, and/or sell copies of the Font Software, and to permit
+ persons to whom the Font Software is furnished to do so, subject to
+ the following conditions:
+ .
+ The above copyright and trademark notices and this permission notice
+ shall be included in all copies of one or more of the Font Software
+ typefaces.
+ .
+ The Font Software may be modified, altered, or added to, and in
+ particular the designs of glyphs or characters in the Fonts may be
+ modified and additional glyphs or characters may be added to the
+ Fonts, only if the fonts are renamed to names not containing either
+ the words "Tavmjong Bah" or the word "Arev".
+ .
+ This License becomes null and void to the extent applicable to Fonts
+ or Font Software that has been modified and is distributed under the 
+ "Tavmjong Bah Arev" names.
+ .
+ The Font Software may be sold as part of a larger software package but
+ no copy of one or more of the Font Software typefaces may be sold by
+ itself.
+ .
+ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
+ MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+ OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL
+ TAVMJONG BAH BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
+ DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
+ OTHER DEALINGS IN THE FONT SOFTWARE.
+ .
+ Except as contained in this notice, the name of Tavmjong Bah shall not
+ be used in advertising or otherwise to promote the sale, use or other
+ dealings in this Font Software without prior written authorization
+ from Tavmjong Bah. For further information, contact: tavmjong @ free
+ . fr.
