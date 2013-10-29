@@ -31,6 +31,7 @@ BuildRequires:  gcc-c++
 %endif
 BuildRequires:  cmake >= 2.8
 BuildRequires:  boost-devel >= 1.39
+BuildRequires:  glm-devel
 BuildRequires:  zlib-devel
 BuildRequires:  SDL-devel >= 1.2
 %if 0%{?suse_version}
