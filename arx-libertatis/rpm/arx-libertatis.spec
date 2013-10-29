@@ -117,6 +117,7 @@ make DESTDIR=%{buildroot} install
 %doc README.md AUTHORS CHANGELOG ARX_PUBLIC_LICENSE.txt
 %{_datadir}/pixmaps/arx-libertatis.png
 %{_datadir}/applications/arx-libertatis.desktop
+%{_mandir}/man1/arx-install-data.1*
 %{_mandir}/man6/arx.6*
 
 %files -n arxunpak
