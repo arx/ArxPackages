@@ -66,6 +66,49 @@ if [ "$PN" = "libsdl" ] ; then
 	}
 fi
 
+if [ "$PN" = "libsdl2" ] ; then
+	rename_func econf orig_econf
+	econf() {
+		local args=( )
+		for arg in "$@" ; do
+			case "$arg" in
+				--enable-timers) continue ;;
+				--enable-file) continue ;;
+				--enable-filesystem) continue ;;
+				--enable-cpuinfo) continue ;;
+				--enable-render) continue ;;
+				--enable-atomic) continue ;;
+				--disable-alsa-shared) continue ;;
+				--disable-esd-shared) continue ;;
+				--disable-pulseaudio-shared) continue ;;
+				--disable-arts-shared) continue ;;
+				--disable-nas-shared) continue ;;
+				--disable-sndio-shared) continue ;;
+				--disable-x11-shared) continue ;;
+				--disable-directfb-shared) continue ;;
+				--disable-fusionsound-shared) continue ;;
+				*) args+=( "$arg" )
+			esac
+		done
+		CFLAGS="$CFLAGS -std=gnu99" orig_econf "${args[@]}" \
+			--disable-timers \
+			--disable-file \
+			--disable-filesystem \
+			--disable-cpuinfo \
+			--disable-render \
+			--disable-atomic \
+			--enable-alsa-shared \
+			--enable-esd-shared \
+			--enable-pulseaudio-shared \
+			--enable-arts-shared \
+			--enable-nas-shared \
+			--enable-sndio-shared \
+			--enable-x11-shared \
+			--enable-directfb-shared \
+			--enable-fusionsound-shared
+	}
+fi
+
 if [ "$PN" = "freetype" ] ; then
 	post_src_prepare() {
 		disable_option FT_CONFIG_OPTION_USE_LZW
