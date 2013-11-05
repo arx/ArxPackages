@@ -7,33 +7,9 @@ echo "  ${white}:: copying files from source${reset}" >&2
 
 . "${scriptdir}/demarkdown"
 
-do_copy_files() {
-	local srcglob="$1"
+do_copy_file() {
+	local src="$1"
 	local dst="$2"
-	
-	# Files starting with a '*' are optional
-	if [[ "$dst" == \** ]] ; then dst="${dst#\*}" ; required=0 ; else required=1 ; fi
-	
-	if [[ "$srcglob" == :* ]] ; then
-		local srcglob="${srcglob#:}"
-		local sourcedir="$filesdir"
-	fi
-	
-	# Find the file
-	local src=''
-	for f in `eval "echo $(escape_args "$sourcedir")/${srcglob}"` ; do
-		[ -f "$f" ] || continue
-		if [ -z "$src" ]
-			then src="$f"
-			else die "${srcglob} is ambiguous: ${src} vs. ${f}"
-		fi
-	done
-	
-	# Handle missing files
-	if [ -z "$src" ] ; then
-		[ $required = 0 ] && continue
-		die "missing ${srcglob}"
-	fi
 	
 	# Add source filename to destination
 	local ddst="$dst"
@@ -81,6 +57,41 @@ do_copy_files() {
 		
 		e cp -a "$src" "$dst"
 		
+	fi
+	
+}
+
+do_copy_files() {
+	local srcglob="$1"
+	local dst="$2"
+	
+	# Files starting with a '*' are optional
+	if [[ "$dst" == \** ]] ; then dst="${dst#\*}" ; required=0 ; else required=1 ; fi
+	
+	if [[ "$srcglob" == :* ]] ; then
+		local srcglob="${srcglob#:}"
+		local sourcedir="$filesdir"
+	fi
+	
+	# Find the file
+	local src=''
+	for f in `eval "echo $(escape_args "$sourcedir")/${srcglob}"` ; do
+		[ -f "$f" ] || continue
+		
+		if [ -z "$src" ]
+			then src="$f"
+			else [[ "$dst" == */ ]] || [[ "$dst" == *. ]] \
+				|| die "${srcglob} is ambiguous: ${src} vs. ${f}"
+		fi
+		
+		do_copy_file "$f" "$dst"
+		
+	done
+	
+	# Handle missing files
+	if [ -z "$src" ] ; then
+		[ $required = 0 ] && continue
+		die "missing ${srcglob}"
 	fi
 	
 }
