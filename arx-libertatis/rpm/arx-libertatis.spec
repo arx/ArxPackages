@@ -33,7 +33,11 @@ BuildRequires:  cmake >= 2.8
 BuildRequires:  boost-devel >= 1.39
 BuildRequires:  glm-devel
 BuildRequires:  zlib-devel
-BuildRequires:  SDL-devel >= 1.2
+%if 0%{?fedora_version} >= 19
+BuildRequires:  pkgconfig(sdl2)
+%else
+BuildRequires:  pkgconfig(sdl)
+%endif
 %if 0%{?suse_version}
 BuildRequires:  freetype2-devel
 %else
@@ -101,6 +105,7 @@ cmake . -DCMAKE_INSTALL_PREFIX=/usr \
 	-DCMAKE_INSTALL_MANDIR="%{_mandir}" \
 	-DCMAKE_INSTALL_BINDIR="%{_bindir}" \
 	-DCMAKE_INSTALL_LIBEXECDIR="%{_libexecdir}" \
+	-DINSTALL_DATADIR="%{_datadir}/arx" \
 	-DUSE_QT5=OFF \
 	-DUNITY_BUILD=ON
 make
@@ -115,11 +120,12 @@ make DESTDIR=%{buildroot} install
 %defattr(-,root,root)
 %{_bindir}/arx
 %{_bindir}/arx-install-data
-%doc README.md AUTHORS CHANGELOG ARX_PUBLIC_LICENSE.txt
+%{_datadir}/arx
 %{_datadir}/pixmaps/arx-libertatis.png
 %{_datadir}/applications/arx-libertatis.desktop
 %{_mandir}/man1/arx-install-data.1*
 %{_mandir}/man6/arx.6*
+%doc README.md AUTHORS CHANGELOG COPYING* LICENSE
 
 %files -n arxunpak
 %defattr(-,root,root)
@@ -177,7 +183,7 @@ echo "See http://wiki.arx-libertatis.org/Getting_the_game_data for more informat
 - Added the executable directory as a system data directory
 - Enabled C++11 mode for GNU-compatible compilers, if supported
 - Various bug fixes and tweaks
-* Thu Jul 31 2012 Daniel Scharrer <daniel@constexpr.org> 1.0.3
+* Tue Jul 31 2012 Daniel Scharrer <daniel@constexpr.org> 1.0.3
 - Bump version to 1.0.3:
 - Fixed minor rendering glitches
 - Fixed missing speech in cinematics for the Russian and Italian versions
@@ -197,5 +203,5 @@ echo "See http://wiki.arx-libertatis.org/Getting_the_game_data for more informat
 - Fixed a crash in the critical error dialog on some Linux systems
   (upstream crash report #229)
 - Loading files from the 'graph' and 'misc' directories is now case-insensitive
-* Sun Mar 26 2012 Daniel Scharrer <daniel@constexpr.org> 1.0
+* Mon Mar 26 2012 Daniel Scharrer <daniel@constexpr.org> 1.0
 - created package

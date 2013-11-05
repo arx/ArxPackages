@@ -37,6 +37,8 @@ cmake_options+=(
 	-DSCRIPTDIR='bin'
 	-DAPPDIR='.'
 	-DICONDIR='.'
+	-DINSTALL_DATADIR='data'
+	-DWITH_SDL=2
 )
 
 inherit_projects+=( 'innoextract' )
