@@ -1,0 +1,15 @@
+--- Makefile.in.orig	2013-12-18 08:54:05.479777137 +0100
++++ Makefile.in	2013-12-18 09:22:49.104867734 +0100
+@@ -126,10 +126,10 @@
+ 	$(LIBTOOL) --mode=link $(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(EXTRA_LDFLAGS) $(LT_LDFLAGS)
+ 
+ $(objects)/$(SDLMAIN_TARGET): $(SDLMAIN_OBJECTS)
+-	$(LIBTOOL) --mode=link $(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(EXTRA_LDFLAGS) $(LT_LDFLAGS)
++	$(LIBTOOL) --mode=link $(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(EXTRA_LDFLAGS) $(LT_LDFLAGS) -all-static
+ 
+ $(objects)/$(SDLTEST_TARGET): $(SDLTEST_OBJECTS)
+-	$(LIBTOOL) --mode=link $(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(EXTRA_LDFLAGS) $(LT_LDFLAGS)
++	$(LIBTOOL) --mode=link $(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(EXTRA_LDFLAGS) $(LT_LDFLAGS) -all-static
+ 
+ install: all install-bin install-hdrs install-lib install-data
+ install-bin:
