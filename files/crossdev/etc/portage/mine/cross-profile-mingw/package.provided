@@ -1,0 +1,9 @@
+dev-lang/python-2.7.4
+app-admin/eselect-opengl-1.2.7
+sys-apps/util-linux-2.23
+dev-libs/libxml2-2.9.0-r2
+dev-libs/openssl-1.0.1e-r1
+
+# MingW already bundles its own OpenGL implementation
+media-libs/mesa-9.0.0
+media-libs/glu-9.0
