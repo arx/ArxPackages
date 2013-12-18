@@ -71,6 +71,12 @@ if [ "$PN" = "libsdl2" ] ; then
 	econf() {
 		local args=( )
 		for arg in "$@" ; do
+			case "$CHOST" in
+				*mingw*)
+				case "$arg" in
+					--disable-directx) continue ;;
+				esac
+			esac
 			case "$arg" in
 				--enable-timers) continue ;;
 				--enable-file) continue ;;
@@ -106,6 +112,23 @@ if [ "$PN" = "libsdl2" ] ; then
 			--enable-x11-shared \
 			--enable-directfb-shared \
 			--enable-fusionsound-shared
+	}
+	if [[ $EBUILD_PHASE == "prepare" ]]; then
+		rename_func eautoreconf orig_eautoreconf
+		eautoreconf() {
+			pushd "${S}" > /dev/null
+			epatch_user
+			popd > /dev/null
+			orig_eautoreconf "$@"
+		}
+	fi
+	post_src_prepare() {
+		# SDL patches their own copy of the libtool sources to adjust the dll name on windows
+		# this change gets lost when gentoo regenerates the files
+		echo 'Fixing Win32 soname...'
+		pushd "${S}" > /dev/null
+		patch -p0 < /etc/portage/mine/cross-patches/libsdl2-win32-soname.patch
+		popd > /dev/null
 	}
 fi
 
