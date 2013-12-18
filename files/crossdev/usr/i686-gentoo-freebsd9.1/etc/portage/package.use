@@ -1,1 +1,2 @@
 media-libs/openal -alsa -pulseaudio
+media-libs/libsdl2 -dbus
