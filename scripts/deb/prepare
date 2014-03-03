@@ -13,13 +13,17 @@ e cp "$_source" "${project}_${_deb_version}.orig.tar.${_source##*.}"
 
 e extract "$_source"
 
+_gpg_command="${PWD}/gpg-wrapper"
+echo "#!/bin/bash
+gpg --local-user 0x${launchpad_key} --no-tty \"\$@\"" \
+	> "$_gpg_command"
+chmod +x "$_gpg_command"
+
 pushd "$_sourcedir"
 	
 	e rsync -a "${pkgsrcdir}/" 'debian'
 	
 	echo "  ${white}:: building source package for debian${reset}" >&2
-	
-	_gpg_command="gpg --local-user 0x$launchpad_key --no-tty"
 	
 	e dpkg-buildpackage -S -us -uc -d -p"$_gpg_command" 2>&1
 	e require_file *.dsc
