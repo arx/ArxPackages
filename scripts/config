@@ -113,6 +113,9 @@ shared_linker_flags=(
 	-Wl,--as-needed
 	-Wl,--no-export-dynamic # note: the build scripts always removes any -rdynamic flags
 	
+	# Add a build id to binaries
+	-Wl,--build-id
+	
 )
 
 # Executable linker flags
