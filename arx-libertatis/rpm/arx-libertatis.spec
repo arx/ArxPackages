@@ -30,25 +30,25 @@ BuildRequires:  c++_compiler
 BuildRequires:  gcc-c++
 %endif
 BuildRequires:  cmake >= 2.8
-BuildRequires:  boost-devel >= 1.39
-BuildRequires:  glm-devel
+BuildRequires:  boost-devel >= 1.48
+BuildRequires:  glm-devel >= 0.9.2.7
 BuildRequires:  zlib-devel
 %if 0%{?fedora_version} >= 19 || 0%{?suse_version} >= 1310
-BuildRequires:  pkgconfig(sdl2)
+BuildRequires:  pkgconfig(sdl2) >= 2.0.0
 %else
-BuildRequires:  pkgconfig(sdl)
+BuildRequires:  pkgconfig(sdl) >= 1.2.10
 %endif
 %if 0%{?suse_version}
-BuildRequires:  freetype2-devel
+BuildRequires:  freetype2-devel >= 2.3.0
 %else
-BuildRequires:  freetype-devel
+BuildRequires:  freetype-devel >= 2.3.0
 %endif
 BuildRequires:  openal-devel
 BuildRequires:  pkgconfig(gl)
 BuildRequires:  glew-devel >= 1.5.2
-BuildRequires:  pkgconfig(QtCore)
-BuildRequires:  pkgconfig(QtGui)
-BuildRequires:  pkgconfig(QtNetwork)
+BuildRequires:  pkgconfig(QtCore) >= 4.7
+BuildRequires:  pkgconfig(QtGui) >= 4.7
+BuildRequires:  pkgconfig(QtNetwork) >= 4.7
 BuildRequires:  xz
 %if 0%{?suse_version}
 BuildRequires:  update-desktop-files
