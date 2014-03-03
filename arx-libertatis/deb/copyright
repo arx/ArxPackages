@@ -3,7 +3,7 @@ Upstream-Name: Arx Libertatis
 Source: http://arx-libertatis.org/
 
 Files: *
-Copyright: Copyright 2011-2013 Arx Libertatis Team (see the AUTHORS file)
+Copyright: Copyright 2011-2014 Arx Libertatis Team (see the AUTHORS file)
 Copyright: Copyright (C) 1999-2010 Arkane Studios SA, a ZeniMax Media company.
 License: GPL-3+
  ~ARX LIBERTATIS CONTRIBUTORS
@@ -108,7 +108,7 @@ Files: src/grahics/image/stb_image*
 License: public-domain
 
 Files: src/util/cmdline/*
-Copyright: Copyright 2013 Arx Libertatis Team (see the AUTHORS file)
+Copyright: Copyright 2013-2014 Arx Libertatis Team (see the AUTHORS file)
 Copyright: Original source is copyright 2010 - 2011. Alexey Tsoy.
 License: BSD-3-clause
  Based on http://sourceforge.net/projects/interpreter11/
@@ -138,7 +138,7 @@ License: BSD-3-clause
  DEALINGS IN THE SOFTWARE.
 
 Files: scripts/cpplint.py
-Copyright: Copyright 2011-2013 Arx Libertatis Team (see the AUTHORS file)
+Copyright: Copyright 2011-2014 Arx Libertatis Team (see the AUTHORS file)
 Copyright: 2009 Google Inc.
 License: BSD-3-clause
  Redistribution and use in source and binary forms, with or without

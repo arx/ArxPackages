@@ -1,7 +1,7 @@
 #
 # spec file for package innoextract
 #
-# Copyright (c) 2012-2013 Daniel Scharrer <daniel@constexpr.org>
+# Copyright (c) 2012-2014 Daniel Scharrer <daniel@constexpr.org>
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
