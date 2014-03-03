@@ -76,5 +76,5 @@ make DESTDIR=%{buildroot} install
 - Compile in C++11 mode if supported
 - Warn about unsupported setup data versions
 - Add support for Inno Setup 5.5.0 installers
-* Sun Mar 25 2011 Daniel Scharrer <daniel@constexpr.org>
+* Sun Mar 25 2012 Daniel Scharrer <daniel@constexpr.org>
 - created package
