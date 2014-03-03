@@ -33,7 +33,7 @@ BuildRequires:  cmake >= 2.8
 BuildRequires:  boost-devel >= 1.39
 BuildRequires:  glm-devel
 BuildRequires:  zlib-devel
-%if 0%{?fedora_version} >= 19
+%if 0%{?fedora_version} >= 19 || 0%{?suse_version} >= 1310
 BuildRequires:  pkgconfig(sdl2)
 %else
 BuildRequires:  pkgconfig(sdl)
