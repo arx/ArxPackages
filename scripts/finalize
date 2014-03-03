@@ -30,18 +30,27 @@ done
 
 readarray -t _sfiles < <(for f in "${_files[@]:+${_files[@]}}"; do echo "$f"; done | sort)
 
-_md5sums_file='MD5SUMS'
-_old_md5sums="$(cat "$_md5sums_file" 2> /dev/null || true)"
-if [ ${#_sfiles[@]} = 0 ]
-	then _new_md5sums='' ; echo > "$_md5sums_file"
-	else _new_md5sums="$(md5sum -b "${_sfiles[@]}")"
-fi
-if [ "$_new_md5sums" = "$_old_md5sums" ] ; then
-	_md5sums_changed=0
-else
-	echo "$_new_md5sums" > "$_md5sums_file"
-	_md5sums_changed=1
-fi
+update_checksums() {
+	local prefix="$1"
+	local command="$2"
+	local file="$3"
+	old="$(cat "$file" 2> /dev/null || true)"
+	if [ ${#_sfiles[@]} = 0 ]
+		then new='' ; echo > "$file"
+		else new="$("$command" -b "${_sfiles[@]}")"
+	fi
+	if [ "$new" = "$old" ] ; then
+		changed=0
+	else
+		echo "$new" > "$file"
+		changed=1
+	fi
+	eval "${prefix}_file=\"\$file\""
+	eval "${prefix}_changed=\"\$changed\""
+}
+
+update_checksums _md5sums md5sum 'MD5SUMS'
+update_checksums _sha512sums sha512sum 'SHA512SUMS'
 
 _readme_file="README"
 _md_file="${_readme_file}.md"
