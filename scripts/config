@@ -113,8 +113,6 @@ shared_linker_flags=(
 	-Wl,--as-needed
 	-Wl,--no-export-dynamic # note: the build scripts always removes any -rdynamic flags
 	
-	# Add a build id to binaries
-	-Wl,--build-id
 	
 )
 
@@ -127,6 +125,9 @@ unix_linker_flags=(
 	# Load libraries from the same directory
 	-Wl,-z,origin
 	-Wl,-rpath,\$ORIGIN
+	
+	# Add a build id to binaries
+	-Wl,--build-id
 	
 )
 
