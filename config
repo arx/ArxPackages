@@ -125,9 +125,9 @@ licenses+=(
 	['/usr/lib/libSDL2.so*']='SDL2'
 	['/usr/lib/libSDL2-*.so*']='SDL2'
 	
-	['/usr/include/freetype*']='Freetype'
-	['/usr/lib/libfreetype.so*']='Freetype'
-	['/usr/include/ft2build.h']='Freetype'
+	['/usr/include/freetype*']='FreeType'
+	['/usr/lib/libfreetype.so*']='FreeType'
+	['/usr/include/ft2build.h']='FreeType'
 	
 	['/usr/bin/bsdtar']='libarchive'
 	
