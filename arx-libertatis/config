@@ -91,9 +91,14 @@ forbidden_libraries+=(
 	'libstdc++-*.dll'
 	'libc++.so*'
 	
-	# We link Boost and GLEW statically - check for that
+	# We link Boost, GLEW, FreeType and ZLIB statically - check for that
 	'libboost_*'
 	'libGLEW*'
+	'glew*'
+	'libfreetype*'
+	'freetype*'
+	'libz.so*'
+	'zlib*'
 	
 )
 
