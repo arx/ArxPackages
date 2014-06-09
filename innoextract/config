@@ -58,7 +58,7 @@ test_binaries() {
 	fi
 	
 	# Check that missing values are not ignored
-	expect_failure innoextract --data-dir
+	expect_failure innoextract --output-dir
 	
 	# Check that invalid arguments are not ignored
 	expect_failure innoextract --foobar --version
