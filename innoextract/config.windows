@@ -1,3 +1,7 @@
 #!/bin/bash
 
 architectures=( 'i686' )
+
+cmake_options+=(
+	-DWITH_CONV=win32
+)
