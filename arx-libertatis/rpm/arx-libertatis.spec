@@ -106,7 +106,7 @@ cmake . -DCMAKE_INSTALL_PREFIX=/usr \
 	-DCMAKE_INSTALL_BINDIR="%{_bindir}" \
 	-DCMAKE_INSTALL_LIBEXECDIR="%{_libexecdir}" \
 	-DINSTALL_DATADIR="%{_datadir}/arx" \
-	-DUSE_QT5=OFF \
+	-DWITH_QT=4 \
 	-DUNITY_BUILD=ON
 make
 
