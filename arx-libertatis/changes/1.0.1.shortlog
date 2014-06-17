@@ -1,0 +1,5 @@
+- Bump version to 1.0.1:
+- Fixed garbled text rendering in the Russian version (upstream bug #226)
+- Fixed a crash in the critical error dialog on some Linux systems
+  (upstream crash report #229)
+- Loading files from the graph and misc directories is now case-insensitive

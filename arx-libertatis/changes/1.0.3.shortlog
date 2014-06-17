@@ -1,0 +1,7 @@
+- Bump version to 1.0.3:
+- Fixed minor rendering glitches
+- Fixed missing speech in cinematics for the Russian and Italian versions
+- Fixed missing ambient sound effects
+- Include attribute modifiers when calculating the effective object knowledge
+  and projectile skills
+- Savegames can now be deleted from the save and load menus
