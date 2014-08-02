@@ -236,6 +236,10 @@ forbidden_libraries=(
 	# PulseAudio - don't link directly, use dlopen
 	'libpulse*.so*'
 	
+	# X11 - don't link directly, use dlopen
+	'libX11.so*'
+	'libxcb.so*'
+	
 )
 
 # Tests to be executed
