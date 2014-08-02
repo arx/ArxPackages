@@ -8,7 +8,7 @@ echo "  ${white}:: adjusting documentation${reset}" >&2
 # Flatten the man files directory structure
 flatten_mandir() {
 	
-	[ -d "$mandir" ] || return
+	[ -d "$mandir" ] || return 0
 	
 	e find "$mandir" -mindepth 2 -type f -exec mv {} "${mandir}/" \;
 	e find "$mandir" -mindepth 1 ! -type f -delete
