@@ -54,6 +54,11 @@ set(CMAKE_CXX_COMPILER \"${PWD}/g++\")
 
 # location of the target environment
 set(CMAKE_FIND_ROOT_PATH \"${root}\")
+# Also tell pkg-config because CMake doesn't
+set(_cross_pkgconfig \"${root}/usr/lib/pkgconfig\")
+set(_cross_pkgconfig \"${root}/usr/share/pkgconfig:\${_cross_pkgconfig}\")
+set(ENV{PKG_CONFIG_LIBDIR} "\${_cross_pkgconfig}")
+set(ENV{PKG_CONFIG_SYSROOT_DIR} \"${root}\")
 
 # adjust the default behaviour of the find_xxx() commands:
 # search headers and libraries in the target environment, search 
