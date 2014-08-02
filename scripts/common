@@ -32,7 +32,7 @@ trap '[ $? != 0 ] && [ ${_no_backtrace:-0} = 0 ] && backtrace' EXIT
 
 while [ $# != 0 ] ; do
 	case "$1" in
-		--root=*)    project="${1#*=}" ;;
+		--root=*)    root="${1#*=}" ;;
 		--project=*) project="${1#*=}" ;;
 		--pkgtype=*) pkgtype="${1#*=}" ;;
 		--version=*) version="${1#*=}" ;;
@@ -54,7 +54,7 @@ done
 
 elog() { echo "$@" ; echo "$@" >> "$buildlog" ; }
 e()    {
-	echo "$(escape_args "$@")"
+	echo "$ $(escape_args "$@")"
 	"$@"
 }
 # make_archive <archive> <source> [<source>...]
@@ -116,12 +116,21 @@ get_output() {
 }
 
 execute() {
-	"${scriptdir}/${1}" \
-		--root="$root" \
-		--project="$project" \
-		--version="$version" \
-		--commit="$commit" \
-		"${@:2}"
+	local args=( )
+	[ -z "${root-}" ]    || args+=( --root="$root" )
+	[ -z "${project-}" ] || args+=( --project="$project" )
+	[ -z "${pkgtype-}" ] || args+=( --pkgtype="$pkgtype" )
+	[ -z "${version-}" ] || args+=( --version="$version" )
+	[ -z "${commit-}" ]  || args+=( --commit="$commit" )
+	if [ -z "${package_execute_level-}" ] ; then
+		local s='##########################################'
+		export package_execute_level=1
+	else
+		local s='------------------------------------------'
+	fi
+	echo "$s$s" >> "$buildlog"
+	echo "${scriptdir}/${1}" "${args[@]:+${args[@]}}" "${@:2}" >> "$buildlog"
+	"${scriptdir}/${1}" "${args[@]:+${args[@]}}" "${@:2}"
 }
 
 runscript() {
@@ -164,7 +173,7 @@ run() {
 	
 	pushd "$_builddir" >> "$buildlog"
 	
-	if runscript "$_script" "${@:4}" && ( [ -z "$_out" ] || [ -e "$_out" ] ) ; then
+	if pkgtype= runscript "$_script" "${@:4}" && ( [ -z "$_out" ] || [ -e "$_out" ] ) ; then
 		
 		popd >> "$buildlog"
 		
