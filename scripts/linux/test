@@ -3,7 +3,7 @@
 test_run_impl() {
 	case "$arch" in
 		amd64|x86_64|i*86|x86) "$@" ;;
-		arm*)                  qemu-arm -L "$root" "$@" ;;
+		arm*)                  LC_ALL="en_US.UTF-8" qemu-arm -L "$root" "$@" ;;
 		*)                     die "unimplemented"
 	esac
 }
