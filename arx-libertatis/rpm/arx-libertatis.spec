@@ -33,11 +33,7 @@ BuildRequires:  cmake >= 2.8
 BuildRequires:  boost-devel >= 1.48
 BuildRequires:  glm-devel >= 0.9.2.7
 BuildRequires:  zlib-devel
-%if 0%{?fedora_version} >= 19 || 0%{?suse_version} >= 1310
 BuildRequires:  pkgconfig(sdl2) >= 2.0.0
-%else
-BuildRequires:  pkgconfig(sdl) >= 1.2.10
-%endif
 %if 0%{?suse_version}
 BuildRequires:  freetype2-devel >= 2.3.0
 %else
@@ -52,8 +48,6 @@ BuildRequires:  pkgconfig(QtNetwork) >= 4.7
 BuildRequires:  xz
 %if 0%{?suse_version}
 BuildRequires:  update-desktop-files
-%endif
-%if 0%{?suse_version} >= 1010
 Recommends:     arxcrashreporter
 Suggests:       arxunpak
 Suggests:       arxsavetool
@@ -107,6 +101,7 @@ cmake . -DCMAKE_INSTALL_PREFIX=/usr \
 	-DCMAKE_INSTALL_LIBEXECDIR="%{_libexecdir}" \
 	-DINSTALL_DATADIR="%{_datadir}/arx" \
 	-DWITH_QT=4 \
+	-DWITH_SDL=2 \
 	-DUNITY_BUILD=ON
 make
 
