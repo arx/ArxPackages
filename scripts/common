@@ -269,7 +269,7 @@ version_max() {
 }
 
 tolower() {
-	tr '[A-Z]' '[a-z]'
+	tr 'A-Z' 'a-z'
 }
 
 # Determine paths
