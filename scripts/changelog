@@ -49,7 +49,7 @@ _make_changelog() {
 	
 	contents="$( grep -v "^$c" "$file" | sed -e :a -e '/./,$!d;/^\n*$/{$d;N;};/\n$/ba' )"
 	if [ -z "$contents" ] ; then rm "$file" ; die "aborting due to empty ${type}" ; fi
-	echo "$contents" > $file
+	echo "$contents" > "$file"
 	
 	elog "- ${white}${project}-${version}: created new ${type}${reset}"
 	
