@@ -120,7 +120,7 @@ build() {
 			
 		)
 		
-		eval "options+=( "\${cmake_options_${osarch}[@]:+\${cmake_options_${osarch}[@]}}" )"
+		eval "options+=( \"\${cmake_options_${osarch}[@]:+\${cmake_options_${osarch}[@]}}\" )"
 		
 		add_cmake_option() {
 			local cmake_flag="$1"
