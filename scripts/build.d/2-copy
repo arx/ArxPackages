@@ -90,7 +90,7 @@ do_copy_files() {
 	
 	# Handle missing files
 	if [ -z "$src" ] ; then
-		[ $required = 0 ] && continue
+		[ $required = 0 ] && return
 		die "missing ${srcglob}"
 	fi
 	
