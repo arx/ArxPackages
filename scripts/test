@@ -31,7 +31,7 @@ test_run() {
 check_abnormal_termination() {
 	exit_code="$1"
 	if [ $exit_code -gt 128 ] ; then
-		signal_number=$(($exit_code - 128))
+		signal_number=$((exit_code - 128))
 		die "porgram crashed with signal $signal_number ($(kill -l $signal_number 2>&1 || true))
 command was: $(escape_args "${@:2}")"
 	fi
