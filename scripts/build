@@ -43,6 +43,6 @@ done
 
 # Create the binary tarball
 echo "  ${white}:: creating archive${reset}" >&2
-make_archive ${_out} "${_outdir}"
+make_archive "${_out}" "${_outdir}"
 
 echo >&2
