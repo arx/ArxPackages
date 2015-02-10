@@ -18,7 +18,7 @@ flatten_bindirs() {
 	e rsync -a "$archbindir"/* "$bindir"/
 	e rm -r "$archbindir"
 	
-	local num_binaries=`find "$bindir" -mindepth 1 | wc -l`
+	local num_binaries=$(find "$bindir" -mindepth 1 | wc -l)
 	if [ $num_binaries = 1 ] || [ "$create_wrapper_scripts" = 0 ] ; then
 		# only one binary -> flatten bin dir
 		e mv "$bindir"/* "$outdir"/
@@ -127,7 +127,7 @@ create_wrappers() {
 		eval "local prefix_path=\"$prefix\""
 		
 		local prefix_files=(
-			`find "$prefix_path" -maxdepth 1 -executable -type f ! -name "$library_pattern" `
+			$(find "$prefix_path" -maxdepth 1 -executable -type f ! -name "$library_pattern")
 		)
 		
 		if [ -d "$prefix_path/libexec" ]
@@ -149,7 +149,7 @@ create_wrappers() {
 	done
 	
 	local primary_wrapper=''
-	for binary in `ls -LSG "${files[@]}"` ; do
+	for binary in $(ls -LSG "${files[@]}") ; do
 		local binary="${binary##*/}"
 		local wrapper="${outdir}/${binary}"
 		
