@@ -125,7 +125,7 @@ demarkdown_start_section() {
 demarkdown_insert() {
 	i=$1
 	
-	[ ! -z "${insert_texts[$i]}" ] || [ ! -z "${insert_files[$i]}" ] || continue
+	[ ! -z "${insert_texts[$i]}" ] || [ ! -z "${insert_files[$i]}" ] || return
 	
 	if [ "$pmode" = 'discard' ] ; then
 		demarkdown_start_section "$prefix" "${insert_names[$i]:-$title}"
