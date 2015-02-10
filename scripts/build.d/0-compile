@@ -155,7 +155,7 @@ build() {
 		[ -f "${root}/${binary}" ] || die "missing ${binary} in ${root}"
 		e mkdir -p "${bindir}/libexec"
 		e cp --preserve=all "${root}/${binary}" "${bindir}/libexec/"
-		echo "$(readlink -f "${root}/${binary}")" >> "$depsdir/copy_from_tree"
+		readlink -f "${root}/${binary}" >> "$depsdir/copy_from_tree"
 	done
 	
 	
