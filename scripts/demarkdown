@@ -59,7 +59,7 @@ demarkdown_flush() {
 		list=' '
 		buffer="${buffer#\* }"
 		width=77
-	else if demarkdown_is_list "$buffer" ; then
+	elif demarkdown_is_list "$buffer" ; then
 		list='   '
 		buffer="${buffer# }"
 		buffer="${buffer# }"
@@ -67,7 +67,7 @@ demarkdown_flush() {
 		buffer="${buffer#\*}"
 		buffer="${buffer# }"
 		width=75
-	fi ; fi
+	fi
 	
 	if [ ! -z "$section_name" ] && [ -z "$section_url" ] ; then
 		section_name="$(escape_sed "$section_name")"
@@ -335,17 +335,17 @@ prepended and/or appended.
 				
 			done
 			
-		else if [ "$mode" = 'discard' ] ; then
+		elif [ "$mode" = 'discard' ] ; then
 			
 			continue
 			
-		else if [ -z "$line" ] ; then
+		elif [ -z "$line" ] ; then
 			
 			demarkdown_flush
 			empty_lines="${empty_lines}
 "
 			
-		else if [ -z "$buffer" ] && [[ "$line" == '    '* ]] ; then
+		elif [ -z "$buffer" ] && [[ "$line" == '    '* ]] ; then
 			
 			demarkdown_flush
 			demarkdown_flush_whitespace
@@ -364,7 +364,7 @@ prepended and/or appended.
 				else buffer="$buffer $line"
 			fi
 			
-		fi ; fi ; fi ; fi
+		fi
 		
 	done
 	

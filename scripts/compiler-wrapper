@@ -30,7 +30,7 @@ add_library() {
 	local file=""
 	if [[ "$1" = :* ]] ; then
 		find_file "${1#:}"
-	else if [ "$mode" = "dynamic" ] ; then
+	elif [ "$mode" = "dynamic" ] ; then
 		find_file "lib$1.so"
 		find_file "lib$1.dll"
 		find_file "lib$1.a"
@@ -38,7 +38,7 @@ add_library() {
 		find_file "lib$1.a"
 		find_file "lib$1.so"
 		find_file "lib$1.dll"
-	fi ; fi
+	fi
 	
 	[ -z "$file" ] && die "could not find -l$1"
 	
