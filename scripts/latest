@@ -11,13 +11,13 @@ for dir in $(find . -mindepth 1 -maxdepth 1 -type d | sort --version-sort --reve
 	version="${dir##*/$project-}"
 	
 	if [ -z "${pkgtype:-}" ] ; then
-		echo "$(readlink -f "$dir")"
+		readlink -f "$dir"
 		exit 0
 	fi
 	
 	name="${project}-${version}${archives["${pkgtype}-${stage}"]}"
 	if [ -f "${dir}/${name}" ] ; then
-		echo "$(readlink -f "${dir}/${name}")"
+		readlink -f "${dir}/${name}"
 		exit 0
 	fi
 	
