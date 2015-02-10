@@ -85,8 +85,8 @@ find_libraries() {
 	
 	# Get all libraries required by the binary
 	local all_libraries=(
-		`"${target}-objdump" -p "$binary" \
-			| grep -P "$objdump_lib_pattern" | sed 's/.* //' | sort | uniq`
+		$("${target}-objdump" -p "$binary" \
+			| grep -P "$objdump_lib_pattern" | sed 's/.* //' | sort | uniq)
 	)
 	echo "${binname}: all libs: ${all_libraries[@]:+${all_libraries[@]}}"
 	
