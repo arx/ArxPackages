@@ -23,6 +23,6 @@ check_symlink() {
 	
 }
 
-for symlink in `find ${outdir} -type l` ; do
+for symlink in $(find "${outdir}" -type l) ; do
 	e check_symlink "$symlink"
 done
