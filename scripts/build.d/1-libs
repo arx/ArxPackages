@@ -88,7 +88,7 @@ find_libraries() {
 		$("${target}-objdump" -p "$binary" \
 			| grep -P "$objdump_lib_pattern" | sed 's/.* //' | sort | uniq)
 	)
-	echo "${binname}: all libs: ${all_libraries[@]:+${all_libraries[@]}}"
+	echo "${binname}: all libs: ${all_libraries[*]:+${all_libraries[*]}}"
 	
 	# Filter base system libraries
 	local libraries=( )
@@ -103,7 +103,7 @@ find_libraries() {
 		
 		libraries+=( "$lib" )
 	done
-	echo "${binname}: user libs: ${libraries[@]:+${libraries[@]}}"
+	echo "${binname}: user libs: ${libraries[*]:+${libraries[*]}}"
 	
 	# Check that the runpath is set correctly
 	if [ $has_elf_rpath = 1 ] && [ "${#libraries[@]}" -gt 0 ] && [[ "$binname" != *.so* ]] ; then
