@@ -9,14 +9,14 @@ set -u
 
 backtrace() {
 	i=${1:-0}
-	while [ "${FUNCNAME[$(($i+1))]}" = 'e' ] ; do i=$(($i+1)) ; done
+	while [ "${FUNCNAME[$((i+1))]}" = 'e' ] ; do i=$((i+1)) ; done
 	echo "${red}error${reset}" \
-		"at ${BASH_SOURCE[$(($i+1))]}:${BASH_LINENO[$i]} in ${FUNCNAME[$(($i+1))]}" >&2
-	i=$(($i+1))
-	while [ ! -z "${BASH_SOURCE[$(($i+1))]-}" ] ; do
-		i=$(($i+1))
+		"at ${BASH_SOURCE[$((i+1))]}:${BASH_LINENO[$i]} in ${FUNCNAME[$((i+1))]}" >&2
+	i=$((i+1))
+	while [ ! -z "${BASH_SOURCE[$((i+1))]-}" ] ; do
+		i=$((i+1))
 		if [ "${FUNCNAME[$i]}" != 'e' ] ; then
-			echo "- called from ${BASH_SOURCE[$i]}:${BASH_LINENO[$(($i-1))]} in ${FUNCNAME[$i]}" >&2
+			echo "- called from ${BASH_SOURCE[$i]}:${BASH_LINENO[$((i-1))]} in ${FUNCNAME[$i]}" >&2
 		fi
 	done
 }
