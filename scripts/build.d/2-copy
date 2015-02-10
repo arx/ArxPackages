@@ -75,7 +75,7 @@ do_copy_files() {
 	
 	# Find the file
 	local src=''
-	for f in `eval "echo $(escape_args "$sourcedir")/${srcglob}"` ; do
+	for f in $(eval "echo $(escape_args "$sourcedir")/${srcglob}") ; do
 		[ -f "$f" ] || continue
 		
 		if [ -z "$src" ]
