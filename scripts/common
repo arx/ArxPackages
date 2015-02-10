@@ -1,8 +1,8 @@
 #!/bin/bash
 
-red=`printf '\033[1;31m'`
-white=`printf '\033[1;37m'`
-reset=`printf '\033[0m'`
+red="$(printf '\033[1;31m')"
+white="$(printf '\033[1;37m')"
+reset="$(printf '\033[0m')"
 
 set -e
 set -u
