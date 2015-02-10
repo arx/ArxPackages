@@ -173,7 +173,7 @@ run() {
 	
 	pushd "$_builddir" >> "$buildlog"
 	
-	if pkgtype= runscript "$_script" "${@:4}" && ( [ -z "$_out" ] || [ -e "$_out" ] ) ; then
+	if pkgtype='' runscript "$_script" "${@:4}" && ( [ -z "$_out" ] || [ -e "$_out" ] ) ; then
 		
 		popd >> "$buildlog"
 		
