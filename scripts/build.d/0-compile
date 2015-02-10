@@ -143,7 +143,7 @@ build() {
 		e generate_toolchain_wrapper 'gcc' "${target}-gcc" "$root" "$depsdir"
 		e generate_toolchain_wrapper 'g++' "${target}-g++" "$root" "$depsdir"
 		
-		VERBOSE=1 e make -j`getconf _NPROCESSORS_ONLN`
+		VERBOSE=1 e make -j"$(getconf _NPROCESSORS_ONLN)"
 		
 		VERBOSE=1 e make install
 		
