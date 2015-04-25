@@ -39,7 +39,7 @@ create_wrapper() {
 	
 	echo '#!/bin/sh'                                                           > "$wrapper"
 	echo                                                                      >> "$wrapper"
-	echo 'here="$(readlink -f "$(command -v "$0")")" ; here="${here%/*}"'     >> "$wrapper"
+	echo 'here="$(command -v "$0")" ; here="${here:-$0}" ; here="$(readlink -f "$here")" ; here="${here%/*}"'     >> "$wrapper"
 	echo 'command="${0##*/}"'                                                 >> "$wrapper"
 	echo                                                                      >> "$wrapper"
 	
