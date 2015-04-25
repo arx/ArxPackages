@@ -84,10 +84,11 @@ required_binaries+=(
 # Libraries that should not be linked
 forbidden_libraries+=(
 	
-	# C++ stdlib - link statically
+	# C++ stdlib - link statically (they may conflict with GL drivers)
 	'libstdc++.so*'
 	'libstdc++-*.dll'
 	'libc++.so*'
+	'libgcc*.so*'
 	
 	# We link Boost, GLEW, FreeType and ZLIB statically - check for that
 	'libboost_*'
