@@ -7,6 +7,8 @@ echo "debian version is ${_deb_version}"
 _deb_release="$(head -1 "${pkgsrcdir}/changelog" | sed 's/^.*(\([^)]*\)).*$/\1/')"
 echo "debian release is ${_deb_release}"
 
+[ "$_deb_version" = "$version" ] || die "DEB version is $_deb_version, expected $version"
+
 get_output _debsource _sourcedir "$version" "$pkgtype" 'prepare'
 
 e execute deploy-obs \

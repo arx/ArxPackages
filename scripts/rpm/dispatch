@@ -2,9 +2,15 @@
 
 . "${BASH_SOURCE[0]%/*}/../common"
 
+_specfile="${pkgsrcdir}/${project}.spec"
+_rpm_version="$(grep '^Version\:' "$_specfile" | sed 's/^Version\: *\([^ ]*\) *$/\1/')"
+echo "rpm version is ${_rpm_version}"
+
+[ "$_rpm_version" = "$version" ] || die "RPM version is ${_rpm_version}, expected ${version}"
+
 get_output _source _sourcedir "$version" 'source'
 
 e execute deploy-obs \
 	--del "${project}-*.tar.*" \
 	--add "$_source" \
-	--add "${pkgsrcdir}/${project}.spec"
+	--add "$_specfile"
