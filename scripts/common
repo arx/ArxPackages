@@ -159,9 +159,15 @@ run() {
 		_phony="$_out"
 	fi
 	
+	local _update_inplace=0
 	if [ -e "$_phony" ] ; then
-		elog "- ${_name} (skipped)"
-		return 0;
+		local _check="${_script}.check"
+		if [ ! -x "${scriptdir}/${_check}" ] || ! pkgtype='' phony="$_phony" runscript "$_check" ; then
+			elog "- ${_name} (skipped)"
+			return 0;
+		else
+			_update_inplace=1
+		fi
 	fi
 	
 	elog "- ${white}${_name}${reset}"
@@ -181,7 +187,7 @@ run() {
 		e rm -rf "$_builddir" >> "$buildlog"
 		
 		# Mark success, don't run again
-		[ -e "$_phony" ] || touch "$_phony"
+		[ "$_phony" != "$_out" ] && touch "$_phony"
 		
 		return 0
 		
@@ -190,7 +196,9 @@ run() {
 		popd >> "$buildlog"
 		
 		# Mark failure, run again
-		[ ! -z "$_out" ] && [ -e "$_out" ] && e rm -rf "$_out" >> "$buildlog"
+		if [ $_update_inplace = 0 ] ; then
+			[ ! -z "$_out" ] && [ -e "$_out" ] && e rm -rf "$_out" >> "$buildlog"
+		fi
 		
 		# Target failed
 		elog "${red}${_name} failed${reset}" >&2
@@ -295,6 +303,7 @@ if [ -z "${pkgtype-}" ] && [ "${curscriptdir##"$scriptdir"/}" != "$curscriptdir"
 	pkgtype="${curscriptdir##"$scriptdir"/}"
 	pkgtype="${pkgtype%%/*}"
 	stage="${curscript##*/}"
+	stage="${stage%.check}"
 	require pkgtype
 fi
 

@@ -29,3 +29,15 @@ You can also directly run some of the relper scrips:
 
     $ ./package -p package -v x.y changelog # Add changelog entry
     $ ./package -p package -v x.y finalize  # Generate checksums and README
+
+### Pusing existing versions to new distro releases
+
+The Open Build Service can automatically build packages for new distribution releases from the same sources once repositories for those releases have been added. For Launchpad, we need to re-upload the sources for the new Ubuntu releases.
+
+First, update the `ubuntu_versions` array in the `config` file. Then re-run
+
+    $ ./package -p package -v x.y
+
+This should automatically re-run dep.prepare and deb.dispatch steps for new distro releases. Source packages, local builds and packages for existing distro releases will not be touched with this option.
+
+Note that creating debian packages only works for the latest version as the changelog is hardcoded in the package config files in the update-version step.

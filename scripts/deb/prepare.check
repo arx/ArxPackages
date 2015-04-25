@@ -1,0 +1,19 @@
+#!/bin/bash
+
+. "${BASH_SOURCE[0]%/*}/../common"
+
+get_output _output
+
+pushd "$_output"
+	
+	for ubuntu_ver in "${ubuntu_versions[@]}" ; do
+		
+		echo "Checking $ubuntu_ver package"
+		[ -f *~${ubuntu_ver}*.dsc ] || exit 0
+		
+	done
+	
+popd
+
+_no_backtrace=1
+exit 1

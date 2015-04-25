@@ -1,0 +1,15 @@
+#!/bin/bash
+
+. "${BASH_SOURCE[0]%/*}/../common"
+
+get_output _debsource _sourcedir "$version" "$pkgtype" 'prepare'
+
+for changes in "${_debsource}/${project}_${version}"-*ppa*~*_source.changes ; do
+	
+	echo "Checking $changes timestamp vs. $phony"
+	[ "$phony" -nt "$changes" ] || exit 0
+	
+done
+
+_no_backtrace=1
+exit 1

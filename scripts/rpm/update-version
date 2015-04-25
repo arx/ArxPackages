@@ -10,7 +10,7 @@ _current_version="$(
 )"
 [ -z "$_current_version" ] && die "could not get current version"
 version_greater "$version" "$_current_version" \
-	|| die "accitental downgrade? new version ${version} <= ${_current_version}"
+	|| die "accidental downgrade? new version ${version} <= ${_current_version}"
 
 get_shortlog _changelog
 
