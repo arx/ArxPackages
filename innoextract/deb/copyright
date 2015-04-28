@@ -1,10 +1,10 @@
-Format: http://dep.debian.net/deps/dep5
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: innoextract
 Source: http://constexpr.org/innoextract/
 
 Files: *
 Copyright: 2011-2014 Daniel Scharrer <daniel@constexpr.org>
-License: ZLIB
+License: Zlib
  This software is provided 'as-is', without any express or implied
  warranty. In no event will the author(s) be held liable for any damages
  arising from the use of this software.
@@ -23,7 +23,7 @@ License: ZLIB
 
 Files: cmake/cpplint.py
 Copyright: Copyright 2011-2014 Daniel Scharrer
-Copyright: 2009 Google Inc.
+ Copyright 2009 Google Inc.
 License: BSD-3-clause
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions
