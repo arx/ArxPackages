@@ -4,7 +4,7 @@ Source: http://arx-libertatis.org/
 
 Files: *
 Copyright: Copyright 2011-2014 Arx Libertatis Team (see the AUTHORS file)
-Copyright: Copyright (C) 1999-2010 Arkane Studios SA, a ZeniMax Media company.
+ Copyright (C) 1999-2010 Arkane Studios SA, a ZeniMax Media company.
 License: GPL-3+
  ~ARX LIBERTATIS CONTRIBUTORS
  .
@@ -109,7 +109,7 @@ License: public-domain
 
 Files: src/util/cmdline/*
 Copyright: Copyright 2013-2014 Arx Libertatis Team (see the AUTHORS file)
-Copyright: Original source is copyright 2010 - 2011. Alexey Tsoy.
+ Original source is copyright 2010 - 2011. Alexey Tsoy.
 License: BSD-3-clause
  Based on http://sourceforge.net/projects/interpreter11/
  .
@@ -139,7 +139,7 @@ License: BSD-3-clause
 
 Files: scripts/cpplint.py
 Copyright: Copyright 2011-2014 Arx Libertatis Team (see the AUTHORS file)
-Copyright: 2009 Google Inc.
+ Copyright 2009 Google Inc.
 License: BSD-3-clause
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions
@@ -169,7 +169,7 @@ Files: data/core/misc/dejavusansmono.ttf
 Copyright: Copyright (c) 2003 by Bitstream, Inc. All Rights Reserved.
  Bitstream Vera is a trademark of Bitstream, Inc.
  DejaVu changes are in public domain.
-Copyright: Copyright (c) 2006 by Tavmjong Bah
+ Copyright (c) 2006 by Tavmjong Bah
 License:
  Fonts are (c) Bitstream (see below). DejaVu changes are in public domain.
  Glyphs imported from Arev fonts are (c) Tavmjong Bah (see below)
