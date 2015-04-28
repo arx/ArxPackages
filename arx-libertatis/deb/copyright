@@ -4,7 +4,7 @@ Source: http://wiki.arx-libertatis.org/Download
 
 Files: *
 Copyright: Copyright 2011-2013 Arx Libertatis Team (see the AUTHORS file)
-Copyright: Copyright (C) 1999-2010 Arkane Studios SA, a ZeniMax Media company.
+ Copyright (C) 1999-2010 Arkane Studios SA, a ZeniMax Media company.
 License: GPL-3+
  ~ARX LIBERTATIS CONTRIBUTORS
  .
@@ -68,7 +68,7 @@ License: public-domain
 
 Files: src/util/cmdline/*
 Copyright: Copyright 2013 Arx Libertatis Team (see the AUTHORS file)
-Copyright: Original source is copyright 2010 - 2011. Alexey Tsoy.
+ Original source is copyright 2010 - 2011. Alexey Tsoy.
 License: BSD-3-clause
  Based on http://sourceforge.net/projects/interpreter11/
  .
@@ -98,7 +98,7 @@ License: BSD-3-clause
 
 Files: scripts/cpplint.py
 Copyright: Copyright 2011-2013 Arx Libertatis Team (see the AUTHORS file)
-Copyright: 2009 Google Inc.
+ Copyright 2009 Google Inc.
 License: BSD-3-clause
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions
