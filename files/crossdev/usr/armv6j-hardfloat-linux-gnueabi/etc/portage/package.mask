@@ -1,0 +1,2 @@
+# libs/atomic/src/lockpool.cpp:127:5: error: ‘thread_fence’ is not a member of ‘boost::atomics::detail
+=dev-libs/boost-1.56.0-r1
