@@ -99,7 +99,6 @@ if [ "$PN" = "libsdl2" ] ; then
 		CFLAGS="$CFLAGS -std=gnu99" orig_econf "${args[@]}" \
 			--disable-timers \
 			--disable-file \
-			--disable-filesystem \
 			--disable-cpuinfo \
 			--disable-render \
 			--disable-atomic \

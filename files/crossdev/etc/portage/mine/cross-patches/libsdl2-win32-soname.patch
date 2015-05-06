@@ -1,38 +1,38 @@
---- configure.old	2013-12-18 11:45:49.137318719 +0100
-+++ configure	2013-12-18 11:44:57.246315991 +0100
-@@ -10069,7 +10069,7 @@
+--- configure.orig	2015-05-07 19:43:22.639340448 +0200
++++ configure	2015-05-07 20:29:16.922530244 +0200
+@@ -10522,7 +10522,7 @@
        ;;
      mingw* | cegcc*)
        # MinGW DLLs use traditional 'lib' prefix
--      soname_spec='${libname}`echo ${release} | $SED -e 's/[.]/-/g'`${versuffix}${shared_ext}'
+-      soname_spec='$libname`echo $release | $SED -e 's/[.]/-/g'`$versuffix$shared_ext'
 +      soname_spec='`echo ${libname} | $SED -e 's/^lib//'`${shared_ext}'
        ;;
      pw32*)
        # pw32 DLLs use 'pw' prefix rather than 'lib'
-@@ -10082,7 +10082,7 @@
+@@ -10535,7 +10535,7 @@
    *,cl*)
      # Native MSVC
      libname_spec='$name'
--    soname_spec='${libname}`echo ${release} | $SED -e 's/[.]/-/g'`${versuffix}${shared_ext}'
+-    soname_spec='$libname`echo $release | $SED -e 's/[.]/-/g'`$versuffix$shared_ext'
 +    soname_spec='`echo ${libname} | $SED -e 's/^lib//'`${shared_ext}'
-     library_names_spec='${libname}.dll.lib'
+     library_names_spec='$libname.dll.lib'
  
      case $build_os in
-@@ -14756,7 +14756,7 @@
+@@ -15340,7 +15340,7 @@
        ;;
      mingw* | cegcc*)
        # MinGW DLLs use traditional 'lib' prefix
--      soname_spec='${libname}`echo ${release} | $SED -e 's/[.]/-/g'`${versuffix}${shared_ext}'
+-      soname_spec='$libname`echo $release | $SED -e 's/[.]/-/g'`$versuffix$shared_ext'
 +      soname_spec='`echo ${libname} | $SED -e 's/^lib//'`${shared_ext}'
        ;;
      pw32*)
        # pw32 DLLs use 'pw' prefix rather than 'lib'
-@@ -14769,7 +14769,7 @@
+@@ -15353,7 +15353,7 @@
    *,cl*)
      # Native MSVC
      libname_spec='$name'
--    soname_spec='${libname}`echo ${release} | $SED -e 's/[.]/-/g'`${versuffix}${shared_ext}'
+-    soname_spec='$libname`echo $release | $SED -e 's/[.]/-/g'`$versuffix$shared_ext'
 +    soname_spec='`echo ${libname} | $SED -e 's/^lib//'`${shared_ext}'
-     library_names_spec='${libname}.dll.lib'
+     library_names_spec='$libname.dll.lib'
  
      case $build_os in
