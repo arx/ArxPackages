@@ -11,3 +11,5 @@ PORTDIR="/usr/portage"
 DISTDIR="/usr/portage/distfiles"
 MAKEOPTS=" -j5"
 GENTOO_MIRRORS="http://distfiles.gentoo.org"
+
+PYTHON_TARGETS="python2_7"

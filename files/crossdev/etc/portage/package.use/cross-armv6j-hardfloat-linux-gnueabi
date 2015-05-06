@@ -1,1 +1,3 @@
 cross-armv6j-hardfloat-linux-gnueabi/binutils -selinux -multilib
+cross-armv6j-hardfloat-linux-gnueabi/linux-headers -selinux -multilib
+cross-armv6j-hardfloat-linux-gnueabi/glibc -selinux -multilib

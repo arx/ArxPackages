@@ -5,5 +5,8 @@ dev-libs/libxml2-2.9.0-r2
 dev-libs/openssl-1.0.1e-r1
 
 # MingW already bundles its own OpenGL implementation
-media-libs/mesa-9.0.0
-media-libs/glu-9.0
+media-libs/mesa-9999
+media-libs/glu-9.0.0-r1
+x11-libs/libXdamage-1.1.4-r1
+x11-libs/libXfixes-5.0.1
+x11-libs/libdrm-9999
