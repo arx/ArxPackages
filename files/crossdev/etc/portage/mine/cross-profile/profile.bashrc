@@ -142,3 +142,7 @@ if [ "$PN" = "freetype" ] ; then
 		disable_option TT_CONFIG_OPTION_SFNT_NAMES
 	}
 fi
+
+if [ "$PN" = "openal" ] ; then
+	LDFLAGS="$LDFLAGS -static-libgcc"
+fi
