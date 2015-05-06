@@ -1,5 +1,4 @@
 cross-x86_64-bindist-linux-gnu/binutils amd64 ~amd64
-cross-x86_64-bindist-linux-gnu/gcc * ~* **
 cross-x86_64-bindist-linux-gnu/linux-headers amd64 ~amd64
 cross-x86_64-bindist-linux-gnu/glibc * ~* **
 cross-x86_64-bindist-linux-gnu/gdb amd64 ~amd64

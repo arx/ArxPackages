@@ -1,11 +1,10 @@
-
 cross-i686-bindist-linux-gnu/glibc        lto glibc-omitfp
 
-cross-i686-bindist-linux-gnu/gcc          lto graphite mudflap
-cross-x86_64-bindist-linux-gnu/gcc        lto graphite mudflap
-cross-i686-gentoo-freebsd9.1/gcc          lto graphite mudflap
-cross-x86_64-gentoo-freebsd9.1/gcc        lto graphite mudflap
-cross-armv6j-hardfloat-linux-gnueabi/gcc  lto graphite mudflap
-cross-i686-w64-mingw32/gcc                lto graphite
+cross-i686-bindist-linux-gnu/gcc          lto -fortran graphite mudflap
+cross-x86_64-bindist-linux-gnu/gcc        lto -fortran graphite mudflap
+cross-i686-gentoo-freebsd9.1/gcc          lto -fortran graphite mudflap -sanitize
+cross-x86_64-gentoo-freebsd9.1/gcc        lto -fortran graphite mudflap -sanitize
+cross-armv6j-hardfloat-linux-gnueabi/gcc  lto -fortran graphite mudflap
+cross-i686-w64-mingw32/gcc                lto -fortran graphite -sanitize
 
 cross-armv6j-hardfloat-linux-gnueabi/gdb  expat

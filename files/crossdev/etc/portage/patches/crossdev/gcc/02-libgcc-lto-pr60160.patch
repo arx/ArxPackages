@@ -1,0 +1,188 @@
+--- libgcc/Makefile.in
++++ libgcc/Makefile.in
+@@ -283,7 +283,7 @@
+ CRTSTUFF_CFLAGS = -O2 $(GCC_CFLAGS) $(INCLUDES) $(MULTILIB_CFLAGS) -g0 \
+   -finhibit-size-directive -fno-inline -fno-exceptions \
+   -fno-zero-initialized-in-bss -fno-toplevel-reorder -fno-tree-vectorize \
+-  -fno-stack-protector $(ESP_NOPIE_CFLAGS) -fstack-check=no \
++  -fno-stack-protector $(ESP_NOPIE_CFLAGS) -fstack-check=no -fno-lto \
+   $(INHIBIT_LIBC_CFLAGS)
+ 
+ # Extra flags to use when compiling crt{begin,end}.o.
+@@ -870,14 +870,14 @@
+                  $(libgcov-interface-objects) $(libgcov-driver-objects)
+ 
+ $(libgcov-merge-objects): %$(objext): $(srcdir)/libgcov-merge.c $(srcdir)/libgcov.h
+-	$(gcc_compile) -DL$* -c $(srcdir)/libgcov-merge.c
++	$(gcc_compile) -fno-lto -DL$* -c $(srcdir)/libgcov-merge.c
+ $(libgcov-profiler-objects): %$(objext): $(srcdir)/libgcov-profiler.c $(srcdir)/libgcov.h
+-	$(gcc_compile) -DL$* -c $(srcdir)/libgcov-profiler.c
++	$(gcc_compile) -fno-lto -DL$* -c $(srcdir)/libgcov-profiler.c
+ $(libgcov-interface-objects): %$(objext): $(srcdir)/libgcov-interface.c $(srcdir)/libgcov.h
+-	$(gcc_compile) -DL$* -c $(srcdir)/libgcov-interface.c
++	$(gcc_compile) -fno-lto -DL$* -c $(srcdir)/libgcov-interface.c
+ $(libgcov-driver-objects): %$(objext): $(srcdir)/libgcov-driver.c \
+   $(srcdir)/libgcov-driver-system.c $(srcdir)/libgcov.h
+-	$(gcc_compile) -DL$* -c $(srcdir)/libgcov-driver.c
++	$(gcc_compile) -fno-lto -DL$* -c $(srcdir)/libgcov-driver.c
+ 
+ 
+ # Static libraries.
+--- libgcc/libgcov-interface.c
++++ libgcc/libgcov-interface.c
+@@ -70,7 +70,7 @@
+    far and reset it to zero.  This avoids duplication or loss of the
+    profile information gathered so far.  */
+ 
+-void
++void __attribute__((__used__))
+ __gcov_flush (void)
+ {
+   init_mx_once ();
+--- libgcc/unwind-dw2.c
++++ libgcc/unwind-dw2.c
+@@ -265,7 +265,7 @@
+ 
+ /* Overwrite the saved value for register INDEX in CONTEXT with VAL.  */
+ 
+-inline void
++inline void __attribute__((__used__))
+ _Unwind_SetGR (struct _Unwind_Context *context, int index, _Unwind_Word val)
+ {
+   int size;
+@@ -341,7 +341,7 @@
+ 
+ /* Retrieve the return address for CONTEXT.  */
+ 
+-inline _Unwind_Ptr
++inline _Unwind_Ptr __attribute__((__used__))
+ _Unwind_GetIP (struct _Unwind_Context *context)
+ {
+   return (_Unwind_Ptr) context->ra;
+@@ -359,19 +359,19 @@
+ 
+ /* Overwrite the return address for CONTEXT with VAL.  */
+ 
+-inline void
++inline void __attribute__((__used__))
+ _Unwind_SetIP (struct _Unwind_Context *context, _Unwind_Ptr val)
+ {
+   context->ra = (void *) val;
+ }
+ 
+-void *
++void * __attribute__((__used__))
+ _Unwind_GetLanguageSpecificData (struct _Unwind_Context *context)
+ {
+   return context->lsda;
+ }
+ 
+-_Unwind_Ptr
++_Unwind_Ptr __attribute__((__used__))
+ _Unwind_GetRegionStart (struct _Unwind_Context *context)
+ {
+   return (_Unwind_Ptr) context->bases.func;
+@@ -389,13 +389,13 @@
+ }
+ 
+ #ifndef __ia64__
+-_Unwind_Ptr
++_Unwind_Ptr __attribute__((__used__))
+ _Unwind_GetDataRelBase (struct _Unwind_Context *context)
+ {
+   return (_Unwind_Ptr) context->bases.dbase;
+ }
+ 
+-_Unwind_Ptr
++_Unwind_Ptr __attribute__((__used__))
+ _Unwind_GetTextRelBase (struct _Unwind_Context *context)
+ {
+   return (_Unwind_Ptr) context->bases.tbase;
+--- libgcc/unwind-sjlj.c
++++ libgcc/unwind-sjlj.c
+@@ -116,7 +116,7 @@
+ }
+ #endif
+ 
+-void
++void __attribute__((__used__))
+ _Unwind_SjLj_Register (struct SjLj_Function_Context *fc)
+ {
+ #if __GTHREADS
+@@ -163,7 +163,7 @@
+     fc_static = fc;
+ }
+ 
+-void
++void __attribute__((__used__))
+ _Unwind_SjLj_Unregister (struct SjLj_Function_Context *fc)
+ {
+   _Unwind_SjLj_SetContext (fc->prev);
+@@ -199,7 +199,7 @@
+   return (_Unwind_Word) 0;
+ }
+ 
+-void
++void __attribute__((__used__))
+ _Unwind_SetGR (struct _Unwind_Context *context, int index, _Unwind_Word val)
+ {
+   context->fc->data[index] = val;
+@@ -207,7 +207,7 @@
+ 
+ /* Get the call-site index as saved in CONTEXT.  */
+ 
+-_Unwind_Ptr
++_Unwind_Ptr __attribute__((__used__))
+ _Unwind_GetIP (struct _Unwind_Context *context)
+ {
+   return context->fc->call_site + 1;
+@@ -225,19 +225,19 @@
+ 
+ /* Set the return landing pad index in CONTEXT.  */
+ 
+-void
++void __attribute__((__used__))
+ _Unwind_SetIP (struct _Unwind_Context *context, _Unwind_Ptr val)
+ {
+   context->fc->call_site = val - 1;
+ }
+ 
+-void *
++void * __attribute__((__used__))
+ _Unwind_GetLanguageSpecificData (struct _Unwind_Context *context)
+ {
+   return context->fc->lsda;
+ }
+ 
+-_Unwind_Ptr
++_Unwind_Ptr __attribute__((__used__))
+ _Unwind_GetRegionStart (struct _Unwind_Context *context __attribute__((unused)) )
+ {
+   return 0;
+@@ -250,13 +250,13 @@
+ }
+ 
+ #ifndef __ia64__
+-_Unwind_Ptr
++_Unwind_Ptr __attribute__((__used__))
+ _Unwind_GetDataRelBase (struct _Unwind_Context *context __attribute__((unused)) )
+ {
+   return 0;
+ }
+ 
+-_Unwind_Ptr
++_Unwind_Ptr __attribute__((__used__))
+ _Unwind_GetTextRelBase (struct _Unwind_Context *context __attribute__((unused)) )
+ {
+   return 0;
+--- libgcc/unwind.inc
++++ libgcc/unwind.inc
+@@ -215,7 +215,7 @@
+ /* Resume propagation of an existing exception.  This is used after
+    e.g. executing cleanup code, and not to implement rethrowing.  */
+ 
+-void LIBGCC2_UNWIND_ATTRIBUTE
++void LIBGCC2_UNWIND_ATTRIBUTE __attribute__((__used__))
+ _Unwind_Resume (struct _Unwind_Exception *exc)
+ {
+   struct _Unwind_Context this_context, cur_context;

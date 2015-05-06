@@ -1,7 +1,24 @@
 
-lto_CFLAGS="-O2 -pipe -flto"
+lto_CFLAGS="-O2 -pipe -flto -ffat-lto-objects"
 CFLAGS_armv6j_hardfloat_linux_gnueabi="${lto_CFLAGS}"
 CFLAGS_i686_bindist_linux_gnu="${lto_CFLAGS}"
+CFLAGS_i686_gentoo_freebsd9_1="${lto_CFLAGS}"
 CFLAGS_i686_w64_mingw32="${lto_CFLAGS}"
 CFLAGS_x86_64_bindist_linux_gnu="${lto_CFLAGS}"
+CFLAGS_x86_64_gentoo_freebsd9_1="${lto_CFLAGS}"
 BOOT_CFLAGS="${lto_CFLAGS}"
+CFLAGS_FOR_TARGET="${lto_CFLAGS}"
+
+lto_CXXFLAGS="-O2 -pipe -flto -ffat-lto-objects"
+CXXFLAGS_armv6j_hardfloat_linux_gnueabi="${lto_CXXFLAGS}"
+CXXFLAGS_i686_bindist_linux_gnu="${lto_CXXFLAGS}"
+CXXFLAGS_i686_gentoo_freebsd9_1="${lto_CXXFLAGS}"
+CXXFLAGS_i686_w64_mingw32="${lto_CXXFLAGS}"
+CXXFLAGS_x86_64_bindist_linux_gnu="${lto_CXXFLAGS}"
+CXXFLAGS_x86_64_gentoo_freebsd9_1="${lto_CXXFLAGS}"
+BOOT_CXXFLAGS="${lto_CXXFLAGS}"
+CXXFLAGS_FOR_TARGET="${lto_CXXFLAGS}"
+
+# libcilkrts breaks compile with LTO, is disabled for non-x86/non-POSIX anyway
+# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=61218
+EXTRA_ECONF=" --disable-bootstrap --disable-libcilkrts "

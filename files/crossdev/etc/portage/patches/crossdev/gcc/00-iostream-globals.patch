@@ -10,7 +10,7 @@ diff -ur gcc-4.7.2.old/libstdc++-v3/src/c++98/ios_init.cc gcc-4.7.2/libstdc++-v3
 @@ -40,22 +40,14 @@
    using namespace __gnu_cxx;
  
-   // Extern declarations for global objects in src/globals.cc.
+   // Extern declarations for global objects in src/c++98/globals.cc.
 -  extern stdio_sync_filebuf<char> buf_cout_sync;
 -  extern stdio_sync_filebuf<char> buf_cin_sync;
 -  extern stdio_sync_filebuf<char> buf_cerr_sync;
@@ -174,14 +174,3 @@ diff -ur gcc-4.7.2.old/libstdc++-v3/src/c++98/Makefile.in gcc-4.7.2/libstdc++-v3
  	hash_tr1.cc \
  	hashtable_tr1.cc \
  	ios.cc \
-diff -ur gcc-4.7.2.old/MD5SUMS gcc-4.7.2/MD5SUMS
---- gcc-4.7.2.old/MD5SUMS	2012-09-20 10:29:29.000000000 +0200
-+++ gcc-4.7.2/MD5SUMS	2013-03-02 18:04:46.426882619 +0100
-@@ -70623,7 +70623,6 @@
- 4ae5527f88b579e7b020367122de623e  libstdc++-v3/src/c++98/concept-inst.cc
- d224bc4c7a9ea6e1ba05194855300f54  libstdc++-v3/src/c++98/ctype.cc
- 3e739f9c75b7813b104ddbb07e94a5b3  libstdc++-v3/src/c++98/ext-inst.cc
--c237e9601a28dd29c6675177e7a7aff9  libstdc++-v3/src/c++98/globals_io.cc
- 7145428d72db9c9676a3d7e8c85e46ce  libstdc++-v3/src/c++98/hash-long-double-tr1-aux.cc
- 576cc9b79282155e89cfe99cf33601b5  libstdc++-v3/src/c++98/hash_tr1.cc
- f461bde07135d08e98835e064afd8f21  libstdc++-v3/src/c++98/hashtable_tr1.cc

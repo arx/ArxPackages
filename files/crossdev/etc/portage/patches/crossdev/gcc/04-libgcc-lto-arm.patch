@@ -1,0 +1,58 @@
+diff --git a/gcc-4.9.2.old/libgcc/config/arm/unwind-arm.c b/gcc-4.9.2/libgcc/config/arm/unwind-arm.c
+index ee23963..8cd9027 100644
+--- a/gcc-4.9.2.old/libgcc/config/arm/unwind-arm.c
++++ b/gcc-4.9.2/libgcc/config/arm/unwind-arm.c
+@@ -152,7 +152,7 @@ extern _Unwind_Reason_Code __aeabi_unwind_cpp_pr2 (_Unwind_State,
+ 
+ /* ABI defined routine to store a virtual register to memory.  */
+ 
+-_Unwind_VRS_Result _Unwind_VRS_Get (_Unwind_Context *context,
++_Unwind_VRS_Result __attribute__((__used__)) _Unwind_VRS_Get (_Unwind_Context *context,
+ 				    _Unwind_VRS_RegClass regclass,
+ 				    _uw regno,
+ 				    _Unwind_VRS_DataRepresentation representation,
+@@ -182,7 +182,7 @@ _Unwind_VRS_Result _Unwind_VRS_Get (_Unwind_Context *context,
+ 
+ /* ABI defined function to load a virtual register from memory.  */
+ 
+-_Unwind_VRS_Result _Unwind_VRS_Set (_Unwind_Context *context,
++_Unwind_VRS_Result __attribute__((__used__)) _Unwind_VRS_Set (_Unwind_Context *context,
+ 				    _Unwind_VRS_RegClass regclass,
+ 				    _uw regno,
+ 				    _Unwind_VRS_DataRepresentation representation,
+@@ -213,7 +213,7 @@ _Unwind_VRS_Result _Unwind_VRS_Set (_Unwind_Context *context,
+ 
+ /* ABI defined function to pop registers off the stack.  */
+ 
+-_Unwind_VRS_Result _Unwind_VRS_Pop (_Unwind_Context *context,
++_Unwind_VRS_Result __attribute__((__used__)) _Unwind_VRS_Pop (_Unwind_Context *context,
+ 				    _Unwind_VRS_RegClass regclass,
+ 				    _uw discriminator,
+ 				    _Unwind_VRS_DataRepresentation representation)
+@@ -486,7 +486,7 @@ __gnu_unwind_get_pr_addr (int idx)
+ 
+ /* ABI defined personality routine entry points.  */
+ 
+-_Unwind_Reason_Code
++_Unwind_Reason_Code __attribute__((__used__))
+ __aeabi_unwind_cpp_pr0 (_Unwind_State state,
+ 			_Unwind_Control_Block *ucbp,
+ 			_Unwind_Context *context)
+@@ -494,7 +494,7 @@ __aeabi_unwind_cpp_pr0 (_Unwind_State state,
+   return __gnu_unwind_pr_common (state, ucbp, context, 0);
+ }
+ 
+-_Unwind_Reason_Code
++_Unwind_Reason_Code __attribute__((__used__))
+ __aeabi_unwind_cpp_pr1 (_Unwind_State state,
+ 			_Unwind_Control_Block *ucbp,
+ 			_Unwind_Context *context)
+@@ -502,7 +502,7 @@ __aeabi_unwind_cpp_pr1 (_Unwind_State state,
+   return __gnu_unwind_pr_common (state, ucbp, context, 1);
+ }
+ 
+-_Unwind_Reason_Code
++_Unwind_Reason_Code __attribute__((__used__))
+ __aeabi_unwind_cpp_pr2 (_Unwind_State state,
+ 			_Unwind_Control_Block *ucbp,
+ 			_Unwind_Context *context)

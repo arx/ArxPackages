@@ -1,0 +1,26 @@
+diff --git a/gcc-4.9.2.old/libstdc++-v3/src/Makefile.in b/gcc-4.9.2/libstdc++-v3/src/Makefile.in
+index cd3943b..fdf6ba9 100644
+--- a/gcc-4.9.2.old/libstdc++-v3/src/Makefile.in
++++ b/gcc-4.9.2/libstdc++-v3/src/Makefile.in
+@@ -375,7 +375,7 @@ libstdc___la_DEPENDENCIES = \
+ 	$(top_builddir)/src/c++11/libc++11convenience.la
+ 
+ libstdc___la_LDFLAGS = \
+-	-version-info $(libtool_VERSION) ${version_arg} -lm
++	-version-info $(libtool_VERSION) ${version_arg} -lm -Wc,-fno-lto
+ 
+ libstdc___la_LINK = $(CXXLINK) $(libstdc___la_LDFLAGS)
+ 
+diff --git a/gcc-4.9.2.old/libstdc++-v3/src/Makefile.am b/gcc-4.9.2/libstdc++-v3/src/Makefile.am
+index 6c2d228..9339912 100644
+--- a/gcc-4.9.2.old/libstdc++-v3/src/Makefile.am
++++ b/gcc-4.9.2/libstdc++-v3/src/Makefile.am
+@@ -69,7 +69,7 @@ libstdc___la_DEPENDENCIES = \
+ 	$(top_builddir)/src/c++11/libc++11convenience.la
+ 
+ libstdc___la_LDFLAGS = \
+-	-version-info $(libtool_VERSION) ${version_arg} -lm
++	-version-info $(libtool_VERSION) ${version_arg} -lm -Wc,-fno-lto
+ 
+ libstdc___la_LINK = $(CXXLINK) $(libstdc___la_LDFLAGS)
+ 

@@ -1,0 +1,28 @@
+$(libgcc-s-objects) and libgcc.a contain definitions for some of the same functions
+
+This breaks thins with LTO for MinGW:
+/var/tmp/portage/cross-i686-w64-mingw32/gcc-4.9.2/work/gcc-4.9.2/libgcc/libgcc2.c:2008:1: error: ‘__divtc3’ has already been defined
+ CONCAT3(__div,MODE,3) (MTYPE a, MTYPE b, MTYPE c, MTYPE d)
+ ^
+/var/tmp/portage/cross-i686-w64-mingw32/gcc-4.9.2/work/gcc-4.9.2/libgcc/libgcc2.c:2008:1: note: previously defined here
+
+--- gcc-4.9.2/libgcc/Makefile.in.old	2015-03-14 17:35:31.657620690 +0100
++++ gcc-4.9.2/libgcc/Makefile.in	2015-03-14 17:37:26.114626706 +0100
+@@ -944,7 +944,7 @@
+ 	sed -e 's/__PFX__/$(LIBGCC_VER_GNU_PREFIX)/g' \
+ 	    -e 's/__FIXPTPFX__/$(LIBGCC_VER_FIXEDPOINT_GNU_PREFIX)/g' < $< > $@
+ 
+-libgcc_s$(SHLIB_EXT): $(libgcc-s-objects) $(extra-parts) libgcc.a
++libgcc_s$(SHLIB_EXT): $(libgcc-s-objects) $(extra-parts) $(filter-out $(patsubst %_s$(objext),%$(objext),$(libgcc-s-objects)),$(libgcc-objects))
+ 	# @multilib_flags@ is still needed because this may use
+ 	# $(GCC_FOR_TARGET) and $(LIBGCC2_CFLAGS) directly.
+ 	# @multilib_dir@ is not really necessary, but sometimes it has
+@@ -952,7 +952,7 @@
+ 	$(mkinstalldirs) $(MULTIDIR)
+ 	$(subst @multilib_flags@,$(CFLAGS) -B./,$(subst \
+ 		@multilib_dir@,$(MULTIDIR),$(subst \
+-		@shlib_objs@,$(objects) libgcc.a,$(subst \
++		@shlib_objs@,$(objects),$(subst \
+ 		@shlib_base_name@,libgcc_s,$(subst \
+ 		@shlib_map_file@,$(mapfile),$(subst \
+ 		@shlib_slibdir_qual@,$(MULTIOSSUBDIR),$(subst \
