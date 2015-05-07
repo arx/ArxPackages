@@ -1,0 +1,21 @@
+From 8846ad967f8885089f3c17c8dce46eace81c243c Mon Sep 17 00:00:00 2001
+From: alexxvk <alexxvk@yandex.ru>
+Date: Sat, 2 May 2015 17:44:06 +0600
+Subject: [PATCH] Fix mingw64 build
+
+---
+ Alc/alcConfig.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Alc/alcConfig.c b/Alc/alcConfig.c
+index acfc97b..89e33a9 100644
+--- a/Alc/alcConfig.c
++++ b/Alc/alcConfig.c
+@@ -33,6 +33,7 @@
+ #include <ctype.h>
+ #include <string.h>
+ #ifdef _WIN32_IE
++#include <windows.h>
+ #include <shlobj.h>
+ #endif
+ 
