@@ -7,4 +7,4 @@ if [ -f "$readme" ] ; then
 fi
 
 # Add carriage returns in text files because Windows is a typewriter OS
-find "$PWD" -type f -name '*.txt' -exec unix2dos {} \;
+find "$outdir" -type f -name '*.txt' -exec unix2dos --keepdate {} \; 2>&1
