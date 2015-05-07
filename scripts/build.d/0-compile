@@ -161,7 +161,7 @@ build() {
 	
 	# Get licenses for dependencies
 	local license_outdir="${outdir}/license"
-	for dependency in $(sort < "$depsdir"/* | uniq) ; do
+	for dependency in $(cat "$depsdir"/* | sort | uniq) ; do
 		
 		# Ignore dependencies from the build dir
 		[[ "$dependency" == "$builddir"/* ]] && continue
