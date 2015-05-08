@@ -1,0 +1,21 @@
+ISO C99 requires long double functions
+
+GCC will not define *any* C++11 prototypes in <cmath> if these are missing.
+
+--- a/lib/msun/src/math.h
+--- a/lib/msun/src/math.h
+@@ -449,7 +449,6 @@ __END_DECLS
+ /* separate header for cmath */
+ #ifndef _MATH_EXTRA_H_
+ #if __ISO_C_VISIBLE >= 1999
+-#if _DECLARE_C99_LDBL_MATH
+ 
+ #define _MATH_EXTRA_H_
+ 
+@@ -478,6 +477,5 @@ long double	tgammal(long double);
+ 
+ __END_DECLS
+ 
+-#endif /* !_DECLARE_C99_LDBL_MATH */
+ #endif /* __ISO_C_VISIBLE >= 1999 */
+ #endif /* !_MATH_EXTRA_H_ */

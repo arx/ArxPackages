@@ -1,0 +1,74 @@
+ISO C99 requires long double functions, glibc should provide redirects for
+__NO_LONG_DOUBLE_MATH case for them.
+
+GCC will not define *any* C++11 prototypes in <cmath> if these are missing.
+
+From: https://www.sourceware.org/ml/libc-hacker/2009-04/msg00004.html
+
+2009-04-23  Jakub Jelinek  <jakub@redhat.com>
+
+	* math/math.h: Provide *l long double prototypes redirecting
+	to double functions even when __NO_LONG_DOUBLE_MATH and not
+	__LDBL_COMPAT.
+	* math/complex.h: Likewise.
+
+--- libc/math/math.h.jj	2006-02-03 20:15:48.000000000 +0100
++++ libc/math/math.h	2009-04-23 23:45:04.000000000 +0200
+@@ -98,7 +98,9 @@ __BEGIN_DECLS
+ # undef	__MATH_PRECNAME
+ 
+ # if (__STDC__ - 0 || __GNUC__ - 0) \
+-     && (!defined __NO_LONG_DOUBLE_MATH || defined __LDBL_COMPAT)
++     && (!defined __NO_LONG_DOUBLE_MATH \
++	 || defined __LDBL_COMPAT \
++	 || !defined _LIBC)
+ #  ifdef __LDBL_COMPAT
+ 
+ #   ifdef __USE_ISOC99 
+@@ -115,9 +117,9 @@ extern long double __REDIRECT_NTH (nextt
+ 				   nextafter) __attribute__ ((__const__));
+ #    endif
+ #   endif
++#  endif
+ 
+-/* Include the file of declarations again, this time using `long double'
+-   instead of `double' and appending l to each function name.  */
++#  if defined __LDBL_COMPAT || defined __NO_LONG_DOUBLE_MATH
+ 
+ #   undef __MATHDECL_1
+ #   define __MATHDECL_2(type, function,suffix, args, alias) \
+@@ -127,6 +129,8 @@ extern long double __REDIRECT_NTH (nextt
+   __MATHDECL_2(type, function,suffix, args, __CONCAT(function,suffix))
+ #  endif
+ 
++/* Include the file of declarations again, this time using `long double'
++   instead of `double' and appending l to each function name.  */
+ #  ifndef _Mlong_double_
+ #   define _Mlong_double_	long double
+ #  endif
+@@ -140,8 +144,8 @@ extern long double __REDIRECT_NTH (nextt
+ #  define _Mdouble_END_NAMESPACE   __END_NAMESPACE_C99
+ #  include <bits/mathcalls.h>
+ #  undef _Mdouble_
+-# undef _Mdouble_BEGIN_NAMESPACE
+-# undef _Mdouble_END_NAMESPACE
++#  undef _Mdouble_BEGIN_NAMESPACE
++#  undef _Mdouble_END_NAMESPACE
+ #  undef __MATH_PRECNAME
+ 
+ # endif /* __STDC__ || __GNUC__ */
+--- libc/math/complex.h.jj	2006-05-15 16:41:04.000000000 +0200
++++ libc/math/complex.h	2009-04-23 23:46:28.000000000 +0200
+@@ -85,8 +85,10 @@ __BEGIN_DECLS
+ /* And the long double versions.  It is non-critical to define them
+    here unconditionally since `long double' is required in ISO C99.  */
+ #if (__STDC__ - 0 || __GNUC__ - 0) \
+-    && (!defined __NO_LONG_DOUBLE_MATH || defined __LDBL_COMPAT)
+-# ifdef __LDBL_COMPAT
++    && (!defined __NO_LONG_DOUBLE_MATH \
++        || defined __LDBL_COMPAT \
++        || !defined _LIBC)
++# if defined __LDBL_COMPAT || defined __NO_LONG_DOUBLE_MATH
+ #  undef __MATHDECL_1
+ #  define __MATHDECL_1(type, function, args) \
+   extern type __REDIRECT_NTH(__MATH_PRECNAME(function), args, function)
