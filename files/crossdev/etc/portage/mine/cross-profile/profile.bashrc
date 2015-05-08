@@ -87,6 +87,7 @@ if [ "$PN" = "libsdl2" ] ; then
 				--enable-cpuinfo) continue ;;
 				--enable-render) continue ;;
 				--enable-atomic) continue ;;
+				--enable-power) continue ;;
 				--disable-alsa-shared) continue ;;
 				--disable-esd-shared) continue ;;
 				--disable-pulseaudio-shared) continue ;;
@@ -96,6 +97,8 @@ if [ "$PN" = "libsdl2" ] ; then
 				--disable-x11-shared) continue ;;
 				--disable-directfb-shared) continue ;;
 				--disable-fusionsound-shared) continue ;;
+				--disable-wayland-shared) continue ;;
+				--disable-mir-shared) continue ;;
 				*) args+=( "$arg" )
 			esac
 		done
@@ -105,15 +108,19 @@ if [ "$PN" = "libsdl2" ] ; then
 			--disable-cpuinfo \
 			--disable-render \
 			--disable-atomic \
+			--disable-power \
 			--enable-alsa-shared \
 			--enable-esd-shared \
 			--enable-pulseaudio-shared \
 			--enable-arts-shared \
 			--enable-nas-shared \
 			--enable-sndio-shared \
+			--enable-wayland-shared \
+			--enable-mir-shared \
 			--enable-x11-shared \
 			--enable-directfb-shared \
 			--enable-fusionsound-shared
+		# --disable-filesystem breaks the build :(
 	}
 	if [[ $EBUILD_PHASE == "prepare" ]]; then
 		rename_func eautoreconf orig_eautoreconf

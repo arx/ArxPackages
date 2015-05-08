@@ -2,12 +2,12 @@ media-libs/openal alsa oss pulseaudio
 media-plugins/alsa-plugins -pulseaudio
 media-sound/pulseaudio -alsa -asyncns -caps -gdbm -glib -orc -ssl -tcpd -udev -webrtc-aec
 
-media-libs/libsdl X xinerama opengl -audio -joystick custom-cflags
-media-libs/libsdl2 X dbus opengl -threads -alsa -audio -sound -joystick -udev -haptic -tslib custom-cflags
+media-libs/libsdl X xinerama opengl -audio -sound -joystick custom-cflags -static-libs
+media-libs/libsdl2 X dbus opengl -threads -alsa -audio -sound -joystick -udev -haptic -tslib custom-cflags -static-libs
 
 media-libs/freetype -bzip2
 
-media-libs/mesa -pic shared-glapi
+media-libs/mesa -pic shared-glapi -gbm -dri3 -udev
 
 app-arch/innoextract c++0x static
 
