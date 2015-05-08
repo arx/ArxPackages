@@ -37,6 +37,7 @@ function rename_func() {
 }
 
 if [ "$PN" = "libarchive" ] ; then
+	LDFLAGS="$LDFLAGS -static-libgcc"
 	rename_func econf orig_econf
 	econf() {
 		orig_econf "$@" \
@@ -48,6 +49,7 @@ if [ "$PN" = "libarchive" ] ; then
 fi
 
 if [ "$PN" = "libsdl" ] ; then
+	LDFLAGS="$LDFLAGS -static-libgcc"
 	rename_func econf orig_econf
 	econf() {
 		local args=( )
@@ -67,6 +69,7 @@ if [ "$PN" = "libsdl" ] ; then
 fi
 
 if [ "$PN" = "libsdl2" ] ; then
+	LDFLAGS="$LDFLAGS -static-libgcc"
 	rename_func econf orig_econf
 	econf() {
 		local args=( )
@@ -144,5 +147,20 @@ if [ "$PN" = "freetype" ] ; then
 fi
 
 if [ "$PN" = "openal" ] ; then
+	LDFLAGS="$LDFLAGS -static-libgcc"
+fi
+
+if [ "$PN" = "libX11" ] || [ "$PN" = "libXext" ] || [ "$PN" = "libXxf86vm" ] ; then
+	LDFLAGS="$LDFLAGS -static-libgcc"
+	rename_func econf orig_econf
+	econf() {
+		echo Hi!
+		orig_econf "$@" \
+			--enable-malloc0returnsnull
+	}
+fi
+
+if [ "$PN" = "mesa" ] || [ "$PN" = "expat" ] || [ "$PN" = "libXdamage" ] || [ "$PN" = "libXfixes" ] || [ "$PN" = "libxcb" ] || [ "$PN" = "libdrm" ] ; then
+	libexpat_LDFLAGS="$LDFLAGS -Wc,-static-libgcc"
 	LDFLAGS="$LDFLAGS -static-libgcc"
 fi
