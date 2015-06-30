@@ -27,6 +27,7 @@ sign_key='28555A66D7E1DEC9' # daniel@constexpr.org
 # Additional options to pass to CMake
 cmake_options+=(
 	-DUSE_STATIC_LIBS=1
+	-DUSE_DYNAMIC_UTIMENSAT=1
 )
 
 ################################################################################
