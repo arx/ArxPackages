@@ -7,7 +7,7 @@ media-libs/libsdl2 X dbus opengl -threads -alsa -audio -sound -joystick -udev -h
 
 media-libs/freetype -bzip2
 
-media-libs/mesa -pic shared-glapi -gbm -dri3 -udev
+media-libs/mesa -pic shared-glapi -gbm -dri3 -udev egl gles1 gles2
 
 app-arch/innoextract c++0x static
 
