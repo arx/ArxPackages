@@ -15,7 +15,11 @@ EDITOR='kwrite'
 # Build configuration
 
 # C / C++ compiler flags
-_compiler_flags=( -flto )
+_compiler_flags=(
+	-flto
+	-fdata-sections
+	-ffunction-sections
+)
 c_flags+=( "${_compiler_flags[@]}" )
 cxx_flags+=( "${_compiler_flags[@]}" )
 
@@ -24,8 +28,8 @@ _linker_flags=(
 	
 	# Enable link-time optimizations
 	"${c_flags[@]}"
-	-flto
 	-fuse-linker-plugin
+	-Wl,--gc-sections
 	
 )
 shared_linker_flags+=( "${_linker_flags[@]}" )
