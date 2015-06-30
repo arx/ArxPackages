@@ -152,6 +152,14 @@ if [ "$PN" = "freetype" ] ; then
 	}
 fi
 
+if [ "$PN" = "libepoxy" ] ; then
+	rename_func econf orig_econf
+	econf() {
+		orig_econf "$@" \
+			--enable-static
+	}
+fi
+
 if [ "$PN" = "openal" ] ; then
 	LDFLAGS="$LDFLAGS -static-libgcc"
 fi
