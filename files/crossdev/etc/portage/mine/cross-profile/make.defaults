@@ -1,9 +1,9 @@
 USE="zlib bindist make-symlinks minimal static-libs \
      -nls -classic -egl -gallium -llvm -shared-glapi -X -pulseaudio -ipv6 -uuid"
 
-CFLAGS="-O2 -pipe -fomit-frame-pointer -flto -ffat-lto-objects"
+CFLAGS="-O2 -pipe -fomit-frame-pointer -flto -ffat-lto-objects -ffunction-sections -fdata-sections"
 CXXFLAGS="${CFLAGS}"
-LDFLAGS="${LDFLAGS} -O2 -flto -fuse-linker-plugin -Wl,-O1 -Wl,--as-needed"
+LDFLAGS="${LDFLAGS} -O2 -flto -fuse-linker-plugin -Wl,-O1 -Wl,--as-needed -ffunction-sections -fdata-sections -Wl,--gc-sections"
 
 FEATURES="-collision-protect sandbox noman noinfo nodoc"
 
