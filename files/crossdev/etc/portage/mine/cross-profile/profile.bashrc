@@ -69,7 +69,6 @@ if [ "$PN" = "libsdl" ] ; then
 fi
 
 if [ "$PN" = "libsdl2" ] ; then
-	LDFLAGS="$LDFLAGS -static-libgcc"
 	rename_func econf orig_econf
 	econf() {
 		local args=( )
@@ -102,7 +101,7 @@ if [ "$PN" = "libsdl2" ] ; then
 				*) args+=( "$arg" )
 			esac
 		done
-		CFLAGS="$CFLAGS -std=gnu99" orig_econf "${args[@]}" \
+		LDFLAGS="$LDFLAGS -static-libgcc" CFLAGS="$CFLAGS -std=gnu99" orig_econf "${args[@]}" \
 			--disable-timers \
 			--disable-file \
 			--disable-cpuinfo \
@@ -168,6 +167,5 @@ if [ "$PN" = "libX11" ] || [ "$PN" = "libXext" ] || [ "$PN" = "libXxf86vm" ] ; t
 fi
 
 if [ "$PN" = "mesa" ] || [ "$PN" = "expat" ] || [ "$PN" = "libXdamage" ] || [ "$PN" = "libXfixes" ] || [ "$PN" = "libxcb" ] || [ "$PN" = "libdrm" ] ; then
-	libexpat_LDFLAGS="$LDFLAGS -Wc,-static-libgcc"
 	LDFLAGS="$LDFLAGS -static-libgcc"
 fi
