@@ -34,6 +34,7 @@ cmake_options+=(
 	-DUNITY_BUILD=1
 	-DUSE_STATIC_LIBS=1
 	-DBUILD_CRASHREPORTER=0 # it's a bit wasteful to include Qt just for the crash reporter
+	-DBUILD_PROFILER=0
 	-DSCRIPTDIR='bin'
 	-DAPPDIR='.'
 	-DICONDIR='.'
