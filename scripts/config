@@ -379,6 +379,7 @@ declare -A licenses=(
 	['/usr/include/std*.h']=''
 	['/usr/include/win*.h']=''
 	['/usr/lib/opengl/xorg-x11/lib/libGL.so*']=''
+	['/usr/lib/libGL.so*']=''
 	['/usr/lib/libX11.so*']=''
 	# Windows
 	['advapi32.lib']=''

@@ -165,7 +165,7 @@ licenses+=(
 	['*/Code/SDL2/*']='SDL2'
 	
 	['/usr/include/freetype*']='FreeType'
-	['/usr/lib/libfreetype.so*']='FreeType'
+	['/usr/lib/libfreetype.*']='FreeType'
 	['/usr/include/ft2build.h']='FreeType'
 	['*/Code/FreeType-*']='FreeType'
 	['*/Code/FreeType/*']='FreeType'
