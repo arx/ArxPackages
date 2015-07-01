@@ -210,17 +210,22 @@ system_libraries=(
 	'libutil.so*'
 	
 	# Windows
-	'kernel32.dll'
-	'msvc*.dll'
-	'user32.dll'
+	'advapi32.dll'
+	'comctl32.dll'
+	'comdlg32.dll'
 	'gdi32.dll'
-	'winspool.dll'
-	'shell32.dll'
+	'imm32.dll'
+	'kernel32.dll'
+	'msvcrt.dll'
 	'ole32.dll'
 	'oleaut32.dll'
+	'opengl32.dll'
+	'shell32.dll'
+	'user32.dll'
 	'uuid.dll'
-	'comdlg32.dll'
-	'advapi32.dll'
+	'version.dll'
+	'winmm.dll'
+	'winspool.dll'
 	
 	# FreeBSD
 	'libthr.so*'
@@ -257,6 +262,14 @@ forbidden_libraries=(
 	# X11 - don't link directly, use dlopen
 	'libX11.so*'
 	'libxcb.so*'
+	
+	# Non-redistributable debug libraries
+	'msvcm*d.dll'
+	'msvcp*d.dll'
+	'msvcr*d.dll'
+	'vccorlib*d.dll'
+	'vcamp*d.dll'
+	'vcomp*d.dll'
 	
 )
 
@@ -359,6 +372,23 @@ declare -A licenses=(
 	['/usr/include/win*.h']=''
 	['/usr/lib/opengl/xorg-x11/lib/libGL.so*']=''
 	['/usr/lib/libX11.so*']=''
+	# Windows
+	['advapi32.lib']=''
+	['comctl32.lib']=''
+	['comdlg32.lib']=''
+	['gdi32.lib']=''
+	['imm32.lib']=''
+	['kernel32.lib']=''
+	['msvcrt.lib']=''
+	['ole32.lib']=''
+	['oleaut32.lib']=''
+	['opengl32.lib']=''
+	['shell32.lib']=''
+	['user32.lib']=''
+	['uuid.lib']=''
+	['version.lib']=''
+	['winmm.lib']=''
+	['winspool.lib']=''
 	
 )
 
