@@ -152,6 +152,15 @@ unix_linker_flags=(
 	-Wl,--build-id
 	
 )
+unix_shared_linker_flags=(
+	
+	"${unix_linker_flags[@]}"
+	
+	# LTO + statically linking libstdc++ ends up with lots of exported symbols
+	-Wl,--version-script="${scriptdir}/hidden.version"
+	
+)
+unix_exe_linker_flags=( "${unix_linker_flags[@]}" )
 
 # List of architectures to build binaries for
 declare -a architectures

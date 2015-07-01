@@ -1,0 +1,4 @@
+{
+  global: __bss_start; _edata; _fini; _init; _end;
+  local: _*; # hide all C++ symbols
+};

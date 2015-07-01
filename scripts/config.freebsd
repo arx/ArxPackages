@@ -7,5 +7,5 @@ readme_transforms+=(
 
 has_elf_rpath=1
 
-shared_linker_flags+=( "${unix_linker_flags[@]:+${unix_linker_flags[@]}}" )
-exe_linker_flags+=( "${unix_linker_flags[@]:+${unix_linker_flags[@]}}" )
+shared_linker_flags+=( "${unix_shared_linker_flags[@]:+${unix_shared_linker_flags[@]}}" )
+exe_linker_flags+=( "${unix_exe_linker_flags[@]:+${unix_exe_linker_flags[@]}}" )
