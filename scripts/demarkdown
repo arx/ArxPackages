@@ -343,6 +343,8 @@ prepended and/or appended.
 		
 		if [ "$mode" == 'discard' ] && [ "$prefix" = '*' ] && [ -z "$line" ] ; then
 			mode='normal'
+			title="$section_title"
+			prefix="$section_prefix"
 			continue
 		fi
 		
