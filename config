@@ -114,39 +114,61 @@ licenses+=(
 	
 	['/usr/include/boost/*']='Boost'
 	['/usr/lib/libboost_*']='Boost'
+	['*/Code/Boost-*']='Boost'
+	['*/Code/Boost/*']='Boost'
 	
 	['/usr/include/glm/*']='GLM'
+	['*/Code/GLM-*']='GLM'
+	['*/Code/GLM/*']='GLM'
 	
 	['/usr/include/zconf.h']='zlib'
 	['/usr/include/zlib*']='zlib'
 	['/usr/lib/libz.*']='zlib'
+	['*/Code/zlib-*']='zlib'
+	['*/Code/zlib/*']='zlib'
 	
 	['/usr/lib/libbz2.*']='libbz2'
+	['*/Code/bzip2-*']='libbz2'
+	['*/Code/bzip2/*']='libbz2'
 	
 	['/usr/include/lzma.h']='liblzma'
 	['/usr/include/lzma/*']='liblzma'
 	['/usr/lib/liblzma.*']='liblzma'
+	['*/Code/liblzma-*']='liblzma'
+	['*/Code/liblzma/*']='liblzma'
 	
 	['/usr/include/iconv.h']='' # may come from glibc
 	['/usr/lib/libiconv.*']='libiconv'
+	['*/Code/libiconv-*']='libiconv'
+	['*/Code/libiconv/*']='libiconv'
 	
 	['/usr/include/AL/*']='OpenAL_Soft'
 	['/usr/lib/libopenal.*']='OpenAL_Soft'
+	['*/Code/OpenAL-Soft-*']='OpenAL_Soft'
+	['*/Code/OpenAL-Soft/*']='OpenAL_Soft'
 	
 	['/usr/include/GL/*']='' #interface only, no implementation
 	['/usr/lib/libGLEW*']='GLEW'
+	['*/Code/GLEW-*']='GLEW'
+	['*/Code/GLEW/*']='GLEW'
 	
 	['/usr/include/SDL/*']='SDL'
 	['/usr/lib/libSDL.so*']='SDL'
 	['/usr/lib/libSDL-1.2.so*']='SDL'
+	['*/Code/SDL-*']='SDL'
+	['*/Code/SDL/*']='SDL'
 	
 	['/usr/include/SDL2/*']='SDL2'
 	['/usr/lib/libSDL2.so*']='SDL2'
 	['/usr/lib/libSDL2-*.so*']='SDL2'
+	['*/Code/SDL2-*']='SDL2'
+	['*/Code/SDL2/*']='SDL2'
 	
 	['/usr/include/freetype*']='FreeType'
 	['/usr/lib/libfreetype.so*']='FreeType'
 	['/usr/include/ft2build.h']='FreeType'
+	['*/Code/FreeType-*']='FreeType'
+	['*/Code/FreeType/*']='FreeType'
 	
 	['/usr/bin/bsdtar']='libarchive'
 	
