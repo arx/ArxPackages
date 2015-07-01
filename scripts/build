@@ -27,8 +27,10 @@ popd
 
 # Set output directories
 get_output _out _outdir
+get_output _debug _debugdir "$version" "$pkgtype-debug"
 buildroot="${PWD}"
 outdir="${PWD}/${_outdir}"
+debugdir="${PWD}/${_debugdir}"
 bindir="${outdir}/bin"
 mandir="${outdir}/doc"
 readme="${outdir}/README${text_suffix}"
@@ -45,6 +47,7 @@ done
 
 # Create the binary tarball
 echo "  ${white}:: creating archive${reset}" >&2
+make_archive "${_debug}" "${_debugdir}"
 make_archive "${_out}" "${_outdir}"
 
 echo >&2

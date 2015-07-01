@@ -19,6 +19,9 @@ for f in "${project}"-* ; do
 	# Ignore existing signatures
 	[[ "$f" == *.sig ]] && continue
 	
+	# Ignore debug symbols
+	[[ "$f" == *-debug.* ]] && continue
+	
 	if [ ! -z "${sign_key-}" ] && [ "$f" -nt "${f}.sig" ] ; then
 		# Sign the created archive
 		e gpg --local-user "0x$sign_key" --detach-sign --no-tty "$f"

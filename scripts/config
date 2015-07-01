@@ -59,6 +59,9 @@ declare -A archives=(
 	['linux-build']='-linux.tar.xz'
 	['windows-build']='-windows.zip'
 	['freebsd-build']='-freebsd.tar.xz'
+	['linux-debug-build']='-linux-debug.tar.xz'
+	['windows-debug-build']='-windows-debug.tar.xz'
+	['freebsd-debug-build']='-freebsd-debug.tar.xz'
 	['deb-prepare']='-source.deb'
 )
 
@@ -97,7 +100,7 @@ c_flags=(
 	
 	# Disable debug information
 	-DNDEBUG
-	-g0
+	-g2
 	
 	# Enable optimization
 	-O3

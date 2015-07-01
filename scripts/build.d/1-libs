@@ -2,7 +2,55 @@
 
 ## Get required libraries and generate dependency info
 
-echo "  ${white}:: getting dependencies${reset}" >&2
+echo "  ${white}:: collecting dependencies${reset}" >&2
+
+
+extract_debug_symbols() {
+	local arch="$1"
+	
+	local builddir="${buildroot}/build-${arch}"
+	local bindir="${bindir}/${arch}"
+	local debugdir="${debugdir}/${arch}"
+	
+	e mkdir -p "$debugdir"
+	
+	local target="${targets["${pkgtype}-${arch}"]:-}"
+	local toolchain="${toolchains["${pkgtype}-${arch}"]:-}"
+	
+	for binary in "${bindir}"/* "${bindir}"/libexec/* ; do
+		[ -f "$binary" ] || continue
+		[[ "$binary" == *.h ]] && continue
+		[ -L "${binary}" ] && continue
+		
+		local name="${binary##*/}"
+		
+		if [ ! -z "$target" ] ; then
+			local debugname="$name.debug"
+			pushd "${binary%/*}"
+				e "$target"-objcopy --only-keep-debug "$binary" "${debugname}"
+				e "$target"-strip "$binary"
+				e "$target"-objcopy --add-gnu-debuglink="${debugname}" "$binary"
+				e mv "${debugname}" "${debugdir}/${debugname}"
+			popd
+		else
+			local debugname="${name%.*}.pdb"
+			local candidate="$(
+				find "$builddir" -mindepth 1 -type f -iname "$debugname" || true
+			)"
+			if [ -f "$candidate" ] ; then
+				e cp "$candidate" "${debugdir}/${debugname}"
+			elif [[ ! "$name" == *.exe ]] ; then
+				continue
+			fi
+		fi
+		
+		[ -f "${debugdir}/${debugname}" ] \
+			|| die "missing debug symbols for ${arch} ${name} (${debugname})"
+		
+	done
+	
+}
+
 
 has_library() {
 	local bindir="$1"
@@ -317,6 +365,12 @@ check_dependencies() {
 	[ "$requirements" = '' ] || echo "${arch}: ${requirements}" >> "$requirements_file"
 	
 }
+
+
+# Get required libraries for all architectures
+for architecture in "${architectures[@]}" ; do
+	e extract_debug_symbols "$architecture"
+done
 
 
 # Copy binaries from other projects
