@@ -1,5 +1,15 @@
 #!/bin/bash
 
+compiler="@compiler@"
+root="@root@"
+depsdir="@depsdir@"
+PATH="@path@"
+
+if [ ! -d "$depsdir" ] ; then
+	exec "$compiler" "$@"
+	exit 1
+fi
+
 depsfile="$(mktemp --tmpdir="$depsdir" XXXXXXXXXX)"
 
 die() {
@@ -8,7 +18,11 @@ die() {
 }
 
 add_library_file() {
-	echo "$(readlink -m -- "$1")" >> "$depsfile"
+	if [ -f "$1" ] || [[ "$f" == /* ]]
+		then echo "$(readlink -m -- "$1")" >> "$depsfile"
+		else echo "$1" >> "$depsfile"
+	fi
+	
 }
 
 search_paths=( )
@@ -18,10 +32,12 @@ find_file() {
 	for path in "${search_paths[@]}" ; do
 		[ -f "${path}/${1}" ]       && file="${path}/${1}"         && return
 	done
-	[ -f "${root}/lib/${1}" ]     && file="${root}/lib/${1}"     && return
-	[ -f "${root}/usr/lib/${1}" ] && file="${root}/usr/lib/${1}" && return
-	[ -f "${root}/bin/${1}" ]     && file="${root}/bin/${1}"     && return
-	[ -f "${root}/usr/bin/${1}" ] && file="${root}/usr/bin/${1}" && return
+	if [ ! -z "$root" ] ; then
+		[ -f "${root}/lib/${1}" ]     && file="${root}/lib/${1}"     && return
+		[ -f "${root}/usr/lib/${1}" ] && file="${root}/usr/lib/${1}" && return
+		[ -f "${root}/bin/${1}" ]     && file="${root}/bin/${1}"     && return
+		[ -f "${root}/usr/bin/${1}" ] && file="${root}/usr/bin/${1}" && return
+	fi
 }
 
 add_library() {
@@ -45,6 +61,11 @@ add_library() {
 	add_library_file "$file"
 }
 
+if [ "${compiler##*/}" = 'cl' ] || [ "${compiler##*/}" = 'link' ]
+	then is_msvc=1
+	else is_msvc=0
+fi
+
 # Parse and filter compiler parameters
 is_search_path=0
 is_library=0
@@ -62,11 +83,15 @@ for arg in "$@" ; do
 		-L*)                  search_paths+=( "${arg#-L}" )                ;;
 		--library-path=*)     search_paths+=( "${arg#--library-path=}" )   ;;
 		
+		/implib:*)                                                         ;;
+		/out:*)                                                            ;;
+		
 		# add library dependency
 		-l|--library)         is_library=1                                 ;;
 		-l*)                  add_library      "${arg#-l}"         "$mode" ;;
 		--library=*)          add_library      "${arg#--library=}" "$mode" ;;
 		-Wl,--out-implib,*)   true                                         ;; # not a lib!
+		-Wl,-soname,*)        true                                         ;; # not a lib!
 		*.a|*.so|*.dll|*.lib) add_library_file "$arg"                      ;;
 		
 		# track static/dynamic library modes
@@ -79,23 +104,29 @@ for arg in "$@" ; do
 		# filter flags
 		-rdynamic)            continue                                     ;;
 		
+		-I*)              [ $is_msvc = 1 ] && add_library_file "${arg#-I}" ;;
+		
 	esac
 	
 	args+=( "$arg" )
 done
 
 # Collect used include files
-localdepsfile="$(mktemp)"
-args+=(
-	-MD -MF "$localdepsfile"
-)
+if [ $is_msvc = 0 ] ; then
+	localdepsfile="$(mktemp)"
+	args+=(
+		-MD -MF "$localdepsfile"
+	)
+fi
 
 "$compiler" "${args[@]}"
 status=$?
 
 # Save used include files as dependencies
-head -n1  "$localdepsfile" | sed "s/^.*: *//;s/ *\\\\\$//;s/ \$//" >> "$depsfile"
-tail -n+2 "$localdepsfile" | sed "s/^ *//;s/ *\\\\\$//"            >> "$depsfile"
-rm "$localdepsfile"
+if [ $is_msvc = 0 ] ; then
+	head -n1  "$localdepsfile" | sed "s/^.*: *//;s/ *\\\\\$//;s/ \$//" >> "$depsfile"
+	tail -n+2 "$localdepsfile" | sed "s/^ *//;s/ *\\\\\$//"            >> "$depsfile"
+	rm "$localdepsfile"
+fi
 
 exit $status

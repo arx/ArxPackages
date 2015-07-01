@@ -3,6 +3,8 @@
 red="$(printf '\033[1;31m')"
 white="$(printf '\033[1;37m')"
 reset="$(printf '\033[0m')"
+true=0
+false=1
 
 set -e
 set -u

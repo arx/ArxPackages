@@ -4,20 +4,38 @@
 
 echo "  ${white}:: getting dependencies${reset}" >&2
 
+has_library() {
+	local bindir="$1"
+	local lib="$2"
+	[ -d "$bindir" ] || return $false
+	if [ "$case_insensitive_fs" = 1 ] ; then
+		local candidate="$(
+			find "${bindir}" -mindepth 1 -maxdepth 1 -type f -iname "$lib" || true
+		)"
+		[ ! -z "$candidate" ] && [ -f "$candidate" ] && return $true
+		if [ -d "${bindir}/libexec" ] ; then
+			local candidate="$(
+				find "${bindir}/libexec" -mindepth 1 -maxdepth 1 -type f -iname "$lib" || true
+			)"
+			[ ! -z "$candidate" ] && [ -f "$candidate" ] && return $true
+		fi
+	else
+		[ -f "${bindir}/${lib}" ] && return $true
+		[ -f "${bindir}/libexec/${lib}" ] && return $true
+	fi
+	return $false
+}
 
 do_copy_binary() {
 	local f="$1"
-	local target="$2"
+	local dest="$2"
 	
 	# Prefer our own binaries/libs
-	[ -e "${bindir}/${f}" ] && return
-	[ -e "${target}/${f}" ] && return
-	[ -e "${bindir}/libexec/${f}" ] && return
-	[ -e "${target}/libexec/${f}" ] && return
+	has_library "$bindir" "$f" && return
+	has_library "$dest" "$f" && return
 	
-	e mkdir -p "${target}/libexec"
-	e cp -a "${binary}" "${target}/libexec/"
-	
+	e mkdir -p "${dest}/libexec"
+	e cp -a "$f" "${dest}/libexec/"
 }
 
 do_inherit_project() {
@@ -71,21 +89,18 @@ do_inherit_project() {
 	
 }
 
-
-# find_libraries <target> <bindir> <binary>
+# find_libraries <bindir> <binary>
 find_libraries() {
 	
-	local target="$1"
-	local root="${root_base}/${target}"
-	local bindir="$2"
-	local binary="$3"
+	local bindir="$1"
+	local binary="$2"
 	local binname="${binary##*/}"
 	
-	[ -x "$(which "${target}-objdump")" ] || die "missing ${target}-objdump"
+	[ -x "$(which objdump)" ] || die "missing objdump"
 	
 	# Get all libraries required by the binary
 	local all_libraries=(
-		$("${target}-objdump" -p "$binary" \
+		$(objdump -p "$binary" \
 			| grep -P "$objdump_lib_pattern" | sed 's/.* //' | sort | uniq)
 	)
 	echo "${binname}: all libs: ${all_libraries[*]:+${all_libraries[*]}}"
@@ -94,11 +109,12 @@ find_libraries() {
 	local libraries=( )
 	for lib in "${all_libraries[@]:+${all_libraries[@]}}" ; do
 		
-		[ "$case_insensitive_fs" = 1 ] && lib="$(echo "$lib" | tolower)"
+		llib="$lib"
+		[ "$case_insensitive_fs" = 1 ] && llib="$(echo "$lib" | tolower)"
 		
-		match_in_array "$lib" "${system_libraries[@]:+${system_libraries[@]}}" && continue
+		match_in_array "$llib" "${system_libraries[@]:+${system_libraries[@]}}" && continue
 		
-		match_in_array "$lib" "${forbidden_libraries[@]:+${forbidden_libraries[@]}}" \
+		match_in_array "$llib" "${forbidden_libraries[@]:+${forbidden_libraries[@]}}" \
 			&& die "${binname} links to blacklisted library ${lib}"
 		
 		libraries+=( "$lib" )
@@ -118,22 +134,32 @@ find_libraries() {
 	for lib in "${libraries[@]:+${libraries[@]}}" ; do
 		
 		# Don't get the library again if we already have it
-		[ -f "${bindir}/${lib}" ] && continue
-		[ -f "${bindir}/libexec/${lib}" ] && continue
+		has_library "$bindir" "$lib" && continue
 		
 		# Find the required library file
-		local name='name'
-		[ "$case_insensitive_fs" = 1 ] && name='iname'
 		local file=''
-		[ -z "$file" ] && [ -f "${root}/lib/${lib}" ] && file="${root}/lib/${lib}"
-		[ -z "$file" ] && [ -f "${root}/usr/lib/${lib}" ] && file="${root}/usr/lib/${lib}"
-		[ -z "$file" ] && [ -f "${root}/bin/${lib}" ] && file="${root}/bin/${lib}"
-		[ -z "$file" ] && [ -f "${root}/usr/bin/${lib}" ] && file="${root}/usr/bin/${lib}"
-		if [ -z "$file" ] ; then
+		for binroot in "${binroots[@]:+${binroots[@]}}" ; do
+			for suffix in "${suffixes[@]}" ; do
+				[ -d "${binroot}/${suffix}" ] || continue
+				if [ "$case_insensitive_fs" = 1 ] ; then
+					local candidate="$(
+						find "${binroot}/${suffix}" -mindepth 1 -maxdepth 1 -type f -iname "$lib" || true
+					)"
+				else
+					local candidate="${binroot}/${suffix}/${lib}"
+				fi
+				[ -z "$candidate" ] && continue
+				[ -f "$candidate" ] || continue
+				file="$candidate"
+				break
+			done
+			[ -z "$file" ] || break
+		done
+		if [ -z "$file" ] && [ -z "$toolchain" ] ; then
 			local candidate="$("${target}-g++" -print-file-name="$lib")"
 			[ -f "$candidate" ] && file="$candidate"
 		fi
-		[ -z "$file" ] && die "could not find ${lib} in ${root}"
+		[ -z "$file" ] && die "could not find ${lib} (required by ${binname})"
 		echo "${lib}: using ${file}"
 		
 		# Resolve symlinks
@@ -143,8 +169,7 @@ find_libraries() {
 			if [ ! "$targetlib" = "$lib" ] ; then
 				e ln -sT "$targetlib" "${bindir}/${lib}"
 				lib="$targetlib"
-				[ -f "${bindir}/${lib}" ] && continue
-				[ -f "${bindir}/libexec/${lib}" ] && continue
+				has_library "$bindir" "$lib" && continue
 			fi
 			[ -f "$link_target" ] || die "bad symlink: ${file} -> ${link_target}"
 			file="$link_target"
@@ -154,10 +179,10 @@ find_libraries() {
 		[[ "$(file -i "$file")" == *:\ text/* ]] && die "$file is a linker script"
 		
 		# Copy the library in our target directory
-		e cp -a "$file" "${bindir}/${lib}"
+		e cp -a "$file" "${bindir}/"
 		
 		# Recursively get the library's dependencies
-		e find_libraries "$target" "$bindir" "${bindir}/${lib}"
+		e find_libraries "$bindir" "$file"
 		
 	done
 }
@@ -165,7 +190,7 @@ find_libraries() {
 
 get_max_symbol_versions() {
 	local symvers=($(
-		"${target}-objdump" -p "$1" \
+		objdump -p "$1" \
 			| tolower \
 			| sed -n '/version references:/,$p' \
 			| tail -n+2 \
@@ -188,23 +213,51 @@ get_max_symbol_versions() {
 check_dependencies() {
 	local arch="$1"
 	
-	local target="${targets["${pkgtype}-${arch}"]}"
-	local root="${root_base}/${target}"
+	local target="${targets["${pkgtype}-${arch}"]:-}"
+	local toolchain="${toolchains["${pkgtype}-${arch}"]:-}"
+	
+	local root=''
+	[ -z "$target" ] || root="${root_base}/${target}"
 	
 	local scriptbindir="$bindir"
 	local bindir="${bindir}/${arch}"
 	
+	local builddir="${PWD}/build-${arch}"
+	local rootdir="$builddir/root"
+	
+	local binroots=( )
+	if [ -f "$rootdir/paths" ] ; then
+		while IFS= read -r binroot ; do
+			binroots+=( "$binroot" )
+		done < <(cat "$rootdir/paths" | sort -rV | uniq)
+	fi
+	[ -z "$root" ] || binroots+=( "$root" )
+	
+	local binarch="$arch"
+	[ -f "$rootdir/arch" ] && binarch="$(cat "$rootdir/arch")"
+	local suffixes=(
+		'' "$binarch"
+		"bin" "bin/$binarch" "lib" "lib/$binarch"
+		"usr/bin" "usr/bin/$binarch" "usr/lib" "usr/lib/$binarch"
+	)
+	
 	# Get required libraries
 	for binary in "${bindir}"/*  "${bindir}"/libexec/* ; do
 		[ -f "$binary" ] || continue
-		e find_libraries "$target" "$bindir" "$binary"
+		[[ "$binary" == *.lib ]] && continue
+		[[ "$binary" == *.h ]] && continue
+		e find_libraries "$bindir" "$binary"
 	done
 	
 	# Remove debugging symbols to save disk space
-	for binary in "${bindir}"/* "${bindir}"/libexec/* ; do
-		[ -f "$binary" ] || continue
-		[ -L "${binary}" ] || e "${target}-strip" "${binary}"
-	done
+	if [ ! -z "$target" ] ; then
+		for binary in "${bindir}"/* "${bindir}"/libexec/* ; do
+			[ -f "$binary" ] || continue
+			[[ "$binary" == *.lib ]] && continue
+			[[ "$binary" == *.h ]] && continue
+			[ -L "${binary}" ] || e "${target}-strip" "${binary}"
+		done
+	fi
 	
 	# Sanity check: did we build all required libraries
 	for binary in "${required_binaries[@]}" ; do
@@ -219,6 +272,8 @@ check_dependencies() {
 	declare -A required_symbol_versions
 	for binary in "${bindir}"/* "${bindir}"/libexec/* ; do
 		[ -f "$binary" ] || continue
+		[[ "$binary" == *.lib ]] && continue
+		[[ "$binary" == *.h ]] && continue
 		[ -L "${binary}" ] || e get_max_symbol_versions "${binary}"
 	done
 	

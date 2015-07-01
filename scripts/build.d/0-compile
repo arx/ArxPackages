@@ -2,56 +2,41 @@
 
 ## Compile binaries and get dependencies
 
-
-# Create a dummy gcc wrapper that just calls the base compiler.
-# This is used during the configure step as we are not interested in config dependencies.
-generate_dummy_toolchain_wrapper() {
-	local file="$1"
-	local compiler="$2"
-	echo "#!/bin/bash
-$(escape_args "$compiler") \"\$@\"" > "$file"
-	chmod +x "$file"
-}
-
-# Create a gcc wrapper that records which includes and libraries are used.
-#
-# It also filters the -rdynamic flag as CMake always sneakily adds it to the linker flags
-# for Linux builds - but it's not needed if we don't use dlopen and makes the builds
-# less portable.
-# Manually add -Wl,--export-dynamic to the default CMake behaviour of it's really needed.
-generate_toolchain_wrapper() {
-	local file="$1"
-	local compiler="$2"
-	local root="$3"
-	local depsdir="$4"
-	
-	echo "#!/bin/bash
-compiler=$(escape_args "$compiler")
-root=$(escape_args "$root")
-depsdir=$(escape_args "$depsdir")
-" > "$file"
-	
-	tail -n+2 "${scriptdir}/compiler-wrapper" >> "$file"
-	
-	chmod +x "$file"
-}
-
-# Generate a CMake toolchain file
+# Generate a CMake toolchain file (wrapper)
 generate_toolchain_file() {
 	local file="$1"
 	local target="$2"
 	local root="$3"
 	local system="$4"
+	local toolchain="$5"
+	local depsdir="$6"
+	local compilerdir="$7"
+	local rootdir="$8"
 	
+	echo -n '' > $file
+	
+	if [ -z "$toolchain" ] ; then
 	echo "
-
 # name of the target operating system
-set(CMAKE_SYSTEM_NAME ${system})
-
+set(CMAKE_SYSTEM_NAME ${system})" >> "$file"
+	fi
+	
+	if [ ! -z "$target" ] ; then
+		echo "
 # compilers to use for C and C++
-set(CMAKE_C_COMPILER \"${PWD}/gcc\")
-set(CMAKE_CXX_COMPILER \"${PWD}/g++\")
-
+set(CMAKE_C_COMPILER \"${target}-gcc\")
+set(CMAKE_CXX_COMPILER \"${target}-g++\")" >> "$file"
+		type "${target}-windres" &>/dev/null \
+			&& echo "set(CMAKE_RC_COMPILER \"${target}-windres\")" >> "$file" || true
+	fi
+	
+	if [ ! -z "$toolchain" ] ; then
+		echo "
+include(\"${toolchain_files["$toolchain"]}\")" >> "$file"
+	fi
+	
+	if [ ! -z "$root" ] ; then
+		echo "
 # location of the target environment
 set(CMAKE_FIND_ROOT_PATH \"${root}\")
 # Also tell pkg-config because CMake doesn't
@@ -65,48 +50,54 @@ set(ENV{PKG_CONFIG_SYSROOT_DIR} \"${root}\")
 # programs in the host environment
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
-set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
-
-" > "$file"
-	type "${target}-windres" &>/dev/null && echo "
-
-set(CMAKE_RC_COMPILER \"${target}-windres\")
-
-" >> "$file" || true
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)" >> "$file"
+	fi
+	
+	echo "
+set(depsdir \"$depsdir\")
+set(compilerdir \"$compilerdir\")
+set(rootdir \"$rootdir\")
+include(\"${scriptdir}/toolchain-wrapper.cmake\")" >> "$file"
 	
 }
-
 
 build() {
 	local arch="$1"
 	
-	local osarch="${pkgtype/-/_}_${arch/-/_}"
+	local osarch="${pkgtype//-/_}_${arch//-/_}"
 	
-	local target="${targets["${pkgtype}-${arch}"]}"
-	local root="${root_base}/${target}"
+	local target="${targets["${pkgtype}-${arch}"]:-}"
+	local toolchain="${toolchains["${pkgtype}-${arch}"]:-}"
+	
+	local root=''
+	[ -z "$target" ] || root="${root_base}/${target}"
 	
 	local bindir="${bindir}/${arch}"
 	
 	echo "  ${white}:: building for ${arch}${reset}" >&2
-	echo "target=${target} root=${root} bindir=${bindir}"
+	echo "target=${target:-} toolchain=${toolchain:-} root=${root:-} bindir=${bindir:-}"
 	
 	local builddir="${PWD}/build-${arch}"
 	e mkdir "$builddir"
 	pushd "$builddir"
 		
 		local depsdir="$builddir/deps"
-		mkdir -p "$depsdir"
+		[ -d "$depsdir" ] && rmdir -r "$depsdir"
 		
-		e generate_dummy_toolchain_wrapper 'gcc' "${target}-gcc"
-		e generate_dummy_toolchain_wrapper 'g++' "${target}-g++"
+		local rootdir="$builddir/root"
+		mkdir -p "$rootdir"
 		
-		e generate_toolchain_file 'toolchain.cmake' "$target" "$root" "$cmake_platform"
+		local compilerdir="$builddir/compiler"
+		mkdir -p "$compilerdir"
+		toolchain_file="$builddir/toolchain.cmake"
+		e generate_toolchain_file "$toolchain_file" \
+			"$target" "$root" "$cmake_platform" "$toolchain" "$depsdir" "$compilerdir" "$rootdir"
 		
 		# Set CMake options
 		local options=(
 			
 			--no-warn-unused-cli
-			-DCMAKE_TOOLCHAIN_FILE="toolchain.cmake"
+			-DCMAKE_TOOLCHAIN_FILE="$toolchain_file"
 			-DCMAKE_BUILD_TYPE=Release
 			
 			-DCMAKE_INSTALL_PREFIX="${outdir}"
@@ -115,6 +106,7 @@ build() {
 			-DCMAKE_INSTALL_BINDIR="${bindir}"
 			-DCMAKE_INSTALL_LIBDIR="${bindir}"
 			-DCMAKE_INSTALL_LIBEXECDIR="${bindir}/libexec"
+			-DCMAKE_INSTALL_INCLUDEDIR="${bindir}/libexec"
 			
 			"${cmake_options[@]:+${cmake_options[@]}}"
 			
@@ -125,11 +117,22 @@ build() {
 		add_cmake_option() {
 			local cmake_flag="$1"
 			local name="$2"
-			local escaped_flags="$(
-				eval escape_args \
-					"\"\${${name}[@]:+\${${name}[@]}}\"" \
-					"\"\${${name}_${osarch}[@]:+\${${name}_${osarch}[@]}}\""
-			)"
+			if [ -z "$toolchain" ] ; then
+				local escaped_flags="$(
+					eval escape_args \
+						"\"\${${name}[@]:+\${${name}[@]}}\"" \
+						"\"\${${name}_${osarch}[@]:+\${${name}_${osarch}[@]}}\""
+				)"
+			else
+				local tcshort="${toolchain%%-*}"
+				local tclong="${toolchain//-/_}"
+				local escaped_flags="$(
+					eval escape_args \
+						"\"\${${name}_${tcshort}[@]:+\${${name}_${tcshort}[@]}}\"" \
+						"\"\${${name}_${osarch}[@]:+\${${name}_${osarch}[@]}}\"" \
+						"\"\${${name}_${tclong}[@]:+\${${name}_${tclong}[@]}}\""
+				)"
+			fi
 			options+=( "${cmake_flag}=${escaped_flags}" )
 		}
 		
@@ -140,8 +143,7 @@ build() {
 		
 		VERBOSE=1 e cmake "${sourcedir}" "${options[@]}"
 		
-		e generate_toolchain_wrapper 'gcc' "${target}-gcc" "$root" "$depsdir"
-		e generate_toolchain_wrapper 'g++' "${target}-g++" "$root" "$depsdir"
+		mkdir -p "$depsdir"
 		
 		VERBOSE=1 e make -j"$(getconf _NPROCESSORS_ONLN)"
 		
@@ -149,44 +151,84 @@ build() {
 		
 	popd
 	
+	local binroots=( )
+	if [ -f "$rootdir/paths" ] ; then
+		while IFS= read -r binroot ; do
+			binroots+=( "$binroot" )
+		done < <(cat "$rootdir/paths" | sort -rV | uniq)
+	fi
+	[ -z "$root" ] || binroots+=( "$root" )
+	
+	local binarch="$arch"
+	[ -f "$rootdir/arch" ] && binarch="$(cat "$rootdir/arch")"
+	local suffixes=(
+		'' "$binarch"
+		"bin" "bin/$binarch" "lib" "lib/$binarch"
+		"usr/bin" "usr/bin/$binarch" "usr/lib" "usr/lib/$binarch"
+	)
 	
 	# Copy binaries from the crossdev tree
 	for binary in "${copy_from_tree[@]:+${copy_from_tree[@]}}" ; do
-		[ -f "${root}/${binary}" ] || die "missing ${binary} in ${root}"
-		e mkdir -p "${bindir}/libexec"
-		e cp --preserve=all "${root}/${binary}" "${bindir}/libexec/"
-		readlink -f "${root}/${binary}" >> "$depsdir/copy_from_tree"
+		local found=0
+		for binroot in "${binroots[@]:+${binroots[@]}}" ; do
+			for suffix in "${suffixes[@]}" ; do
+				local file="${binroot}/${suffix}/${binary}"
+				[ -f "$file" ] || continue
+				e mkdir -p "${bindir}/libexec"
+				e cp --preserve=all "$file" "${bindir}/libexec/"
+				readlink -f "$file" >> "$depsdir/copy_from_tree"
+				found=1
+				break
+			done
+			[ $found = 1 ] && break
+		done
+		[ $found = 1 ] || die "missing ${binary} for ${pkgtype}-${arch}"
 	done
-	
 	
 	# Get licenses for dependencies
 	local license_outdir="${outdir}/license"
 	for dependency in $(cat "$depsdir"/* | sort | uniq) ; do
 		
 		# Ignore dependencies from the build dir
+		[ "$dependency" = "$builddir" ] && continue
 		[[ "$dependency" == "$builddir"/* ]] && continue
 		
 		# Ignore dependencies from the source dir
+		[ "$dependency" = "$sourcedir" ] && continue
 		[[ "$dependency" == "$sourcedir"/* ]] && continue
+		
+		# Ignore dependencies from the build dir
+		[ -f "${bindir}/${dependency}" ] && continue
+		[ -f "${bindir}/libexec/${dependency}" ] && continue
 		
 		# Ignore dependencies from gcc
 		[[ "$dependency" == /usr/lib/gcc/* ]] && continue
 		
-		# All other dependencies should be in the build root
-		[[ "$dependency" == "$root"/* ]] || die "dependency outside root: ${dependency}"
+		local raw_dependency="$dependency"
 		
-		raw_dependency="$dependency"
-		dependency="${dependency#"$root"}"
+		# All other dependencies should be in the build root
+		if [[ "$dependency" == */* ]] ; then
+			local found=0
+			dependency="$(realpath "$dependency")"
+			for binroot in "${binroots[@]:+${binroots[@]}}" ; do
+				local realbinroot="$(realpath "$binroot")"
+				[[ "$dependency" == "$realbinroot"/* ]] || continue
+				dependency="${dependency#"$realbinroot"}"
+				found=1
+			done
+			[ $found = 1 ] || die "dependency outside root: ${dependency}"
+		fi
 		
 		local license_found=0
 		local license=''
 		for pattern in "${!licenses[@]}" ; do
-			if [[ "$dependency" == $pattern ]] ; then
+			if [[ "$dependency" == $pattern ]] || [[ "$raw_dependency" == $pattern ]] ; then
 				license_found=1
 				license="${licenses["$pattern"]}"
 				break
 			fi
 		done
+		
 		if [ $license_found = 0 ] ; then
 			
 			# Ignore system stuff
@@ -196,8 +238,8 @@ build() {
 			
 			match_in_array "$package" "${system_packages[@]:+${system_packages[@]}}" && continue
 			
-			[ "$package" = '' ] || die "no license for dependency: ${dependency} (${package})"
-			die "no license for dependency: ${dependency}"
+			[ "$package" = '' ] || die "no license for dependency: ${raw_dependency} = ${dependency} (${package})"
+			die "no license for dependency: ${raw_dependency} = ${dependency}"
 			
 		fi
 		[ "$license" = '' ] && continue

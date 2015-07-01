@@ -98,9 +98,22 @@ c_flags=(
 	-O3
 	
 )
+c_flags_msvc=(
+	
+	/MD
+	
+	# Disable debug information
+	/D NDEBUG
+	
+	# Enable optimization
+	/O2
+	/Ob2
+	
+)
 
 # C++ compiler flags
 cxx_flags=( "${c_flags[@]}" )
+cxx_flags_msvc=( "${c_flags_msvc[@]}" )
 
 # Shared library linker flags
 shared_linker_flags=(
@@ -113,11 +126,12 @@ shared_linker_flags=(
 	-Wl,--as-needed
 	-Wl,--no-export-dynamic # note: the build scripts always removes any -rdynamic flags
 	
-	
 )
+shared_linker_flags_msvc=( )
 
 # Executable linker flags
 exe_linker_flags=( "${shared_linker_flags[@]}" )
+exe_linker_flags_msvc=( )
 
 # Additional linker flags for *nix systems
 unix_linker_flags=(
@@ -138,6 +152,10 @@ declare -a architectures
 # Syntax: [ARCHITECTURE]=TARGET
 # We expect $target-gcc, $target-g++, $target-objdump, and $root_base/$target
 declare -A targets
+
+declare -A toolchains
+
+declare -A toolchain_files
 
 # Base directory where cross compilation prefixes are installed
 # Prefixes are located at $root_base/$target (see $targets)
