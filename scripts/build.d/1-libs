@@ -163,7 +163,7 @@ find_libraries() {
 		match_in_array "$llib" "${system_libraries[@]:+${system_libraries[@]}}" && continue
 		
 		match_in_array "$llib" "${forbidden_libraries[@]:+${forbidden_libraries[@]}}" \
-			&& die "${binname} links to blacklisted library ${lib}"
+			&& die "${arch} ${binname} links to blacklisted library ${lib}"
 		
 		libraries+=( "$lib" )
 	done
@@ -176,7 +176,7 @@ find_libraries() {
 				| grep ' (RUNPATH) ' | sed 's/^.*\[\([^]]*\)\]$/\1/' || true
 		)"
 		[ "$runpath" = "\$ORIGIN" ] \
-			|| die "${binname} does not have runpath set to \$ORIGIN: \"$runpath\""
+			|| die "${arch} ${binname} does not have runpath set to \$ORIGIN: \"$runpath\""
 	fi
 	
 	for lib in "${libraries[@]:+${libraries[@]}}" ; do
@@ -207,7 +207,7 @@ find_libraries() {
 			local candidate="$("${target}-g++" -print-file-name="$lib")"
 			[ -f "$candidate" ] && file="$candidate"
 		fi
-		[ -z "$file" ] && die "could not find ${lib} (required by ${binname})"
+		[ -z "$file" ] && die "could not find ${lib} (required by ${arch} ${binname})"
 		echo "${lib}: using ${file}"
 		
 		# Resolve symlinks
