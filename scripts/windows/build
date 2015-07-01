@@ -3,11 +3,36 @@
 cmake_platform='Windows'
 case_insensitive_fs=1
 convert_man_to_text=1
-create_wrapper_scripts=0
 allow_symlinks=0
 library_pattern='*.dll'
 objdump_lib_pattern='DLL Name: '
 exe_suffix='.exe'
 text_suffix='.txt'
+
+create_wrapper() {
+	local wrapper="$1"
+	local use_path="$2"
+	local cmd_dash="$3"
+	local prefixes=( "${@:4}" )
+	local target="${targets[windows-i686]}"
+	
+	local wrapper_options=(
+		-static-libgcc
+		-s
+		-Os
+	)
+	
+	binary="${bindir}/${architectures[0]}/${wrapper##*/}"
+	[ -f "$binary" ] || die "missing $binary"
+	
+	# Select between GUI and console subsystems
+	case "$(file "$binary")" in
+		*' executable (GUI)'*)     wrapper_options+=( '-mwindows' ) ;;
+		*' executable (console)'*) ;;
+		*) die "Unknown binary type: $binary: $(file "$binary")"
+	esac
+	
+	"$target-gcc" "$scriptdir/loader.c" -o "$wrapper" "${wrapper_options[@]}"
+}
 
 . "${BASH_SOURCE[0]%/*}/../build"

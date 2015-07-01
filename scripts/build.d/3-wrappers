@@ -29,6 +29,7 @@ flatten_bindirs() {
 
 
 # Create wrapper scripts for executables
+if ! command -v create_wrapper &> /dev/null ; then
 create_wrapper() {
 	local wrapper="$1"
 	local use_path="$2"
@@ -104,6 +105,7 @@ create_wrapper() {
 	echo "exec \"\$here/${prefix}/\$command\" \"\$@\""                        >> "$wrapper"
 	
 }
+fi
 
 create_wrappers() {
 	
@@ -156,7 +158,7 @@ create_wrappers() {
 		# Don't overwrite already generated wrappers
 		[ -e "$wrapper" ] && continue
 		
-		if [ -z "$primary_wrapper" ] ; then
+		if [ -z "$primary_wrapper" ] || [ $allow_symlinks = 0 ] ; then
 			primary_wrapper="$binary"
 			e create_wrapper "$wrapper" "$use_path" "$cmd_dash" "${prefixes[@]}"
 			e chmod +x "$wrapper"
