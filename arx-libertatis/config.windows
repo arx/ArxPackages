@@ -1,0 +1,19 @@
+#!/bin/bash
+
+architectures=( 'x86' 'x64' )
+
+toolchains[windows-x86]='msvc-12-32'
+toolchains[windows-x64]='msvc-12-64'
+
+readme_transforms+=(
+	--discard '* scripts *'
+)
+
+# TODO: arx-portable
+
+copy_files+=(
+	
+	# Create a data subdirectory (with a README)
+	[':data/README.windows.md']='data/README.txt'
+	
+)

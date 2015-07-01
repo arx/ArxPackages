@@ -1,0 +1,17 @@
+#!/bin/bash
+
+inherit_projects+=( 'innoextract' )
+
+required_binaries+=(
+	arx-install-data
+)
+
+copy_files+=(
+	
+	# Include the arx-portable wrapper
+	[':arx-portable']='/'
+	
+	# Create a data subdirectory (with a README)
+	[':data/README.md']='data/'
+	
+)

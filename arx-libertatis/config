@@ -43,8 +43,6 @@ cmake_options+=(
 	-DRUNTIME_LIBEXECDIR=''
 )
 
-inherit_projects+=( 'innoextract' )
-
 ################################################################################
 # Wrapper configuration
 
@@ -53,16 +51,6 @@ wrapper_use_command=1
 
 # Set arx_PATH to overwrite the real binary location in the data path selection
 wrapper_use_cmd_path=1
-
-copy_files+=(
-	
-	# Include the arx-portable wrapper
-	[':arx-portable']='/'
-	
-	# Create a data subdirectory (with a README)
-	[':data/README.md']='data/'
-	
-)
 
 ################################################################################
 # Adjust documentation
@@ -79,7 +67,6 @@ required_binaries+=(
 	arx
 	arxunpak
 	arxsavetool
-	arx-install-data
 )
 
 # Libraries that should not be linked

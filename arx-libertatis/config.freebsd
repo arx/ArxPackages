@@ -1,3 +1,5 @@
 #!/bin/bash
 
 architectures=( 'i686' 'amd64' )
+
+. "${projectdir}/config.unix"
