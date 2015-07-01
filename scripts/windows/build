@@ -24,6 +24,8 @@ create_wrapper() {
 	
 	binary="${bindir}/${architectures[0]}/${wrapper##*/}"
 	[ -f "$binary" ] || die "missing $binary"
+	local builddir="${buildroot}/build-wrapper-${wrapper##*/}"
+	mkdir -p "$builddir"
 	
 	# Select between GUI and console subsystems
 	case "$(file "$binary")" in
@@ -32,7 +34,12 @@ create_wrapper() {
 		*) die "Unknown binary type: $binary: $(file "$binary")"
 	esac
 	
-	"$target-gcc" "$scriptdir/loader.c" -o "$wrapper" "${wrapper_options[@]}"
+	# Copy resources (icons) to the wrapper
+	local resources="$builddir/resources.obj"
+	"$target-windres" "$binary" -O coff -o "$resources" 2>&1
+	[ -f "$resources" ] && wrapper_options+=( "$resources" )
+	
+	"$target-gcc" "$scriptdir/launcher.c" -o "$wrapper" "${wrapper_options[@]}"
 }
 
 . "${BASH_SOURCE[0]%/*}/../build"

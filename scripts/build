@@ -27,6 +27,7 @@ popd
 
 # Set output directories
 get_output _out _outdir
+buildroot="${PWD}"
 outdir="${PWD}/${_outdir}"
 bindir="${outdir}/bin"
 mandir="${outdir}/doc"
