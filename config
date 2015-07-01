@@ -22,6 +22,11 @@ _compiler_flags=(
 )
 c_flags+=( "${_compiler_flags[@]}" )
 cxx_flags+=( "${_compiler_flags[@]}" )
+_compiler_flags_msvc=(
+	/GL
+)
+c_flags_msvc+=( "${_compiler_flags_msvc[@]}" )
+cxx_flags_msvc+=( "${_compiler_flags_msvc[@]}" )
 
 # Linker flags
 _linker_flags=(
@@ -43,6 +48,16 @@ exe_linker_flags+=(
 	-fvisibility-inlines-hidden
 	
 )
+_linker_flags_msvc=(
+	
+	# Enable link-time optimizations
+	/LTCG
+	/OPT:REF
+	/OPT:ICF
+	
+)
+shared_linker_flags_msvc+=( "${_linker_flags_msvc[@]}" )
+exe_linker_flags_msvc+=( "${_linker_flags_msvc[@]}" )
 
 # Taret names for used architectures (see $architectures)
 # Syntax: [ARCHITECTURE]=TARGET
