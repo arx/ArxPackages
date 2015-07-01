@@ -18,7 +18,7 @@ test_run() {
 	local arch="$__current_test_architecture"
 	local bindir="$__current_test_bindir"
 	local archbindir="$__current_test_archbindir"
-	local target="${targets["${pkgtype}-${arch}"]}"
+	local target="${targets["${pkgtype}-${arch}"]:-}"
 	local root="${root_base}/${target}"
 	local binary="${archbindir}/${1}"
 	echo "$(escape_args '$' "${@}")" >> "$buildlog"
