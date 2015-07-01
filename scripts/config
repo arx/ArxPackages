@@ -20,8 +20,10 @@
 # Don't build DEB and RPM packages for git snapshots
 if [ -z "${is_test_version:-}" ] ; then
 	is_test_version=0
-	[[ "${version-}" != *.* ]]        && is_test_version=1
-	[ "${version-}" != "${commit-}" ] && is_test_version=1
+	if [ $is_snapshot = 0 ] ; then
+		[[ "${version-}" != *.* ]]        && is_test_version=1
+		[ "${version-}" != "${commit-}" ] && is_test_version=1
+	fi
 fi
 
 # Where are project-specific test/input files stored?
@@ -37,13 +39,16 @@ builddir="$root/build"
 buildlog="$builddir/build.log"
 
 # Where to store the final output
-if [ $is_test_version = 1 ]
-	then outdir="$root/out/test"
-	else outdir="$root/out/$project"
+if [ $is_test_version = 1 ] ; then
+	outdir="$root/out/test"
+elif [ $is_snapshot = 1 ] ; then
+	outdir="$root/out/$project/snapshots"
+else
+	outdir="$root/out/$project"
 fi
 
 # Where to store changelog files
-if [ $is_test_version = 1 ]
+if [ $is_test_version = 1 ] || [ $is_snapshot = 1 ]
 	then changelogdir="$builddir/changes/$project"
 	else changelogdir="$projectdir/changes"
 fi

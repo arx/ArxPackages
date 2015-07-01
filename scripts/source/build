@@ -30,7 +30,7 @@ e find "$_outdir" -name '.*' -exec rm -rvf {} \;
 
 _version_file="${_outdir}/VERSION"
 if [ -f "$_version_file" ] ; then
-	if [ $is_test_version = 0 ] ; then
+	if [ $is_test_version = 0 ] && [ $is_snapshot = 0 ] ; then
 		# Check version number for stable releases
 		_vername="$(head --lines=1 "$_version_file")"
 		_version="${_vername##* }"
@@ -42,7 +42,7 @@ if [ -f "$_version_file" ] ; then
 	else
 		# Adjust version for test/patch releases
 		_vername="$(head --lines=1 "$_version_file")"
-		if [[ "${version-}" == *.* ]]
+		if [[ "${version-}" == *.* ]] || [ $is_snapshot = 1 ]
 			then _vername="${_vername% *} ${version}"
 			else _vername="${_vername}+${version}"
 		fi

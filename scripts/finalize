@@ -89,7 +89,7 @@ if [ ! -f "${_md_file}" ] || [ $_md5sums_changed = 1 ] ; then
 	# Changelog
 	echo >> "$_md_file"
 	echo '## Changelog' >> "$_md_file"
-	if [ $is_test_version = 0 ] ; then
+	if [ $is_test_version = 0 ] && [ $is_snapshot = 0 ] ; then
 		get_changelog _changelog
 		echo >> "$_md_file"
 		echo "$_changelog" >> "$_md_file"

@@ -32,6 +32,7 @@ die() {
 
 trap '[ $? != 0 ] && [ ${_no_backtrace:-0} = 0 ] && backtrace' EXIT
 
+is_snapshot=0
 while [ $# != 0 ] ; do
 	case "$1" in
 		--root=*)    root="${1#*=}" ;;
@@ -39,18 +40,22 @@ while [ $# != 0 ] ; do
 		--pkgtype=*) pkgtype="${1#*=}" ;;
 		--version=*) version="${1#*=}" ;;
 		--commit=*)  commit="${1#*=}" ;;
+		--snapshot)  is_snapshot=1 ;;
 		-p) shift ; project="$1" ;;
 		-t) shift ; pkgtype="$1" ;;
 		-v) shift ; version="$1" ;;
 		-c) shift ; commit="$1" ;;
+		-s) is_snapshot=1 ;;
 		--) shift ; break ;;
 		*) break ;;
 	esac
 	shift
 done
 
-[ -z "${commit-}" ] && [ ! -z "${version-}" ] && commit="$version"
-[ -z "${version-}" ] && [ ! -z "${commit-}" ] && version="$commit"
+if [ $is_snapshot = 0 ] ; then
+	[ -z "${commit-}" ] && [ ! -z "${version-}" ] && commit="$version"
+	[ -z "${version-}" ] && [ ! -z "${commit-}" ] && version="$commit"
+fi
 
 # Logging functions
 
@@ -124,6 +129,7 @@ execute() {
 	[ -z "${pkgtype-}" ] || args+=( --pkgtype="$pkgtype" )
 	[ -z "${version-}" ] || args+=( --version="$version" )
 	[ -z "${commit-}" ]  || args+=( --commit="$commit" )
+	[ $is_snapshot = 0 ] || args+=( --snapshot )
 	if [ -z "${package_execute_level-}" ] ; then
 		local s='##########################################'
 		export package_execute_level=1
@@ -342,5 +348,24 @@ source_if_exists "${root}/config.local"
 # Read package-specific config
 [ ! -z "${projectdir-}" ]  && [ ! -z "${pkgtype-}" ]  \
 	&& source_if_exists "${projectdir}/config.${pkgtype}"
+
+if [ $is_snapshot = 1 ] && ( [ -z "${commit-}" ] || [ -z "${version-}" ] ) ; then
+	
+	_repodir="${builddir}/${project}.git"
+	e git --git-dir="$_repodir" fetch --all > /dev/null
+	e git --git-dir="$_repodir" fetch --tags > /dev/null
+	
+	if [ -z "${commit-}" ] ; then
+		commit="$(git --git-dir="$_repodir" rev-parse master)"
+	fi
+	
+	if [ -z "${version-}" ] ; then
+		_commit="$(git --git-dir="$_repodir" rev-parse --short=5 "$commit")"
+		_version="$(git --git-dir="$_repodir" show "$commit:VERSION" | head --lines=1)"
+		_version="${_version##* }"
+		version="${_version}-$(date --utc --iso-8601)-${_commit}"
+	fi
+	
+fi
 
 true

@@ -11,17 +11,17 @@ mkdir -p "$outdir"
 elog "${white}packaging ${project}-${version}${reset}"
 
 # Update source version and changelog data
-if [ $is_test_version = 0 ] ; then
+if [ $is_test_version = 0 ] && [ $is_snapshot = 0 ] ; then
 	make_changelog
 	runall update-version
 fi
 
 # Build the source archives
 run source build
-[ $is_test_version = 0 ] && runscript finalize
+[ $is_test_version = 0 ] && [ $is_snapshot = 0 ] && runscript finalize
 
 # Send build jobs for Linux packages to the repective build servers
-if [ $is_test_version = 0 ] ; then
+if [ $is_test_version = 0 ] && [ $is_snapshot = 0 ] ; then
 	runall prepare
 	runall dispatch
 fi
