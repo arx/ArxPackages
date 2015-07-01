@@ -1,0 +1,13 @@
+diff --git a/gcc-4.9.2.old/libstdc++-v3/libsupc++/eh_terminate.cc b/gcc-4.9.2/libstdc++-v3/libsupc++/eh_terminate.cc
+index 40e12d2..ae53efc 100644
+--- a/gcc-4.9.2.old/libstdc++-v3/libsupc++/eh_terminate.cc
++++ b/gcc-4.9.2/libstdc++-v3/libsupc++/eh_terminate.cc
+@@ -51,7 +51,7 @@ __cxxabiv1::__terminate (std::terminate_handler handler) throw ()
+     { std::abort (); }
+ }
+ 
+-void
++void __attribute__((__used__))
+ std::terminate () throw()
+ {
+   __terminate (get_terminate ());
