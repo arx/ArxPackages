@@ -37,10 +37,18 @@ function rename_func() {
 }
 
 if [ "$PN" = "libarchive" ] ; then
-	LDFLAGS="$LDFLAGS -static-libgcc"
+	LDFLAGS="$LDFLAGS -static-libgcc ${ROOT}usr/lib/libz.a"
 	rename_func econf orig_econf
 	econf() {
-		orig_econf "$@" \
+		local args=( )
+		for arg in "$@" ; do
+			case "$arg" in
+				--enable-bsdtar=shared) continue ;;
+				--enable-bsdcpio*) continue ;;
+				*) args+=( "$arg" )
+			esac
+		done
+		orig_econf "${args[@]}" \
 			--without-xml2 --without-expat --without-openssl \
 			--disable-acl --disable-xattr \
 			--disable-bsdcpio --enable-bsdtar=static 
