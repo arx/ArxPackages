@@ -26,30 +26,38 @@ convert_man_pages() {
 		local manfile="${manpage##*/}"
 		local section="$(escape_sed "${manfile##*.}")" # manpage section
 		local command="$(escape_sed "${manfile%.*}")"
-		manfile="$(escape_sed "$manfile")"
+		
+		mantext="$(printf '%s' "$manpage" | perl -pe 's/\.\d+$//g').txt"
+		local mantextfile="${mantext##*/}"
+		
+		echo "converting manpage ${manpage}..."
+		man "$manpage" \
+			| sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" \
+			| col -xb \
+			> "$mantext"
 		
 		if [ "$convert_man_to_text" = 1 ] ; then
 			
-			echo "converting manpage ${manpage}..."
-			man "$manpage" \
-				| sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" \
-				| col -xb \
-				> "${manpage}.txt"
 			e rm "$manpage"
 			
-			local replacement="    see doc\\/${manfile}.txt"
+			local replacement="\\1see doc\\/$(escape_sed "$mantextfile")"
 			
 		else
 			
-			local replacement="\\1 doc\\/${manfile}"
+			local replacement="\\1\\2 doc\\/$(escape_sed "$manfile")}"
 			
 		fi
 		
 		if [ -f "$readme" ] ; then
-			e sed -i "s/^\\( *\\\$ man\\) ${section} ${command}\$/${replacement}/" "$readme"
-			e sed -i "s/^\\( *\\\$ man\\) ${command}\$/${replacement}/" "$readme"
-			e sed -i "s/\`\\(man\\) ${section} ${command}\`/\`${replacement}\`/" "$readme"
-			e sed -i "s/\`\\(man\\) ${command}\`/\`${replacement}\`/" "$readme"
+			if [ "$convert_man_to_text" = 1 ] ; then
+				local replacement2="doc\\/$(escape_sed "$mantextfile")"
+				e sed -i "s/\\(the \\)\\?\`\\(man\\) ${section} ${command}\` output/${replacement2}/" "$readme"
+				e sed -i "s/\\(the \\)\\?\`\\(man\\) ${command}\` output/${replacement2}/" "$readme"
+			fi
+			e sed -i "s/^\\( *\\)\\(\\\$ man\\) ${section} ${command}\$/${replacement}/" "$readme"
+			e sed -i "s/^\\( *\\)\\(\\\$ man\\) ${command}\$/${replacement}/" "$readme"
+			e sed -i "s/\`\\(\\)\\(man\\) ${section} ${command}\`/\`${replacement}\`/" "$readme"
+			e sed -i "s/\`\\(\\)\\(man\\) ${command}\`/\`${replacement}\`/" "$readme"
 		fi
 		
 	done
