@@ -30,7 +30,7 @@ Group:          Amusements/Games/RPG
 %else
 Group:          Amusements/Games
 %endif
-Source:         %{name}-%{version}.tar.xz
+Source:         http://arx-libertatis.org/files/%{name}-%{version}.tar.xz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 %if 0%{?suse_version}
 BuildRequires:  c++_compiler

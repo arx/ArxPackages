@@ -30,7 +30,7 @@ Group:          Productivity/Archiving/Compression
 %else
 Group:          Applications/Archiving
 %endif
-Source:         %{name}-%{version}.tar.gz
+Source:         http://constexpr.org/innoextract/files/%{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 %if 0%{?suse_version}
 BuildRequires:  c++_compiler
