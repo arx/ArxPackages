@@ -50,7 +50,10 @@ non-windows systems without running the actual installer using wine.
 %setup -q
 
 %build
-cmake . -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_CXX_FLAGS="$RPM_OPT_FLAGS" -DMAN_DIR=%{_mandir}
+cmake . \
+	-DCMAKE_INSTALL_PREFIX=%{_prefix} \
+	-DCMAKE_CXX_FLAGS="$RPM_OPT_FLAGS" \
+	-DMAN_DIR=%{_mandir}
 make
 
 %install
