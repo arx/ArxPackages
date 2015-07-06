@@ -17,7 +17,7 @@
 
 Name:           arx-libertatis
 Version:        1.1.2
-Release:        0
+Release:        1%{?dist}
 License:        GPL-3.0+
 Summary:        Cross-platform port of Arx Fatalis, a first-person role-playing game
 URL:            http://arx-libertatis.org/

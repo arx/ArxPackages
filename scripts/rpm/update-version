@@ -21,7 +21,7 @@ ${_changelog:?bad changelog}"
 e sed -i "s/^\\(Version\:[ \\t][ \\t]*\\).*$/\\1$(escape_sed "$version")/" \
 	"$_specfile" || die "failed to set new version"
 
-e sed -i "s/^\\(Release\:[ \\t][ \\t]*\\).*$/\\10/" \
+e sed -i "s/^\\(Release\:[ \\t][ \\t]*\\).*$/\\11\\%\\{?dist\\}/" \
 	"$_specfile" || die "failed to set new release"
 
 e sed -i "s/^%changelog$/\\0$(escape_sed "$_changelog_entry")/" \

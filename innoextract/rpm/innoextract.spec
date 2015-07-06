@@ -17,7 +17,7 @@
 
 Name:           innoextract
 Version:        1.4
-Release:        0
+Release:        1%{?dist}
 License:        Zlib
 Summary:        A tool to extract installers created by Inno Setup
 Url:            http://constexpr.org/innoextract/
