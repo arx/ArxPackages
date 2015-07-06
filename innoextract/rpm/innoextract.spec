@@ -61,7 +61,7 @@ make
 
 %files
 %license LICENSE
-%doc README.md CHANGELOG
+%doc README.md CHANGELOG VERSION
 %doc %{_mandir}/man1/innoextract.1*
 %{_bindir}/innoextract
 
