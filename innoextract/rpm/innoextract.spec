@@ -64,8 +64,8 @@ make %{?_smp_mflags}
 %files
 %license LICENSE
 %doc README.md CHANGELOG VERSION
-%doc %{_mandir}/man1/innoextract.1*
 %{_bindir}/innoextract
+%{_mandir}/man1/innoextract.1*
 
 %changelog
 * Mon Mar 11 2013 Daniel Scharrer <daniel@constexpr.org> - 1.4-1
