@@ -37,7 +37,7 @@ BuildRequires:  c++_compiler
 %else
 BuildRequires:  gcc-c++
 %endif
-BuildRequires:  cmake >= 2.8
+BuildRequires:  cmake
 BuildRequires:  boost-devel
 BuildRequires:  pkgconfig(liblzma)
 

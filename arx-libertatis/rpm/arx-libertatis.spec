@@ -37,7 +37,7 @@ BuildRequires:  c++_compiler
 %else
 BuildRequires:  gcc-c++
 %endif
-BuildRequires:  cmake >= 2.8
+BuildRequires:  cmake
 BuildRequires:  boost-devel >= 1.48
 BuildRequires:  glm-devel >= 0.9.2.7
 BuildRequires:  zlib-devel
