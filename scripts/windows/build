@@ -19,6 +19,7 @@ create_launcher() {
 	local here='@@HERE@@'
 	eval "args=( $cmdline )"
 	local command="${args[0]}"
+	command="${command%.exe}.exe"
 	
 	local scommand="$(printf '%s' "${command%.exe}" | tr - _)"
 	

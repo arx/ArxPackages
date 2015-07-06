@@ -193,8 +193,10 @@ create_launchers() {
 	
 	for launcher in "${!launchers[@]}" ; do
 		
-		e create_launcher $launcher "${launchers["$launcher"]}"
-		e chmod +x "$launcher"
+		launcherfile="$launcher$exe_suffix"
+		
+		e create_launcher "$launcherfile" "${launchers["$launcher"]}"
+		e chmod +x "$launcherfile"
 		
 	done
 	
