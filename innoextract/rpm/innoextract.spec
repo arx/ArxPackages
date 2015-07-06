@@ -18,7 +18,11 @@
 Name:           innoextract
 Version:        1.4
 Release:        1%{?dist}
+%if 0%{?suse_version}
 License:        Zlib
+%else
+License:        zlib
+%endif
 Summary:        A tool to extract installers created by Inno Setup
 Url:            http://constexpr.org/innoextract/
 Group:          Productivity/Archiving/Compression
