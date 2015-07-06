@@ -110,3 +110,12 @@ if [ ! -f "${_md_file}" ] || [ $_md5sums_changed = 1 ] ; then
 fi
 
 popd
+
+for _outdir in "$outdir" "$outdir/snapshots" ; do
+	[ -d "$_outdir" ] || continue
+	pushd "$_outdir"
+	for dir in "$project"-* ; do
+		touch "$dir" --reference="$dir/$dir${archives[source-build]}"
+	done
+	popd
+done
