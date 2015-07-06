@@ -14,23 +14,35 @@ create_wrapper() {
 	local use_path="$2"
 	local cmd_dash="$3"
 	local prefixes=( "${@:4}" )
+	
 	local target="${targets[windows-i686]}"
+	
+	local command="${wrapper##*/}"
+	local scommand="$(printf '%s' "${command%.*}" | tr - _)"
+	
+	[ $wrapper_use_path = 1 ] || use_path=0
 	
 	local wrapper_options=(
 		-static-libgcc
 		-s
 		-Os
+		-DUNICODE
+		-D_UNICODE
+		-DLAUNCHER_USE_PATH="$use_path"
+		-DLAUNCHER_USE_CMD_PATH=$wrapper_use_cmd_path
+		-DLAUNCHER_COMMAND="$command"
+		-DLAUNCHER_SCOMMAND="$scommand"
 	)
 	
-	binary="${bindir}/${architectures[0]}/${wrapper##*/}"
+	local binary="${bindir}/${architectures[0]}/${command}"
 	[ -f "$binary" ] || die "missing $binary"
-	local builddir="${buildroot}/build-wrapper-${wrapper##*/}"
+	local builddir="${buildroot}/build-wrapper-${command}"
 	mkdir -p "$builddir"
 	
 	# Select between GUI and console subsystems
 	case "$(file "$binary")" in
-		*' executable (GUI)'*)     wrapper_options+=( '-mwindows' ) ;;
-		*' executable (console)'*) ;;
+		*' executable (GUI)'*) wrapper_options+=( -mwindows -DLAUNCHER_ATTACH_CONSOLE=1 ) ;;
+		*' executable (console)'*) wrapper_options+=( -DLAUNCHER_WAIT=1 ) ;;
 		*) die "Unknown binary type: $binary: $(file "$binary")"
 	esac
 	

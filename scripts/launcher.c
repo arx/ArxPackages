@@ -1,10 +1,29 @@
-#define UNICODE
-#define _UNICODE
-#define LOADER_WAIT
 
 #include <windows.h>
 
 #include <tchar.h>
+
+#ifndef LAUNCHER_USE_PATH
+#define LAUNCHER_USE_PATH 0
+#endif
+
+#ifndef LAUNCHER_USE_CMD_PATH
+#define LAUNCHER_USE_CMD_PATH 0
+#endif
+
+#ifndef LAUNCHER_WAIT
+#define LAUNCHER_WAIT 0
+#endif
+
+#ifndef LAUNCHER_ATTACH_CONSOLE
+#define LAUNCHER_ATTACH_CONSOLE 0
+#endif
+
+#define STR_HELPER(x) CAT(L, # x)
+#define STR(x) STR_HELPER(x)
+#define CAT_HELPER(x, y) x ## y
+#define CAT(x, y) CAT_HELPER(x, y)
+#define ARRAY_SIZE(a) (sizeof(a) / sizeof(*(a)))
 
 BOOL IsWow64() {
 	
@@ -32,48 +51,72 @@ BOOL IsWow64() {
 int CALLBACK WinMain(HINSTANCE a, HINSTANCE b, PSTR c, INT d) {
 	
 	// Save the console for our children
-	AttachConsole(ATTACH_PARENT_PROCESS);
-	
-	TCHAR buffer[MAX_PATH];
-	LPTSTR p;
-	STARTUPINFO si;
-	PROCESS_INFORMATION pi;
-	LPCTSTR prefix;
-	int plen;
-	#ifdef LOADER_WAIT
-	DWORD exitcode;
+	#if LAUNCHER_ATTACH_CONSOLE
+	if(AttachConsole(ATTACH_PARENT_PROCESS)) {
+		freopen("CONOUT$", "wb", stdout);
+		freopen("CONOUT$", "wb", stderr);
+	}
 	#endif
 	
 	// Get the path of this executable
+	TCHAR buffer[MAX_PATH * 10];
 	if(!GetModuleFileName(NULL, buffer, sizeof(buffer)) > 0) {
-		return 1337;
+		return 1;
 	}
+	LPTSTR p = _tcsrchr(buffer, '\\') + 1;
+	
+	// Pass along the current executable directory
+	#if LAUNCHER_USE_CMD_PATH
+	*p = 0;
+	SetEnvironmentVariable(STR(CAT(LAUNCHER_SCOMMAND, _PATH)), buffer);
+	#endif
 	
 	// Determine the subdirectory for the appropriate variant
+	LPCTSTR prefix;
 	if(IsWow64()) {
 		prefix = TEXT("bin\\x64\\");
 	} else {
 		prefix = TEXT("bin\\x86\\");
 	}
-	plen = _tcslen(prefix);
-	
-	// Inject the subdirectory into the path
-	p = _tcsrchr(buffer, '\\') + 1;
-	memmove(p + plen, p, (_tcslen(buffer) - (p - buffer) + 1) * sizeof(TCHAR));
+	DWORD plen = _tcslen(prefix);
 	memcpy(p, prefix, plen * sizeof(TCHAR));
+	p += plen;
+	
+	// Adjust %PATH%
+	#if LAUNCHER_USE_PATH
+	LPTSTR pp = p;
+	*pp++ = ';';
+	DWORD ppsize = ARRAY_SIZE(buffer) - (pp - buffer);
+	DWORD pathlen = GetEnvironmentVariable(L"PATH", pp, ppsize);
+	if(pathlen && pathlen < ppsize) {
+		SetEnvironmentVariable(L"PATH", buffer);
+	}
+	#endif
+	
+	// Append the target command name
+	const TCHAR * const command = STR(LAUNCHER_COMMAND);
+	DWORD clen = _tcslen(command);
+	memcpy(p, command, clen * sizeof(TCHAR));
+	p += clen;
+	
+	*p = 0;
 	
 	// Start the selected variant
+	STARTUPINFO si;
 	ZeroMemory(&si, sizeof(si));
 	si.cb = sizeof(si);
+	PROCESS_INFORMATION pi;
 	ZeroMemory(&pi, sizeof(pi));
-	if(!CreateProcess(buffer, GetCommandLine(), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
-		return 1337;
+	DWORD flags = CREATE_UNICODE_ENVIRONMENT;
+	if(!CreateProcess(buffer, GetCommandLine(), NULL, NULL, FALSE, flags, NULL, NULL, &si, &pi)) {
+		return 1;
 	}
 	
-	#ifdef LOADER_WAIT
+	#if LAUNCHER_WAIT
+	DWORD exitcode;
 	WaitForSingleObject(pi.hProcess, INFINITE);
 	if(!GetExitCodeProcess(pi.hProcess, &exitcode)) {
-		return 1337;
+		return 1;
 	}
 	#endif
 	
@@ -81,7 +124,7 @@ int CALLBACK WinMain(HINSTANCE a, HINSTANCE b, PSTR c, INT d) {
 	CloseHandle(pi.hProcess);
 	CloseHandle(pi.hThread);
 	
-	#ifdef LOADER_WAIT
+	#if LAUNCHER_WAIT
 	return exitcode;
 	#else
 	return 0;

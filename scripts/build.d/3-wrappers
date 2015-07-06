@@ -78,7 +78,7 @@ create_wrapper() {
 	
 	# Pass the location of the wrapper script to the target executable
 	if [ $wrapper_use_cmd_path = 1 ] ; then
-		echo "eval \${${scommand}}_PATH='\"$wrapper_cmd_path\"'"                >> "$wrapper"
+		echo "eval \${${scommand}}_PATH='\"\$here\"'"                           >> "$wrapper"
 		echo "export \${${scommand}}_PATH"                                      >> "$wrapper"
 	fi
 	# Pass the command invocation to the target executable (to use as argv[0])
