@@ -1,9 +1,0 @@
-#!/bin/sh
-
-# Wrapper for arx that saves and loads all files to/from
-# the directory containing this script.
-
-here="$(readlink -f "$(command -v "$0")")" ; here="${here%/*}"
-
-exec "$here/arx" --no-data-dir --data-dir="$here/data" \
-	--user-dir="$here" --config-dir="$here" "$@"

@@ -8,9 +8,6 @@ required_binaries+=(
 
 copy_files+=(
 	
-	# Include the arx-portable wrapper
-	[':arx-portable']='/'
-	
 	# Create a data subdirectory (with a README)
 	[':data/README.md']='data/'
 	

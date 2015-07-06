@@ -9,8 +9,6 @@ readme_transforms+=(
 	--discard '* scripts *'
 )
 
-# TODO: arx-portable
-
 copy_files+=(
 	
 	# Create a data subdirectory (with a README)

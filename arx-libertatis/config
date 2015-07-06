@@ -53,6 +53,10 @@ wrapper_use_command=1
 # Set arx_PATH to overwrite the real binary location in the data path selection
 wrapper_use_cmd_path=1
 
+launchers=(
+	[arx-portable]='"arx" --no-data-dir --data-dir="$here/data" --user-dir="$here" --config-dir="$here"'
+)
+
 ################################################################################
 # Adjust documentation
 
