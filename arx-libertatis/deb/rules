@@ -7,10 +7,12 @@
 
 override_dh_auto_configure:
 	dh_auto_configure -- \
-		-DWITH_QT=4 \
-		-DUNITY_BUILD=ON \
 		-DCMAKE_INSTALL_LIBEXECDIR=lib/arx \
-		-DGAMESBINDIR=games
+		-DGAMESBINDIR=games \
+		-DRUNTIME_DATADIR="" \
+		-DWITH_QT=4 \
+		-DWITH_SDL=2 \
+		-DUNITY_BUILD=ON
 
 override_dh_strip:
 	dh_strip --dbg-package=arx-libertatis-dbg

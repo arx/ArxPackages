@@ -40,7 +40,8 @@ cmake_options+=(
 	-DICONDIR='.'
 	-DINSTALL_DATADIR='data'
 	-DWITH_SDL=2
-	-DRUNTIME_LIBEXECDIR=''
+	-DRUNTIME_LIBEXECDIR=".${env_separator}.."
+	-DRUNTIME_DATADIR=".${env_separator}../.."
 )
 
 ################################################################################

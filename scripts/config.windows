@@ -6,3 +6,5 @@ readme_transforms+=(
 	--discard '* unix *'
 	--discard '* unix-like *'
 )
+
+env_separator=';'

@@ -109,6 +109,7 @@ cmake . \
 	-DCMAKE_INSTALL_LIBEXECDIR="%{_libexecdir}" \
 	-DCMAKE_CXX_FLAGS="$RPM_OPT_FLAGS" \
 	-DINSTALL_DATADIR="%{_datadir}/arx" \
+	-DRUNTIME_DATADIR="" \
 	-DWITH_QT=4 \
 	-DWITH_SDL=2 \
 	-DUNITY_BUILD=ON
