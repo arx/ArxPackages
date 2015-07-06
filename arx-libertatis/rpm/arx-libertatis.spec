@@ -121,6 +121,8 @@ make
 %endif
 
 %files
+%license LICENSE* COPYING*
+%doc README.md AUTHORS CHANGELOG
 %{_bindir}/arx
 %{_bindir}/arx-install-data
 %{_datadir}/arx
@@ -128,7 +130,6 @@ make
 %{_datadir}/applications/arx-libertatis.desktop
 %{_mandir}/man1/arx-install-data.1*
 %{_mandir}/man6/arx.6*
-%doc README.md AUTHORS CHANGELOG COPYING* LICENSE
 
 %files -n arxunpak
 %defattr(-,root,root)

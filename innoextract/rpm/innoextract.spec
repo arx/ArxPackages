@@ -60,6 +60,7 @@ make
 %make_install
 
 %files
+%license LICENSE
 %doc README.md CHANGELOG
 %doc %{_mandir}/man1/innoextract.1*
 %{_bindir}/innoextract
