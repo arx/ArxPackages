@@ -54,7 +54,7 @@ cmake . -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_CXX_FLAGS="$RPM_OPT_FLAGS" -DMAN_DIR
 make
 
 %install
-make DESTDIR=%{buildroot} install
+%make_install
 
 %files
 %defattr(-,root,root)

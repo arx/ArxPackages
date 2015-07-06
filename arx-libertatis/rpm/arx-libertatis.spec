@@ -114,7 +114,7 @@ cmake . -DCMAKE_INSTALL_PREFIX=/usr \
 make
 
 %install
-make DESTDIR=%{buildroot} install
+%make_install
 %if 0%{?suse_version}
 %suse_update_desktop_file %name
 %endif
