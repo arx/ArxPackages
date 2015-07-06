@@ -52,8 +52,10 @@ non-windows systems without running the actual installer using wine.
 %build
 cmake . \
 	-DCMAKE_INSTALL_PREFIX=%{_prefix} \
-	-DCMAKE_CXX_FLAGS="$RPM_OPT_FLAGS" \
-	-DMAN_DIR=%{_mandir}
+	-DCMAKE_INSTALL_DATAROOTDIR="%{_datadir}" \
+	-DCMAKE_INSTALL_MANDIR="%{_mandir}" \
+	-DCMAKE_INSTALL_BINDIR="%{_bindir}" \
+	-DCMAKE_CXX_FLAGS="$RPM_OPT_FLAGS"
 make
 
 %install
