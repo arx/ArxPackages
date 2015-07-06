@@ -16,7 +16,8 @@ get_shortlog _changelog
 
 _changelog_entry="
 * $(date --utc '+%a %b %d %Y') ${packager} - ${version}-1
-${_changelog:?bad changelog}"
+${_changelog:?bad changelog}
+"
 
 e sed -i "s/^\\(Version\:[ \\t][ \\t]*\\).*$/\\1$(escape_sed "$version")/" \
 	"$_specfile" || die "failed to set new version"

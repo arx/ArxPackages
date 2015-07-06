@@ -158,9 +158,11 @@ echo "See http://wiki.arx-libertatis.org/Getting_the_game_data for more informat
 * Thu Oct 17 2013 Daniel Scharrer <daniel@constexpr.org> - 1.1.2-1
 - Bump version to 1.1.2 (new upstream release):
 - Fixed a crash when hovering over map markers after the window was resized
+
 * Wed Jul 17 2013 Daniel Scharrer <daniel@constexpr.org> - 1.1.1-1
 - Bump version to 1.1.1 (new upstream release):
 - Fixed map marker labels not being saved
+
 * Sun Jul 14 2013 Daniel Scharrer <daniel@constexpr.org> - 1.1-1
 - Bump version to 1.1 (new upstream release):
 - Added support for multiple simultaneous data directories
@@ -187,6 +189,7 @@ echo "See http://wiki.arx-libertatis.org/Getting_the_game_data for more informat
 - Added the executable directory as a system data directory
 - Enabled C++11 mode for GNU-compatible compilers, if supported
 - Various bug fixes and tweaks
+
 * Tue Jul 31 2012 Daniel Scharrer <daniel@constexpr.org> - 1.0.3-1
 - Bump version to 1.0.3:
 - Fixed minor rendering glitches
@@ -195,17 +198,20 @@ echo "See http://wiki.arx-libertatis.org/Getting_the_game_data for more informat
 - Include attribute modifiers when calculating the effective object knowledge
   and projectile skills
 - Savegames can now be deleted from the save and load menus
+
 * Thu Jun 14 2012 Daniel Scharrer <daniel@constexpr.org> - 1.0.2-1
 - bump version to 1.0.2:
 - Fixed various crashes
 - Fixed disappearing items when sorting the inventory
 - Fixed minor rendering and input bugs
 - Fixed spanish version
+
 * Sun Apr 22 2012 Daniel Scharrer <daniel@constexpr.org> - 1.0.1-1
 - bump version to 1.0.1:
 - Fixed garbled text rendering in the Russian version (upstream bug #226)
 - Fixed a crash in the critical error dialog on some Linux systems
   (upstream crash report #229)
 - Loading files from the 'graph' and 'misc' directories is now case-insensitive
+
 * Mon Mar 26 2012 Daniel Scharrer <daniel@constexpr.org> - 1.0-1
 - created package

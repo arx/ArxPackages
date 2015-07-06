@@ -81,11 +81,13 @@ make
 - Added an --output-dir (-d) command-line option to control where files
   are extracted
 - Various bug fixes and tweaks
+
 * Tue Jul 03 2012 Daniel Scharrer <daniel@constexpr.org> - 1.3-1
 - bump version to 1.3:
 - Respect --quiet and --silent for multi-file installers
 - Compile in C++11 mode if supported
 - Warn about unsupported setup data versions
 - Add support for Inno Setup 5.5.0 installers
+
 * Sun Mar 25 2012 Daniel Scharrer <daniel@constexpr.org> - 1.2-1
 - created package
