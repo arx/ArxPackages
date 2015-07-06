@@ -66,7 +66,7 @@ if [ ! -f "${_md_file}" ] || [ $_md5sums_changed = 1 ] ; then
 	# Introduction
 	echo >> "$_md_file"
 	if [ "${#_files[@]}" = 1 ] ; then _and_binaries='' ; else _and_binaries=' and binaries' ; fi
-	echo -n "This folder contains source code${_and_binaries} for version ${version} of [${project_name}](${project_url})" >> "$_md_file"
+	echo -n "This directory contains source code${_and_binaries} for version ${version} of [${project_name}](${project_url})" >> "$_md_file"
 	if [ ! -z "${project_tagline-}" ] ; then
 	echo -n ", ${project_tagline}" >> "$_md_file"
 	fi
