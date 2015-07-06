@@ -25,7 +25,11 @@ License:        zlib
 %endif
 Summary:        A tool to extract installers created by Inno Setup
 Url:            http://constexpr.org/innoextract/
+%if 0%{?suse_version}
 Group:          Productivity/Archiving/Compression
+%else
+Group:          Applications/Archiving
+%endif
 Source:         %{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 %if 0%{?suse_version}

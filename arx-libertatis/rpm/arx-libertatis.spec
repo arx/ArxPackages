@@ -25,7 +25,11 @@ License:        GPLv3+
 %endif
 Summary:        Cross-platform port of Arx Fatalis, a first-person role-playing game
 URL:            http://arx-libertatis.org/
+%if 0%{?suse_version}
 Group:          Amusements/Games/RPG
+%else
+Group:          Amusements/Games
+%endif
 Source:         %{name}-%{version}.tar.xz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 %if 0%{?suse_version}
