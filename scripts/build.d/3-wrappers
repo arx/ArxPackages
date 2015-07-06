@@ -173,6 +173,35 @@ create_wrappers() {
 }
 
 
+if ! command -v create_launcher &> /dev/null ; then
+create_launcher() {
+	local launcher="$1"
+	local cmdline="$2"
+	
+	echo '#!/bin/sh'                                                           > "$launcher"
+	echo                                                                      >> "$launcher"
+	echo 'here="$(command -v "$0")" ; here="${here:-$0}" ; here="$(readlink -f "$here")" ; here="${here%/*}"' >> "$launcher"
+	echo                                                                      >> "$launcher"
+	echo "exec \$here/${cmdline#\"} \"\$@\""                                  >> "$launcher"
+	
+}
+fi
+
+create_launchers() {
+	
+	pushd "$outdir"
+	
+	for launcher in "${!launchers[@]}" ; do
+		
+		e create_launcher $launcher "${launcher["$launcher"]}"
+		
+	done
+	
+	popd
+	
+}
+
+
 # Remove libexec subdirs, move files into the normal bindirs
 flatten_libexec() {
 	
@@ -194,5 +223,7 @@ flatten_libexec() {
 e flatten_bindirs
 
 e create_wrappers
+
+e create_launchers
 
 e flatten_libexec

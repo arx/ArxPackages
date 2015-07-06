@@ -9,17 +9,26 @@ objdump_lib_pattern='DLL Name: '
 exe_suffix='.exe'
 text_suffix='.txt'
 
-create_wrapper() {
+create_launcher() {
 	local wrapper="$1"
-	local use_path="$2"
-	local cmd_dash="$3"
-	local prefixes=( "${@:4}" )
+	local cmdline="$2"
 	
 	local target="${targets[windows-i686]}"
 	
-	local command="${wrapper##*/}"
-	local scommand="$(printf '%s' "${command%.*}" | tr - _)"
+	local args=( )
+	local here='@@HERE@@'
+	eval "args=( $cmdline )"
+	local command="${args[0]}"
 	
+	local scommand="$(printf '%s' "${command%.exe}" | tr - _)"
+	
+	local use_path=0
+	local prefix_path="${bindir}/${architectures[0]}"
+	local prefix_files=(
+		$(find "$prefix_path" -maxdepth 1 -executable -type f ! -name "$library_pattern")
+	)
+	[ -d "$prefix_path/libexec" ] && use_path=1
+	[ "${#prefix_files[@]}" -gt 1 ] && use_path=1
 	[ $wrapper_use_path = 1 ] || use_path=0
 	
 	local wrapper_options=(
@@ -37,7 +46,7 @@ create_wrapper() {
 	local binary="${bindir}/${architectures[0]}/${command}"
 	[ -f "$binary" ] || die "missing $binary"
 	local builddir="${buildroot}/build-wrapper-${command}"
-	mkdir -p "$builddir"
+	e mkdir -p "$builddir"
 	
 	# Select between GUI and console subsystems
 	case "$(file "$binary")" in
@@ -46,12 +55,41 @@ create_wrapper() {
 		*) die "Unknown binary type: $binary: $(file "$binary")"
 	esac
 	
+	if [ "${#args[@]}" -gt 1 ] ; then
+		local launcher_args='';
+		for arg in "${args[@]:1}" ; do
+			launcher_args+=' LAUNCHER_ARG_BEGIN();'
+			echo ":$arg"
+			while true ; do
+				local text="${arg%%"@@HERE@@"*}"
+				arg="${arg#"$text"}"
+				echo "'$text' '$arg'"
+				if [ ! -z "$text" ] ; then
+					text="$(
+						printf '%s' "$text" | sed 's:/:\\:g' | sed 's:\([\\"]\):\\\1:g'
+					)"
+					launcher_args+=" LAUNCHER_ARG_TEXT(L\"$text\");"
+				fi
+				[ -z "$arg" ] && break
+				arg="${arg#"@@HERE@@"}"
+				launcher_args+=' LAUNCHER_ARG_HERE();'
+			done
+			launcher_args+=' LAUNCHER_ARG_END();'
+		done
+		wrapper_options+=( -DLAUNCHER_ARGS="$launcher_args" )
+	fi
+	
 	# Copy resources (icons) to the wrapper
 	local resources="$builddir/resources.obj"
-	"$target-windres" "$binary" -O coff -o "$resources" 2>&1
+	e "$target-windres" "$binary" -O coff -o "$resources" 2>&1
 	[ -f "$resources" ] && wrapper_options+=( "$resources" )
 	
-	"$target-gcc" "$scriptdir/launcher.c" -o "$wrapper" "${wrapper_options[@]}"
+	e "$target-gcc" "$scriptdir/launcher.c" -o "$wrapper" "${wrapper_options[@]}"
+}
+
+create_wrapper() {
+	local wrapper="$1"
+	create_launcher "$wrapper" "\"\${wrapper##*/}\""
 }
 
 . "${BASH_SOURCE[0]%/*}/../build"

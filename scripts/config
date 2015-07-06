@@ -204,6 +204,8 @@ wrapper_use_cmd_path=0
 # Set ${command}_COMMAND to the string used to invoke the wrapper script
 wrapper_use_command=0
 
+declare -A launchers
+
 # Libraries that are not included in binary distributions, but may be linked against
 system_libraries=(
 	
