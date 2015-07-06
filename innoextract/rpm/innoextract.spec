@@ -60,7 +60,6 @@ make
 %make_install
 
 %files
-%defattr(-,root,root)
 %doc README.md CHANGELOG
 %doc %{_mandir}/man1/innoextract.1*
 %{_bindir}/innoextract

@@ -121,7 +121,6 @@ make
 %endif
 
 %files
-%defattr(-,root,root)
 %{_bindir}/arx
 %{_bindir}/arx-install-data
 %{_datadir}/arx
