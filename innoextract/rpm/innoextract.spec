@@ -56,7 +56,7 @@ cmake . \
 	-DCMAKE_INSTALL_MANDIR="%{_mandir}" \
 	-DCMAKE_INSTALL_BINDIR="%{_bindir}" \
 	-DCMAKE_CXX_FLAGS="$RPM_OPT_FLAGS"
-make
+make %{?_smp_mflags}
 
 %install
 %make_install
