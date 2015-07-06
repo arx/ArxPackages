@@ -193,7 +193,7 @@ create_launchers() {
 	
 	for launcher in "${!launchers[@]}" ; do
 		
-		e create_launcher $launcher "${launcher["$launcher"]}"
+		e create_launcher $launcher "${launchers["$launcher"]}"
 		
 	done
 	
