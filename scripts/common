@@ -360,10 +360,9 @@ if [ $is_snapshot = 1 ] && ( [ -z "${commit-}" ] || [ -z "${version-}" ] ) ; the
 	fi
 	
 	if [ -z "${version-}" ] ; then
-		_commit="$(git --git-dir="$_repodir" rev-parse --short=5 "$commit")"
 		_version="$(git --git-dir="$_repodir" show "$commit:VERSION" | head --lines=1)"
 		_version="${_version##* }"
-		version="${_version}-$(date --utc --iso-8601)-${_commit}"
+		version="${_version}-$(date --utc --iso-8601)"
 	fi
 	
 fi
