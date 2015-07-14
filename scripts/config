@@ -86,6 +86,9 @@ project_name="$project"
 # URL for the full changelog (OPTIONAL)
 #project_changelog_url='http://example.com/changelog'
 
+# URL where output files can be accessed
+#project_files_url='http://example.com/files/'
+
 # GPG key id to sign builds with - empty key disables signing
 sign_key=''
 

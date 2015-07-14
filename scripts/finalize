@@ -109,6 +109,20 @@ if [ ! -f "${_md_file}" ] || [ $_md5sums_changed = 1 ] ; then
 	
 fi
 
+_rsspart_file="feed.rsspart"
+if [ $is_snapshot = 1 ] && [ ! -z "${project_files_url:-}" ] && [ ! -f "$_rsspart_file" ] ; then
+	
+	_time="$(stat -c "%Y" "${project}-${version}${archives[source-build]}")"
+	_snapshots_url="${project_files_url}snapshots/${project}-${version}/"
+		echo "<item>
+<title>${project_name} ${version} development snapshot</title>
+<link>${_snapshots_url}</link>
+<pubDate>$(date --rfc-2822 --utc --date="@${_time}")</pubDate>
+<guid isPermaLink=\"true\">${_snapshots_url}</guid>
+</item>" > "$_rsspart_file"
+	
+fi
+
 popd
 
 for _outdir in "$outdir" "$outdir/snapshots" ; do
@@ -119,3 +133,29 @@ for _outdir in "$outdir" "$outdir/snapshots" ; do
 	done
 	popd
 done
+
+if [ $is_snapshot = 1 ] && [ -d "$outdir" ] && [ ! -z "${project_files_url:-}" ] ; then
+	pushd "$outdir"
+	_snapshots_url="${project_files_url}snapshots/"
+	_snapshot_time=0
+	echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>
+<rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\">
+<channel>
+<title>${project_name} Development Snapshots</title>
+<link>${_snapshots_url}</link>
+<description>Untested in-developments builds of ${project_name}</description>
+<language>en-us</language>
+<atom:link href=\"${_snapshots_url}feed.rss\" rel=\"self\" type=\"application/rss+xml\" />" \
+		 > feed.rss
+	for dir in $(ls -d -- "$project"-* | sort --version-sort --reverse) ; do
+		_rsspart_file="${dir}/feed.rsspart"
+		[ -f "$_rsspart_file" ] || continue
+		_time="$(stat -c "%Y" "$dir")"
+		[ "$_time" -gt "$_snapshot_time" ] && _snapshot_time="$_time"
+		cat "$_rsspart_file" >> feed.rss
+	done
+	echo '</channel>
+</rss>' >> feed.rss
+	e touch -d "@${_snapshot_time}" feed.rss
+	popd
+fi
