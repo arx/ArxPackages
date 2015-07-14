@@ -125,7 +125,7 @@ fi
 
 popd
 
-for _outdir in "$outdir" "$outdir/snapshots" ; do
+for _outdir in "$outdir" ; do
 	[ -d "$_outdir" ] || continue
 	pushd "$_outdir"
 	for dir in "$project"-* ; do
