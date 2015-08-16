@@ -39,7 +39,7 @@ BuildRequires:  gcc-c++
 %endif
 BuildRequires:  cmake
 BuildRequires:  boost-devel >= 1.48
-BuildRequires:  glm-devel >= 0.9.2.7
+BuildRequires:  glm-devel >= 0.9.5.0
 BuildRequires:  zlib-devel
 BuildRequires:  pkgconfig(sdl2) >= 2.0.0
 %if 0%{?suse_version}

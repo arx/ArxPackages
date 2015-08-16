@@ -2,7 +2,7 @@ Source: arx-libertatis
 Section: games
 Priority: extra
 Maintainer: Daniel Scharrer <daniel@constexpr.org>
-Build-Depends:  debhelper (>= 7.0.50), cmake (>= 2.8), libboost-dev (>= 1.48), libglm-dev (>= 0.9.2.7), zlib1g-dev, libsdl2-dev (>= 2.0.0) | libsdl1.2-dev (>= 1.2.10), libfreetype6-dev (>= 2.3.0), libopenal-dev, mesa-common-dev, libgl1-mesa-dev, libglew-dev (>= 1.5.2), libqt4-dev (>= 4.7)
+Build-Depends:  debhelper (>= 7.0.50), cmake (>= 2.8), libboost-dev (>= 1.48), libglm-dev (>= 0.9.5.0), zlib1g-dev, libsdl2-dev (>= 2.0.0) | libsdl1.2-dev (>= 1.2.10), libfreetype6-dev (>= 2.3.0), libopenal-dev, mesa-common-dev, libgl1-mesa-dev, libglew-dev (>= 1.5.2), libqt4-dev (>= 4.7)
 Standards-Version: 3.9.4
 Homepage: http://arx-libertatis.org/
 Vcs-Git: git://github.com/arx/ArxLibertatis.git
