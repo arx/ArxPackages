@@ -64,9 +64,10 @@ e()    {
 	echo "$ $(escape_args "$@")"
 	"$@"
 }
+
 # make_archive <archive> <source> [<source>...]
 make_archive() {
-	file="${1?missing file arg}"
+	local file="${1?missing file arg}"
 	
 	# Clean old files
 	[ -f "$file" ]     && e rm "$file"
@@ -77,16 +78,42 @@ make_archive() {
 	
 	# Create the archive
 	case "$file" in
-		*.zip) e zip -9r "$file" "${@:2}" ;;
-		*)     e tar -caf "$file" --numeric-owner "${@:2}" ;;
+		*.zip)
+			if [ $# = 2 ] && [ -d "${2%%/*}" ] ; then
+				file="$(realpath -m "$file")"
+				pushd "${2%%/*}"
+					local dir
+					case "$2" in
+						*/*) dir="${2#*/}" ;;
+						*)   dir='.' ;;
+					esac
+					e zip -9r "$file" "$dir"
+					local ret="${PIPESTATUS[0]}"
+				popd
+				return "$ret"
+			else
+				e zip -9r "$file" "${@:2}"
+			fi
+		;;
+		*)
+			e tar -caf "$file" --numeric-owner "${@:2}"
+		;;
 	esac
 }
+
 # extract <archive>
 extract() {
-	file="${1?missing file arg}"
+	local file="${1?missing file arg}"
 	case "$file" in
-		*.zip) e unzip "$file" ;;
-		*)     e tar -xf "$file" ;;
+		*.zip)
+			local dir="${file%.zip}"
+			dir="${dir##*/}"
+			e mkdir "$dir"
+			e unzip "$file" -d "$dir"
+		;;
+		*)
+			e tar -xf "$file"
+		;;
 	esac
 }
 
