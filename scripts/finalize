@@ -53,6 +53,7 @@ update_checksums() {
 }
 
 update_checksums _md5sums md5sum 'MD5SUMS'
+update_checksums _sha256sums sha256sum 'SHA256SUMS'
 update_checksums _sha512sums sha512sum 'SHA512SUMS'
 
 _readme_file="README"
