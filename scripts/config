@@ -92,6 +92,8 @@ project_name="$project"
 # GPG key id to sign builds with - empty key disables signing
 sign_key=''
 
+codename_required=0
+
 ################################################################################
 # Build configuration
 

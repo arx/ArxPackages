@@ -32,6 +32,12 @@ get_shortlog() {
 	_get_changelog '.shortlog' "$@"
 }
 
+get_codename() {
+	local out="${1:?missing output}"
+	local codenamefile="${changelogdir}/${version}.codename"
+	eval "$out=\"\$([ -f \"\$codenamefile\" ] && cat \"\$codenamefile\" || true)\""
+}
+
 _make_changelog() {
 	local file="$1"
 	local type="$2"
@@ -61,6 +67,10 @@ make_changelog() {
 	
 	mkdir -p "$changelogdir"
 	local file="${changelogdir}/${version}"
+	
+	if [ $codename_required = 1 ] ; then
+		[ -f "$file.codename" ] || _make_changelog "$file.codename" 'codename' '%' ''
+	fi
 	
 	[ -f "$file.md" ] || _make_changelog "$file.md" 'changelog' '%' '* ...'
 	

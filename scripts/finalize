@@ -62,7 +62,9 @@ if [ ! -f "${_md_file}" ] || [ $_md5sums_changed = 1 ] ; then
 	
 	# Title
 	echo > "$_md_file"
-	echo "# ${project_name} ${version}" >> "$_md_file"
+	get_codename _codename
+	[ -z "$_codename" ] || _codename=" \"$_codename\""
+	echo "# ${project_name} ${version}${_codename}" >> "$_md_file"
 	
 	# Introduction
 	echo >> "$_md_file"
