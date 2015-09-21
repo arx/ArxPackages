@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2015 Daniel Scharrer
+ *
+ * This software is provided 'as-is', without any express or implied
+ * warranty.  In no event will the author(s) be held liable for any damages
+ * arising from the use of this software.
+ *
+ * Permission is granted to anyone to use this software for any purpose,
+ * including commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
+ *
+ * 1. The origin of this software must not be misrepresented; you must not
+ *    claim that you wrote the original software. If you use this software
+ *    in a product, an acknowledgment in the product documentation would be
+ *    appreciated but is not required.
+ * 2. Altered source versions must be plainly marked as such, and must not be
+ *    misrepresented as being the original software.
+ * 3. This notice may not be removed or altered from any source distribution.
+ */
 
 #include <windows.h>
 
@@ -27,27 +46,24 @@
 
 #include <stdio.h>
 
-BOOL IsWow64() {
+BOOL is_wow64() {
 	
-	typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
-	BOOL bIsWow64;
-	HMODULE handle;
-	LPFN_ISWOW64PROCESS fnIsWow64Process;
+	typedef BOOL (WINAPI * IsWow64Process_t)(HANDLE, PBOOL);
+	IsWow64Process_t IsWow64Process_p;
 	
-	//IsWow64Process is not available on all supported versions of Windows.
-	//Use GetModuleHandle to get a handle to the DLL that contains the function
-	//and GetProcAddress to get a pointer to the function if available.
-	handle = GetModuleHandle(TEXT("kernel32"));
-	fnIsWow64Process = (LPFN_ISWOW64PROCESS)GetProcAddress(handle,"IsWow64Process");
-	if(!fnIsWow64Process) {
+	// IsWow64Process is not available on all versions of Windows - load it dynamically.
+	HMODULE handle = GetModuleHandle(TEXT("kernel32"));
+	IsWow64Process_p = (IsWow64Process_t)GetProcAddress(handle, "IsWow64Process");
+	if(!IsWow64Process_p) {
 		return FALSE;
 	}
 	
-	if(!fnIsWow64Process(GetCurrentProcess(), &bIsWow64)) {
-		return FALSE; // WTF
+	BOOL result;
+	if(!IsWow64Process_p(GetCurrentProcess(), &result)) {
+		return FALSE;
 	}
 	
-	return bIsWow64;
+	return result;
 }
 
 void flush_slashes(LPTSTR * opp, unsigned * slash_countp) {
@@ -139,7 +155,7 @@ int CALLBACK WinMain(HINSTANCE a, HINSTANCE b, PSTR c, INT d) {
 	
 	// Determine the subdirectory for the appropriate variant
 	LPCTSTR prefix;
-	if(IsWow64()) {
+	if(is_wow64()) {
 		prefix = TEXT("\\bin\\x64");
 	} else {
 		prefix = TEXT("\\bin\\x86");
