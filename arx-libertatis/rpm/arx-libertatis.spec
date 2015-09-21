@@ -101,13 +101,11 @@ if Arx Libertatis crashes.
 %setup -q
 
 %build
-cmake . \
-	-DCMAKE_INSTALL_PREFIX=%{_prefix} \
+%cmake . \
 	-DCMAKE_INSTALL_DATAROOTDIR="%{_datadir}" \
 	-DCMAKE_INSTALL_MANDIR="%{_mandir}" \
 	-DCMAKE_INSTALL_BINDIR="%{_bindir}" \
 	-DCMAKE_INSTALL_LIBEXECDIR="%{_libexecdir}" \
-	-DCMAKE_CXX_FLAGS="$RPM_OPT_FLAGS" \
 	-DINSTALL_DATADIR="%{_datadir}/arx" \
 	-DRUNTIME_DATADIR="" \
 	-DWITH_QT=4 \

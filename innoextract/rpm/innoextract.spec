@@ -50,12 +50,10 @@ non-windows systems without running the actual installer using wine.
 %setup -q
 
 %build
-cmake . \
-	-DCMAKE_INSTALL_PREFIX=%{_prefix} \
+%cmake . \
 	-DCMAKE_INSTALL_DATAROOTDIR="%{_datadir}" \
 	-DCMAKE_INSTALL_MANDIR="%{_mandir}" \
-	-DCMAKE_INSTALL_BINDIR="%{_bindir}" \
-	-DCMAKE_CXX_FLAGS="$RPM_OPT_FLAGS"
+	-DCMAKE_INSTALL_BINDIR="%{_bindir}"
 make %{?_smp_mflags}
 
 %install
