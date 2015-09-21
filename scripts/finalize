@@ -31,7 +31,7 @@ for f in "${project}"-* ; do
 	
 done
 
-readarray -t _sfiles < <(for f in "${_files[@]:+${_files[@]}}"; do echo "$f"; done | sort)
+readarray -t _sfiles < <(for f in "${_files[@]:+${_files[@]}}"; do echo "$f"; done | sort -V)
 
 update_checksums() {
 	local prefix="$1"
