@@ -58,7 +58,7 @@ test_binaries() {
 	# Check the version number
 	local ver="$(test_run innoextract --silent --version)"
 	if [ $is_test_version = 0 ] ; then
-		[ "$ver" = "$version" ] || die "version mismatch: '$ver'"
+		[[ "$ver" = "$version"* ]] || die "version mismatch: '$ver' ≠ '$version'"
 	fi
 	
 	# Check that missing values are not ignored
