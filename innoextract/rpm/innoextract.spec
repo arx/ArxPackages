@@ -50,17 +50,25 @@ non-windows systems without running the actual installer using wine.
 %setup -q
 
 %build
-%cmake . \
+%cmake \
 	-DCMAKE_INSTALL_DATAROOTDIR="%{_datadir}" \
 	-DCMAKE_INSTALL_MANDIR="%{_mandir}" \
 	-DCMAKE_INSTALL_BINDIR="%{_bindir}"
 make %{?_smp_mflags}
 
 %install
+%if 0%{?suse_version}
+%cmake_install
+%else
 %make_install
+%endif
 
 %files
+%if 0%{?suse_version}
+%doc LICENSE
+%else
 %license LICENSE
+%endif
 %doc README.md CHANGELOG VERSION
 %{_bindir}/innoextract
 %{_mandir}/man1/innoextract.1*

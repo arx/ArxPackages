@@ -101,7 +101,7 @@ if Arx Libertatis crashes.
 %setup -q
 
 %build
-%cmake . \
+%cmake \
 	-DCMAKE_INSTALL_DATAROOTDIR="%{_datadir}" \
 	-DCMAKE_INSTALL_MANDIR="%{_mandir}" \
 	-DCMAKE_INSTALL_BINDIR="%{_bindir}" \
@@ -114,13 +114,19 @@ if Arx Libertatis crashes.
 make
 
 %install
-%make_install
 %if 0%{?suse_version}
+%cmake_install
 %suse_update_desktop_file %name
+%else
+%make_install
 %endif
 
 %files
+%if 0%{?suse_version}
+%doc LICENSE* COPYING*
+%else
 %license LICENSE* COPYING*
+%endif
 %doc README.md AUTHORS CHANGELOG VERSION
 %{_bindir}/arx
 %{_bindir}/arx-install-data
