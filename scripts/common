@@ -260,7 +260,7 @@ edit() {
 
 # Escape for use in a sed replacement string
 escape_sed() {
-	echo -n "$1" | sed 's/\([\\\*\.\^\$\/]\|\[\|\]\)/\\\1/g' | perl -pe 's/\n/\\\n/'
+	echo -n "$1" | sed 's/\([\\\*\.\^\$\/]\|\[\|\]\)/\\\1/g' | perl -pe 's/\n/\\n/'
 }
 
 subdirs() {
