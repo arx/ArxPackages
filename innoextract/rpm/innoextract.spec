@@ -16,7 +16,7 @@
 #
 
 Name:           innoextract
-Version:        1.4
+Version:        1.5
 Release:        1%{?dist}
 %if 0%{?suse_version}
 License:        Zlib
@@ -74,6 +74,15 @@ make %{?_smp_mflags}
 %{_mandir}/man1/innoextract.1*
 
 %changelog
+* Thu Sep 24 2015 Daniel Scharrer <daniel@constexpr.org> - 1.5-1
+- Bump version to 1.5 (new upstream release):
+- Added support for Inno Setup 5.5.6 installers
+- Added --include and --exclude-temp options to filter extracted files
+- Improved handling of file collisions and added a --collisions option to control the behavior
+- Added support for newer GOG.com multi-part installers via the --gog option
+- Added support for building without iconv, using builtin conversions and/or Win32 API instead
+- Various bug fixes and improvements
+
 * Mon Mar 11 2013 Daniel Scharrer <daniel@constexpr.org> - 1.4-1
 - Bump version to 1.4 (new upstream release):
 - Fixed issues with the progress bar in sandbox environments
