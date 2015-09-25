@@ -110,4 +110,4 @@ test_binaries() {
 	true
 }
 
-echo "$version" | grep -P '^\d+\.\d+$' > /dev/null && codename_required=1
+echo "${version:-kek}" | grep -P '^\d+\.\d+$' > /dev/null && codename_required=1
