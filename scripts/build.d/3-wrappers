@@ -182,7 +182,7 @@ create_launcher() {
 	echo                                                                      >> "$launcher"
 	echo 'here="$(command -v "$0")" ; here="${here:-$0}" ; here="$(readlink -f "$here")" ; here="${here%/*}"' >> "$launcher"
 	echo                                                                      >> "$launcher"
-	echo "exec \$here/${cmdline#\"} \"\$@\""                                  >> "$launcher"
+	echo "exec \"\$here/${cmdline#\"} \"\$@\""                                >> "$launcher"
 	
 }
 fi
