@@ -52,7 +52,7 @@ BuildRequires:  pkgconfig(gl)
 BuildRequires:  glew-devel >= 1.5.2
 BuildRequires:  pkgconfig(QtCore) >= 4.7
 BuildRequires:  pkgconfig(QtGui) >= 4.7
-BuildRequires:  pkgconfig(QtNetwork) >= 4.7
+BuildRequires:  pkgconfig(libcurl) >= 7.20.0
 BuildRequires:  xz
 %if 0%{?suse_version}
 BuildRequires:  update-desktop-files
