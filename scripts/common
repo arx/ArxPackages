@@ -33,6 +33,7 @@ die() {
 trap '[ $? != 0 ] && [ ${_no_backtrace:-0} = 0 ] && backtrace' EXIT
 
 is_snapshot=0
+forced=0
 while [ $# != 0 ] ; do
 	case "$1" in
 		--root=*)    root="${1#*=}" ;;
@@ -41,11 +42,13 @@ while [ $# != 0 ] ; do
 		--version=*) version="${1#*=}" ;;
 		--commit=*)  commit="${1#*=}" ;;
 		--snapshot)  is_snapshot=1 ;;
+		--force)     forced=1 ;;
 		-p) shift ; project="$1" ;;
 		-t) shift ; pkgtype="$1" ;;
 		-v) shift ; version="$1" ;;
 		-c) shift ; commit="$1" ;;
 		-s) is_snapshot=1 ;;
+		-f) forced=1 ;;
 		--) shift ; break ;;
 		*) break ;;
 	esac
@@ -157,6 +160,7 @@ execute() {
 	[ -z "${version-}" ] || args+=( --version="$version" )
 	[ -z "${commit-}" ]  || args+=( --commit="$commit" )
 	[ $is_snapshot = 0 ] || args+=( --snapshot )
+	[ $forced = 0 ]      || args+=( --force )
 	if [ -z "${package_execute_level-}" ] ; then
 		local s='##########################################'
 		export package_execute_level=1
@@ -195,7 +199,7 @@ run() {
 	fi
 	
 	local _update_inplace=0
-	if [ -e "$_phony" ] ; then
+	if [ -e "$_phony" ] && [ $forced = 0 ] ; then
 		local _check="${_script}.check"
 		if [ ! -x "${scriptdir}/${_check}" ] || ! pkgtype='' phony="$_phony" runscript "$_check" ; then
 			elog "- ${_name} (skipped)"
