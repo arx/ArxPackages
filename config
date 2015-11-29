@@ -172,6 +172,10 @@ licenses+=(
 	
 	['/usr/bin/bsdtar']='libarchive'
 	
+	['/usr/include/qt5/*']='Qt5'
+	['/usr/lib/libQt5*.so*']='Qt5'
+	['*/Code/Qt-5.*']='Qt5'
+	
 )
 
 provided_versioned_libraries+=(
