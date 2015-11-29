@@ -9,6 +9,14 @@ readme_transforms+=(
 	--discard '* scripts *'
 )
 
+cmake_options_windows_x86+=(
+	-DBUILD_CRASHREPORTER=1
+)
+
+cmake_options_windows_x64+=(
+	-DRUNTIME_LIBEXECDIR='.;..;../x86'
+)
+
 copy_files+=(
 	
 	# Create a data subdirectory (with a README)
