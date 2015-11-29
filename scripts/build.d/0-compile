@@ -187,7 +187,7 @@ build() {
 	
 	# Get licenses for dependencies
 	local license_outdir="${outdir}/license"
-	for dependency in $(cat "$depsdir"/* | sort | uniq) ; do
+	while read dependency ; do
 		
 		# Ignore dependencies from the build dir
 		[ "$dependency" = "$builddir" ] && continue
@@ -255,7 +255,7 @@ build() {
 		done
 		[ $license_found = 0 ] && die "missing license file for ${license}"
 		
-	done
+	done < <(cat "$depsdir"/* | sort | uniq)
 	
 	true
 }
