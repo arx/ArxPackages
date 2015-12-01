@@ -189,6 +189,8 @@ build() {
 	local license_outdir="${outdir}/license"
 	while read dependency ; do
 		
+		[ -z "$dependency" ] && continue
+		
 		# Ignore dependencies from the build dir
 		[ "$dependency" = "$builddir" ] && continue
 		[[ "$dependency" == "$builddir"/* ]] && continue
