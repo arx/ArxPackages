@@ -15,12 +15,3 @@ index 0087edb..a84043b 100644
  ENDIF()
  
  # Set defines for large file support
-@@ -515,7 +517,7 @@ IF(NOT HAVE_WINDOWS_H)
- 
-     CHECK_SYMBOL_EXISTS(pthread_setname_np pthread.h HAVE_PTHREAD_SETNAME_NP)
-     IF(NOT HAVE_PTHREAD_SETNAME_NP)
--        CHECK_SYMBOL_EXISTS(pthread_set_name_np pthread.h HAVE_PTHREAD_SET_NAME_NP)
-+        CHECK_SYMBOL_EXISTS(pthread_set_name_np pthread_np.h HAVE_PTHREAD_SET_NAME_NP)
-     ENDIF()
-     IF(HAVE_PTHREAD_NP_H)
-         CHECK_SYMBOL_EXISTS(pthread_mutexattr_setkind_np "pthread.h;pthread_np.h" HAVE_PTHREAD_MUTEXATTR_SETKIND_NP)
