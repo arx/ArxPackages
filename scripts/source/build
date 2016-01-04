@@ -21,6 +21,8 @@ e mkdir "$_outdir"
 
 # Checkout the source from git into our working directory
 e git --git-dir="$_repodir" --work-tree="$_outdir" checkout "$commit" -f 2>&1
+_git_log="$(git --git-dir="$_repodir" log -n1 --pretty=oneline "$commit")"
+printf '  Using commit %s\n' "$_git_log" >&2
 
 # Sanity check
 [ -e "${_outdir}/.git" ] && die 'bad git, bad'
