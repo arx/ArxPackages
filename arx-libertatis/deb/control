@@ -50,6 +50,27 @@ Description: Tool to extract the Arx Fatalis .pak files containing the game asse
  .
  This is not required to run Arx Libertatis but can be useful for development.
 
+Package: libarxio
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Arx compression helper library
+ Arx Fatalis compression helper library used by the Blender addon.
+
+Package: libarxio-dev
+Section: devel
+Architecture: any
+Depends: ${misc:Depends}, libarxio (= ${binary:Version})
+Description: Arx compression helper library (development files)
+ Arx Fatalis compression helper library used by the Blender addon (development files).
+
+Package: arx-blender-addon
+Section: utils
+Architecture: all
+Depends: ${misc:Depends}, libarxio (= ${binary:Version})
+Description: Arx Libertatis Blender addon
+ Blender addon to edit Arx Fatalis data files.
+
 Package: arx-libertatis-dbg
 Architecture: any
 Section: debug
