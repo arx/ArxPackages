@@ -63,8 +63,6 @@ Recommends:     arxcrashreporter
 Suggests:       arxunpak
 Suggests:       arxsavetool
 Suggests:       innoextract
-Summary:        Cross-platform port of Arx Fatalis, a first-person role-playing game
-Group:          Amusements/Games/RPG
 %description
 Cross-platform port of Arx Fatalis, a first-person role-playing game.
 This package only includes the game executable - you will also need
@@ -72,7 +70,11 @@ the data files from the original game.
 
 %package -n arxunpak
 Summary:        Tool to extract the Arx Fatalis .pak files containing the game assets
+%if 0%{?suse_version}
 Group:          Productivity/Archiving/Compression
+%else
+Group:          Applications/Archiving
+%endif
 %description -n arxunpak
 Tool to extract the .pak files containing the game assets of the original Arx Fatalis.
 
@@ -80,7 +82,11 @@ This is not required to run Arx Libertatis but can be useful for development.
 
 %package -n arxsavetool
 Summary:        Tool to inspect and modify Arx Libertatis save files
+%if 0%{?suse_version}
 Group:          Development/Tools/Other
+%else
+Group:          Development/Tools
+%endif
 %description -n arxsavetool
 Tool to inspect and modify Arx Libertatis save files. Allows to extract
 individual files from save file containers and re-pack them. Also allows
@@ -89,7 +95,11 @@ by broken versions of the game.
 
 %package -n arxcrashreporter
 Summary:        Arx Libertatis crash reporter
+%if 0%{?suse_version}
 Group:          Development/Tools/Debuggers
+%else
+Group:          Development/Tools
+%endif
 Requires:       gdb
 %description -n arxcrashreporter
 A GUI tool to report detailed information to https://bugs.arx-libertatis.org/
