@@ -9,8 +9,7 @@ override_dh_auto_configure:
 	dh_auto_configure -- \
 		-DCMAKE_INSTALL_LIBEXECDIR=lib/arx \
 		-DGAMESBINDIR=games \
-		-DRUNTIME_DATADIR="" \
-		-DWITH_SDL=2
+		-DRUNTIME_DATADIR=""
 
 override_dh_strip:
 	dh_strip --dbg-package=arx-libertatis-dbg

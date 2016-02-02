@@ -109,8 +109,7 @@ if Arx Libertatis crashes.
 	-DCMAKE_INSTALL_BINDIR="%{_bindir}" \
 	-DCMAKE_INSTALL_LIBEXECDIR="%{_libexecdir}" \
 	-DINSTALL_DATADIR="%{_datadir}/arx" \
-	-DRUNTIME_DATADIR="" \
-	-DWITH_SDL=2
+	-DRUNTIME_DATADIR=""
 make
 
 %install
