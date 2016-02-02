@@ -299,6 +299,18 @@ match_in_array() {
 	return 1 # false
 }
 
+remove_from_array() {
+	local var="$1"
+	local needle="$2"
+	local input=( )
+	eval "input=( \"\${${var}[@]}\" )"
+	local output=( )
+	for item in "${input[@]}" ; do
+		[ "$item" = "$needle" ] || output+=( "$item" )
+	done
+	eval "${var}=( \"\${output[@]}\" )"
+}
+
 version_greater() {
 	[ "$1" = '' ] && return 1
 	[ "$2" = '' ] && return 0

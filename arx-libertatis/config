@@ -109,3 +109,5 @@ test_binaries() {
 }
 
 echo "${version:-kek}" | grep -P '^\d+\.\d+$' > /dev/null && codename_required=1
+
+remove_from_array ubuntu_versions 'precise' # GLM is too old
