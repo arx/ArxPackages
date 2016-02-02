@@ -132,7 +132,7 @@ for _outdir in "$outdir" ; do
 	[ -d "$_outdir" ] || continue
 	pushd "$_outdir"
 	for dir in "$project"-* ; do
-		touch "$dir" --reference="$dir/$dir${archives[source-build]}"
+		e touch "$dir" --reference="$dir/$dir${archives[source-build]}"
 	done
 	popd
 done
