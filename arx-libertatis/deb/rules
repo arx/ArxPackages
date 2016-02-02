@@ -11,8 +11,7 @@ override_dh_auto_configure:
 		-DGAMESBINDIR=games \
 		-DRUNTIME_DATADIR="" \
 		-DWITH_QT=4 \
-		-DWITH_SDL=2 \
-		-DUNITY_BUILD=ON
+		-DWITH_SDL=2
 
 override_dh_strip:
 	dh_strip --dbg-package=arx-libertatis-dbg

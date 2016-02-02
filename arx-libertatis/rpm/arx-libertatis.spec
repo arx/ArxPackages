@@ -109,8 +109,7 @@ if Arx Libertatis crashes.
 	-DINSTALL_DATADIR="%{_datadir}/arx" \
 	-DRUNTIME_DATADIR="" \
 	-DWITH_QT=4 \
-	-DWITH_SDL=2 \
-	-DUNITY_BUILD=ON
+	-DWITH_SDL=2
 make
 
 %install
