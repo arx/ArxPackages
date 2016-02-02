@@ -64,6 +64,7 @@ make %{?_smp_mflags}
 %endif
 
 %files
+%defattr(-,root,root)
 %if 0%{?suse_version}
 %doc LICENSE
 %else
