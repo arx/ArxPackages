@@ -206,7 +206,7 @@ make
 %desktop_database_post
 echo "This package only installs the game binary."
 echo "You will also need the demo or full game data."
-echo "See http://wiki.arx-libertatis.org/Getting_the_game_data for more information."
+echo "See http://arx.vg/data for more information."
 
 %postun
 %desktop_database_postun
