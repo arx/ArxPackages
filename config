@@ -188,8 +188,14 @@ provided_versioned_libraries+=(
 # OpenSUSE Build Service project to push RPM and DEB packages to
 obs_project='home:dscharrer'
 
-# Launchpad project to push RPM and DEB packages to
+# OpenSUSE Build Service project to push RPM and DEB snapshot packages to
+obs_snapshot_project='home:dscharrer:snapshots'
+
+# Launchpad project to push DEB packages to
 launchpad_ppa='ppa:arx/release'
+
+# Launchpad project to push DEB development snapshot packages to
+launchpad_snapshot_ppa='ppa:arx/snapshot'
 
 # GPG key to use for Launchpad uploads
 launchpad_key='28555A66D7E1DEC9'
