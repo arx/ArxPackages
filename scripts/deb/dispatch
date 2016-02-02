@@ -1,24 +1,34 @@
 #!/bin/bash
 
 . "${BASH_SOURCE[0]%/*}/../common"
-
-_deb_version="$(head -1 "${pkgsrcdir}/changelog" | sed 's/^.*(\([^\-]*\)-.*$/\1/')"
-echo "debian version is ${_deb_version}"
-_deb_release="$(head -1 "${pkgsrcdir}/changelog" | sed 's/^.*(\([^)]*\)).*$/\1/')"
-echo "debian release is ${_deb_release}"
-
-[ "$_deb_version" = "$version" ] || die "DEB version is $_deb_version, expected $version"
+. "${BASH_SOURCE[0]%/*}/common"
 
 get_output _debsource _sourcedir "$version" "$pkgtype" 'prepare'
 
-e execute deploy-obs \
-	--del "${project}*.dsc" \
-	--del "${project}_*.orig.*" \
-	--del "${project}_*.debian.*" \
-	--add "${_debsource}/${project}_${_deb_release}.dsc" \
-	--add "${_debsource}/${project}_${_deb_version}.orig".* \
-	--add "${_debsource}/${project}_${_deb_release}.debian".*
+if [ $is_snapshot = 0 ] || [ ! -z "${obs_snapshot_project:-}" ] ; then
+	
+	e execute deploy-obs \
+		--del "${project}*.dsc" \
+		--del "${project}_*.orig.*" \
+		--del "${project}_*.debian.*" \
+		--add "${_debsource}/${project}_${_deb_release}.dsc" \
+		--add "${_debsource}/${project}_${_deb_version}.orig".* \
+		--add "${_debsource}/${project}_${_deb_release}.debian".*
+	
+fi
 
-for changes in "${_debsource}/${project}_${_deb_version}"-*ppa*~*_source.changes ; do
-	e dput "$launchpad_ppa" "$changes"
-done
+if [ $is_snapshot = 0 ] || [ ! -z "${launchpad_snapshot_ppa:-}" ] ; then
+	
+	if [ $is_snapshot = 0 ] ; then
+		[ -z "$launchpad_ppa" ] && die
+		_launchpad_ppa="$launchpad_ppa"
+	else
+		[ -z "$launchpad_snapshot_ppa" ] && die
+		_launchpad_ppa="$launchpad_snapshot_ppa"
+	fi
+	
+	for changes in "${_debsource}/${project}_${_deb_version}"-*ppa*~*_source.changes ; do
+		e dput "$_launchpad_ppa" "$changes"
+	done
+	
+fi

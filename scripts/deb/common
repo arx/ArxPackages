@@ -1,0 +1,48 @@
+#!/bin/bash
+
+to_deb_version() {
+	sed 's:\-\([a-z]\):~\1:g;s:\([a-z]\)\-:\1+:g'
+}
+
+if [ $is_snapshot = 0 ] ; then
+	
+	_deb_version="$(head -1 "${pkgsrcdir}/changelog" | sed 's/^.*(\([^\-]*\)-.*$/\1/')"
+	echo "debian version is ${_deb_version}"
+	_deb_release="$(head -1 "${pkgsrcdir}/changelog" | sed 's/^.*(\([^)]*\)).*$/\1/')"
+	echo "debian release is ${_deb_release}"
+	
+	[ "$_deb_version" = "$version" ] || die "DEB version is ${_deb_version}, expected ${version}"
+	
+else
+	
+	_deb_version="$(printf '%s' "$version" | sed 's:\-\([a-z]\):~\1:g;s:\([a-z]\)\-:\1+:g')"
+	echo "debian version is ${_deb_version}"
+	_deb_release="${_deb_version}-0.1"
+	echo "debian release is ${_deb_release}"
+	
+fi
+
+add_snapshot_deb_changelog_entry() {
+	
+	local changelogfile="$1"
+	local series="$2"
+	
+	local tmpfile="${PWD}/changelog.temp"
+	
+	if [ "$series" = 'stable' ]
+		then local deb_release="$_deb_release"
+		else local deb_release="${_deb_version}-0ppa1~${series}"
+	fi
+	
+	echo "${project} (${deb_release}) ${series}; urgency=low
+
+  * This is an automatically generated development snapshot!
+
+ -- ${packager}  $(date --rfc-2822)
+" > "$tmpfile"
+	
+	cat "$changelogfile" >> "$tmpfile"
+	
+	e mv "$tmpfile" "$changelogfile"
+	
+}

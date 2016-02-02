@@ -1,6 +1,7 @@
 #!/bin/bash
 
 . "${BASH_SOURCE[0]%/*}/../common"
+. "${BASH_SOURCE[0]%/*}/common"
 . "${scriptdir}/changelog"
 
 _specfile="${pkgsrcdir}/${project}.spec"
@@ -14,16 +15,4 @@ version_greater "$version" "$_current_version" \
 
 get_shortlog _changelog
 
-_changelog_entry="
-* $(date --utc '+%a %b %d %Y') ${packager} - ${version}-1
-${_changelog:?bad changelog}
-"
-
-e sed -i "s/^\\(Version\:[ \\t][ \\t]*\\).*$/\\1$(escape_sed "$version")/" \
-	"$_specfile" || die "failed to set new version"
-
-e sed -i "s/^\\(Release\:[ \\t][ \\t]*\\).*$/\\11\\%\\{?dist\\}/" \
-	"$_specfile" || die "failed to set new release"
-
-e sed -i "s/^%changelog$/\\0$(escape_sed "$_changelog_entry")/" \
-	"$_specfile" || die "failed add changelog entry"
+update_rpm_version "$_specfile" "$version" "${_changelog:?bad changelog}"

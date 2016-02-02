@@ -1,0 +1,23 @@
+#!/bin/bash
+
+update_rpm_version() {
+	
+	local specfile="$1"
+	local version="$2"
+	local changelog="$3"
+	
+	local changelog_entry="
+* $(date --utc '+%a %b %d %Y') ${packager} - ${version}-1
+${changelog}
+"
+	
+	e sed -i "s/^\\(Version\:[ \\t][ \\t]*\\).*$/\\1$(escape_sed "$version")/" \
+		"$specfile" || die "failed to set new version"
+	
+	e sed -i "s/^\\(Release\:[ \\t][ \\t]*\\).*$/\\11\\%\\{?dist\\}/" \
+		"$specfile" || die "failed to set new release"
+	
+	e sed -i "s/^%changelog$/\\0$(escape_sed "$changelog_entry")/" \
+		"$specfile" || die "failed add changelog entry"
+	
+}

@@ -2,8 +2,20 @@
 
 . "${BASH_SOURCE[0]%/*}/common"
 
-_repodir="${builddir}/${project}.osc"
-[ -e "$_repodir" ] || e osc checkout --output-dir="$_repodir" "$obs_project" "$obs_package"
+if [ $is_snapshot = 0 ] ; then
+	[ -z "$obs_project" ] && die
+	_repodir="${builddir}/${project}.osc"
+	_obs_project="$obs_project"
+else
+	[ -z "$obs_snapshot_project" ] && die
+	_repodir="${builddir}/${project}-snapshots.osc"
+	_obs_project="$obs_snapshot_project"
+fi
+
+if [ ! -e "$_repodir" ] ; then
+	e osc checkout --output-dir="$_repodir" "$_obs_project" "$obs_package"
+fi
+
 pushd "$_repodir" > /dev/null
 
 e osc update
@@ -38,6 +50,9 @@ done
 
 e osc addremove
 
-e osc commit
+if [ $is_snapshot = 0 ]
+	then e osc commit
+	else e osc commit -m 'New development snapshot'
+fi
 
 popd > /dev/null

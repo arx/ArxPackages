@@ -1,14 +1,66 @@
 #!/bin/bash
 
 . "${BASH_SOURCE[0]%/*}/../common"
+. "${BASH_SOURCE[0]%/*}/common"
+
+if [ ! $is_snapshot = 0 ] ; then
+	[ -z "${obs_snapshot_project:-}" ] && exit
+fi
 
 _specfile="${pkgsrcdir}/${project}.spec"
-_rpm_version="$(grep '^Version\:' "$_specfile" | sed 's/^Version\: *\([^ ]*\) *$/\1/')"
-echo "rpm version is ${_rpm_version}"
-
-[ "$_rpm_version" = "$version" ] || die "RPM version is ${_rpm_version}, expected ${version}"
 
 get_output _source _sourcedir "$version" 'source'
+
+if [ $is_snapshot = 0 ] ; then
+	
+	_rpm_version="$(grep '^Version\:' "$_specfile" | sed 's/^Version\: *\([^ ]*\) *$/\1/')"
+	echo "rpm version is ${_rpm_version}"
+	
+	[ "$_rpm_version" = "$version" ] || die "RPM version is ${_rpm_version}, expected ${version}"
+	
+else
+	
+	if [[ "$version" == *-* ]] ; then
+		
+		_target_version="${version%%-*}"
+		
+		if [[ "$_target_version" == *.* ]] ; then
+			_rpm_version="${_target_version%.*}."
+			_target_component="${_target_version##*.}"
+		else
+			_rpm_version=''
+			_target_component="$_target_version"
+		fi
+		
+		[[ "$_target_component" =~ ^-?[0-9]+$ ]] \
+			|| die "Unknown version scheme: '$_target_component'"
+		_rpm_version+="$((_target_component-1)).9999"
+		
+		_rpm_version+="+$(
+			printf '%s' "${version#*-}" | sed 's:\-\([a-z]\):+\1:g;s:\([a-z]\)\-:\1+:g;s:\-:.:g'
+		)"
+		
+	else
+		_rpm_version="$version"
+	fi
+	
+	echo "rpm version is ${_rpm_version}"
+	
+	_new_specfile="${PWD}/${project}.spec"
+	cp "$_specfile" "$_new_specfile"
+	update_rpm_version "$_new_specfile" "$_rpm_version" \
+		"- This is an automatically generated development snapshot!"
+	_specfile="$_new_specfile"
+	
+	_rpm_source="$(escape_sed "${project_files_url}snapshots/${_source##*/}")"
+	e sed -i "s/^\\(Source\:[ \\t][ \\t]*\\).*\\/%{name}\\-%{version}\\.tar.*$/\\1${_rpm_source}/" \
+		"$_specfile" || die "failed to set new source"
+	
+	_rpm_dir="$(escape_sed "${_sourcedir}")"
+	e sed -i "s/^\\(%setup[ \\t].*\\)$/\\1 -n ${_rpm_dir}/" \
+		"$_specfile" || die "failed to set new source dir"
+	
+fi
 
 e execute deploy-obs \
 	--del "${project}-*.tar.*" \

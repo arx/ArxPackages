@@ -1,15 +1,9 @@
 #!/bin/bash
 
 . "${BASH_SOURCE[0]%/*}/../common"
+. "${BASH_SOURCE[0]%/*}/common"
 
-_deb_version="$(head -1 "${pkgsrcdir}/changelog" | sed 's/^.*(\([^\-]*\)-.*$/\1/')"
-echo "debian version is ${_deb_version}"
-_deb_release="$(head -1 "${pkgsrcdir}/changelog" | sed 's/^.*(\([^)]*\)).*$/\1/')"
-echo "debian release is ${_deb_release}"
-
-[ "$_deb_version" = "$version" ] || die "DEB version is ${_deb_version}, expected ${version}"
-
-get_output _source _sourcedir "$_deb_version" 'source'
+get_output _source _sourcedir "$version" 'source'
 
 e cp "$_source" "${project}_${_deb_version}.orig.tar.${_source##*.}"
 
@@ -26,6 +20,8 @@ get_output _output
 pushd "$_sourcedir"
 	
 	e rsync -a "${pkgsrcdir}/" 'debian'
+	
+	[ $is_snapshot = 0 ] || add_snapshot_deb_changelog_entry 'debian/changelog' 'stable'
 	
 	if [ ! -f "${_output}/${project}.dsc" ] ; then
 		
@@ -46,7 +42,16 @@ pushd "$_sourcedir"
 			
 			# Change the Debian version to an Ubuntu ppa version
 			e cp "$pkgsrcdir/changelog" 'debian/changelog'
-			e sed -i "s/^\\([^ ]*\\) (\\([^\\-]*\\)-\\([0-9]*\\)\\.\\([0-9]*\\)) \\([^;]*\\);/\\1 (\\2-\\3ppa\\4~${ubuntu_ver}) ${ubuntu_ver};/" 'debian/changelog'
+			
+			if [ $is_snapshot = 0 ] ; then
+				
+				e sed -i "s/^\\([^ ]*\\) (\\([^\\-]*\\)-\\([0-9]*\\)\\.\\([0-9]*\\)) \\([^;]*\\);/\\1 (\\2-\\3ppa\\4~${ubuntu_ver}) ${ubuntu_ver};/" 'debian/changelog'
+				
+			else
+				
+				add_snapshot_deb_changelog_entry 'debian/changelog' "$ubuntu_ver"
+				
+			fi
 			
 			e dpkg-buildpackage -S -d -p"$_gpg_command" 2>&1
 			e require_file *~${ubuntu_ver}*.dsc

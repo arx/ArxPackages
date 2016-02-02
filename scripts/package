@@ -21,9 +21,12 @@ run source build
 [ $is_test_version = 0 ] && [ $is_snapshot = 0 ] && runscript finalize
 
 # Send build jobs for Linux packages to the repective build servers
-if [ $is_test_version = 0 ] && [ $is_snapshot = 0 ] ; then
-	runall prepare
-	runall dispatch
+if [ $is_test_version = 0 ] ; then
+	if [ $is_snapshot = 0 ] \
+	   || [ ! -z "${obs_snapshot_project:-}" ] || [ ! -z "${launchpad_snapshot_ppa:-}" ] ; then
+		runall prepare
+		runall dispatch
+	fi
 fi
 
 # Build (portable) binary archives
