@@ -50,8 +50,10 @@ BuildRequires:  freetype-devel >= 2.3.0
 BuildRequires:  openal-devel
 BuildRequires:  pkgconfig(gl)
 BuildRequires:  glew-devel >= 1.5.2
-BuildRequires:  pkgconfig(QtCore) >= 4.7
-BuildRequires:  pkgconfig(QtGui) >= 4.7
+BuildRequires:  pkgconfig(Qt5Core) >= 5.0.0
+BuildRequires:  pkgconfig(Qt5Concurrent) >= 5.0.0
+BuildRequires:  pkgconfig(Qt5Gui) >= 5.0.0
+BuildRequires:  pkgconfig(Qt5Widgets) >= 5.0.0
 BuildRequires:  pkgconfig(libcurl) >= 7.20.0
 BuildRequires:  xz
 %if 0%{?suse_version}
@@ -108,7 +110,6 @@ if Arx Libertatis crashes.
 	-DCMAKE_INSTALL_LIBEXECDIR="%{_libexecdir}" \
 	-DINSTALL_DATADIR="%{_datadir}/arx" \
 	-DRUNTIME_DATADIR="" \
-	-DWITH_QT=4 \
 	-DWITH_SDL=2
 make
 
