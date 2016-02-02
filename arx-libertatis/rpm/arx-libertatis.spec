@@ -58,15 +58,11 @@ BuildRequires:  pkgconfig(libcurl) >= 7.20.0
 BuildRequires:  xz
 %if 0%{?suse_version}
 BuildRequires:  update-desktop-files
+%endif
 Recommends:     arxcrashreporter
 Suggests:       arxunpak
 Suggests:       arxsavetool
 Suggests:       innoextract
-%else
-# TODO Fedora doesn't know these tags yet as of Fedora 19
-# Drop the hard dependency once we have a sane way to specify the optional one
-Requires:       arxcrashreporter
-%endif
 Summary:        Cross-platform port of Arx Fatalis, a first-person role-playing game
 Group:          Amusements/Games/RPG
 %description
