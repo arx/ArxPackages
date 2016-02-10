@@ -27,7 +27,12 @@
 >=cross-i686-gentoo-freebsd9.1/binutils-2.24-r2
 >=cross-x86_64-gentoo-freebsd9.1/binutils-2.24-r2
 
-# GCC compile fails at libcilkrts
-# /usr/libexec/gcc/i686-bindist-linux-gnu/ld: lto-wrapper failed
-# possibly https://gcc.gnu.org/bugzilla/show_bug.cgi?id=61218
-# =cross-i686-bindist-linux-gnu/gcc-4.9.2
+# lto1: internal compiler error: in read_cgraph_and_symbols, at lto/lto.c:2922
+# note: might gimple mismatch that could be fixed by rebuilding cross-world
+=cross-i686-gentoo-freebsd9.1/gcc-4.9.3
+=cross-x86_64-gentoo-freebsd9.1/gcc-4.9.3
+
+# windres borked
+# $ i686-w64-mingw32-windres /home/dscharrer/pro/package/build/arx-libertatis-1.2-dev-2015-07-29-windows-build/arx-libertatis-1.2-dev-2015-07-29-windows/bin/x86/arx.exe -O coff -o /home/dscharrer/pro/package/build/arx-libertatis-1.2-dev-2015-07-29-windows-build/build-wrapper-arx.exe/resources.obj
+# i686-w64-mingw32-windres: /home/dscharrer/pro/package/build/arx-libertatis-1.2-dev-2015-07-29-windows-build/arx-libertatis-1.2-dev-2015-07-29-windows/bin/x86/arx.exe: resource name: address out of bound
+=cross-i686-w64-mingw32/binutils-2.25.1*
