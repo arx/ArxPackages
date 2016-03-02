@@ -370,6 +370,7 @@ fi
 
 source_if_exists() {
 	[ -f "$1" ] && . "$1" || true
+	[ -f "$1.local" ] && . "$1.local" || true
 }
 
 # Read default config
@@ -380,7 +381,6 @@ source_if_exists() {
 
 # Read global config
 source_if_exists "${root}/config"
-source_if_exists "${root}/config.local"
 
 # Read pkgtype-specific config
 [ ! -z "${pkgtype-}" ]    && source_if_exists "${root}/config.${pkgtype}"
