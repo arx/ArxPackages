@@ -1,7 +1,7 @@
 #
 # spec file for package innoextract
 #
-# Copyright (c) 2012-2015 Daniel Scharrer <daniel@constexpr.org>
+# Copyright (c) 2012-2016 Daniel Scharrer <daniel@constexpr.org>
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -16,7 +16,7 @@
 #
 
 Name:           innoextract
-Version:        1.5
+Version:        1.6
 Release:        1%{?dist}
 %if 0%{?suse_version}
 License:        Zlib
@@ -75,6 +75,14 @@ make %{?_smp_mflags}
 %{_mandir}/man1/innoextract.1*
 
 %changelog
+* Thu Mar 24 2016 Daniel Scharrer <daniel@constexpr.org> - 1.6-1
+- Added support for Inno Setup 5.5.7 (and 5.5.8) installers
+- Added a --collisions=rename-all option
+- Fixed issues with the --collisions=rename option
+- Unsafe characters in special constant strings (ie : in {code:…}) are now replaced with $
+- Windows: Fixed progress bar flickering while printing extracted filenames
+- Windows binaries: Fixed crash on platforms without AVX support
+
 * Thu Sep 24 2015 Daniel Scharrer <daniel@constexpr.org> - 1.5-1
 - Bump version to 1.5 (new upstream release):
 - Added support for Inno Setup 5.5.6 installers

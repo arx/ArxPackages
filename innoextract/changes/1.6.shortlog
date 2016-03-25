@@ -1,0 +1,6 @@
+- Added support for Inno Setup 5.5.7 (and 5.5.8) installers
+- Added a --collisions=rename-all option
+- Fixed issues with the --collisions=rename option
+- Unsafe characters in special constant strings (ie : in {code:…}) are now replaced with $
+- Windows: Fixed progress bar flickering while printing extracted filenames
+- Windows binaries: Fixed crash on platforms without AVX support
