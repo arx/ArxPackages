@@ -204,7 +204,7 @@ launchpad_key='28555A66D7E1DEC9'
 ubuntu_versions+=(
 	'precise' # 12.04 LTS  EOL: 2017-04
 	'trusty'  # 14.04 LTS  EOL: 2019-04
-	'vivid'   # 15.04      EOL: 2016-01
 	'wily'    # 15.10      EOL: 2016-07
-	'xenial'  # 16.04 LTS
+	'xenial'  # 16.04 LTS  EOL: 2021-04
+	'yakkety' # 16.10      EOL: 2017-02
 )
