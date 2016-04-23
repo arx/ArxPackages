@@ -64,5 +64,6 @@ fi
 
 e execute deploy-obs \
 	--del "${project}-*.tar.*" \
+	--del "*.patch" \
 	--add "$_source" \
 	--add "$_specfile"
