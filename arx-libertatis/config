@@ -56,7 +56,7 @@ wrapper_use_command=1
 wrapper_use_cmd_path=1
 
 launchers=(
-	[arx-portable]='"arx" --no-data-dir --data-dir="$here/data" --user-dir="$here" --config-dir="$here"'
+	[arx-portable]='"arx" --no-data-dir --data-dir="$here" --user-dir="$here" --config-dir="$here"'
 )
 
 ################################################################################
