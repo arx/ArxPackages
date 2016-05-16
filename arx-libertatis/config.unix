@@ -2,6 +2,10 @@
 
 inherit_projects+=( 'innoextract' )
 
+cmake_options+=(
+	-DICON_TYPE=png
+)
+
 required_binaries+=(
 	arx-install-data
 )
