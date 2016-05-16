@@ -129,7 +129,7 @@ require() {
 	fi
 }
 
-## get_output [version] [pkgtype]
+## get_output file_var dir_var [version] [pkgtype] [stage]
 get_output() {
 	[ ! -z "${3-}" ] && local version="$3"
 	if [ ! -z "${4-}" ] ; then
@@ -152,6 +152,23 @@ get_output() {
 	if [ ! -z "${2-}" ] ; then
 		local dirname="${name%.*}"
 		eval "$2=\"${dirname%.tar}\""
+	fi
+}
+
+## get_output file_var dir_var project version [pkgtype] [stage]
+get_output_of() {
+	local project="$3"
+	local version="$4"
+	local pkgtype="${5:-source}"
+	local stage="${6:-build}"
+	local result
+	IFS=$'\n' result=($(
+		"${scriptdir}/get-output" \
+			--project="$project" --version="$version" --pkgtype="$pkgtype" "$stage"
+	))
+	eval "$1=\"\${result[0]}\""
+	if [ ! -z "${2-}" ] ; then
+		eval "$2=\"\${result[1]}\""
 	fi
 }
 

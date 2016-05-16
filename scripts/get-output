@@ -1,0 +1,7 @@
+#!/bin/bash
+
+. "${BASH_SOURCE[0]%/*}/common"
+
+get_output _out _outdir "$version" "$pkgtype" "${1:-build}"
+
+printf '%s\n%s\n' "$_out" "$_outdir"
