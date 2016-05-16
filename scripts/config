@@ -21,7 +21,7 @@
 if [ -z "${is_test_version:-}" ] ; then
 	is_test_version=0
 	if [ $is_snapshot = 0 ] ; then
-		[[ "${version-}" != *.* ]]        && is_test_version=1
+		[[ "${version-}" != *.* ]] && [[ ! "${version}" =~ ^[0-9]+$ ]] && is_test_version=1
 		[ "${version-}" != "${commit-}" ] && is_test_version=1
 	fi
 fi
