@@ -1,0 +1,26 @@
+#!/bin/bash
+
+################################################################################
+# Project configuration
+
+project_name='Arx Libertatis Data'
+
+# Git repository URL for the project source code
+git_repository='git://github.com/arx/ArxLibertatisData.git'
+
+# URL for the project website
+project_url='http://arx-libertatis.org/'
+
+# URL where output files can be accessed
+project_files_url='http://arx-libertatis.org/files/data/'
+
+# GPG key id to sign builds with - empty key disables signing
+sign_key='F87D7DF750859A5E' # release@arx-libertatis.org
+
+flat_files_tree=1
+
+################################################################################
+# Build configuration
+
+# Arx is not a small project, use better source compression
+archives['source-build']='.tar.xz'
