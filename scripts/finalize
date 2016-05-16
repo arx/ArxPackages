@@ -148,6 +148,7 @@ if [ $flat_files_tree = 0 ] ; then
 		[ -d "$_outdir" ] || continue
 		pushd "$_outdir"
 		for dir in "$project"-* ; do
+			[ -d "$dir" ] || continue
 			e touch "$dir" --reference="$dir/$dir${archives[source-build]}"
 		done
 		popd
