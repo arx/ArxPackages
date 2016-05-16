@@ -94,6 +94,9 @@ sign_key=''
 
 codename_required=0
 
+# Don't create a subdirectory for each version
+flat_files_tree=0
+
 ################################################################################
 # Build configuration
 

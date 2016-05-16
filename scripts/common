@@ -140,9 +140,12 @@ get_output() {
 		local stage="${5:-"${stage:-build}"}"
 	fi
 	local name="${project}-${version}${archives["${pkgtype}-${stage}"]}"
-	if [ "$stage" = 'build' ]
-		then local outdir="${outdir}/${project}-${version}"
-		else local outdir="${builddir}/done"
+	if [ ! "$stage" = 'build' ] ; then
+		local outdir="${builddir}/done"
+	elif [ ! $flat_files_tree = 0 ] ; then
+		local outdir="${outdir}"
+	else
+		local outdir="${outdir}/${project}-${version}"
 	fi
 	mkdir -p "$outdir"
 	eval "$1=\"${outdir}/${name}\""

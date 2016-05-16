@@ -4,7 +4,11 @@
 . "${scriptdir}/changelog"
 . "${scriptdir}/demarkdown"
 
-_outdir="${outdir}/${project}-${version}"
+if [ ! $flat_files_tree = 0 ] ; then
+	_outdir="$outdir"
+else
+	_outdir="${outdir}/${project}-${version}"
+fi
 
 mkdir -p "$_outdir"
 pushd "$_outdir"
@@ -64,16 +68,24 @@ if [ ! -f "${_md_file}" ] || [ $_md5sums_changed = 1 ] ; then
 	echo > "$_md_file"
 	get_codename _codename
 	[ -z "$_codename" ] || _codename=" \"$_codename\""
-	echo "# ${project_name} ${version}${_codename}" >> "$_md_file"
+	if [ ! $flat_files_tree = 0 ] ; then
+		echo "# ${project_name}" >> "$_md_file"
+	else
+		echo "# ${project_name} ${version}${_codename}" >> "$_md_file"
+	fi
 	
 	# Introduction
 	echo >> "$_md_file"
-	if [ "${#_files[@]}" = 1 ] ; then _and_binaries='' ; else _and_binaries=' and binaries' ; fi
-	echo -n "This directory contains source code${_and_binaries} for version ${version} of [${project_name}](${project_url})" >> "$_md_file"
-	if [ ! -z "${project_tagline-}" ] ; then
-	echo -n ", ${project_tagline}" >> "$_md_file"
+	if [ ! $flat_files_tree = 0 ] ; then
+		echo "This directory contains files for [${project_name}](${project_url})." >> "$_md_file"
+	else
+		if [ "${#_files[@]}" = 1 ] ; then _and_binaries='' ; else _and_binaries=' and binaries' ; fi
+		echo -n "This directory contains source code${_and_binaries} for version ${version} of [${project_name}](${project_url})" >> "$_md_file"
+		if [ ! -z "${project_tagline-}" ] ; then
+		echo -n ", ${project_tagline}" >> "$_md_file"
+		fi
+		echo "." >> "$_md_file"
 	fi
-	echo "." >> "$_md_file"
 	
 	# Alternate download locations
 	if [ ! -z "${project_downloads_url-}" ] ; then 
@@ -93,19 +105,21 @@ if [ ! -f "${_md_file}" ] || [ $_md5sums_changed = 1 ] ; then
 	done < "$_md5sums_file"
 	
 	# Changelog
-	echo >> "$_md_file"
-	echo '## Changelog' >> "$_md_file"
-	if [ $is_test_version = 0 ] && [ $is_snapshot = 0 ] ; then
-		get_changelog _changelog
+	if [ $flat_files_tree = 0 ] ; then
 		echo >> "$_md_file"
-		echo "$_changelog" >> "$_md_file"
-	else
-		echo >> "$_md_file"
-		echo "This release is a development snapshot!" >> "$_md_file"
-	fi
-	if [ ! -z "${project_changelog_url-}" ] ; then
-		echo >> "$_md_file"
-		echo "See the full [changelog](${project_changelog_url}) for changes in other versions." >> "$_md_file"
+		echo '## Changelog' >> "$_md_file"
+		if [ $is_test_version = 0 ] && [ $is_snapshot = 0 ] ; then
+			get_changelog _changelog
+			echo >> "$_md_file"
+			echo "$_changelog" >> "$_md_file"
+		else
+			echo >> "$_md_file"
+			echo "This release is a development snapshot!" >> "$_md_file"
+		fi
+		if [ ! -z "${project_changelog_url-}" ] ; then
+			echo >> "$_md_file"
+			echo "See the full [changelog](${project_changelog_url}) for changes in other versions." >> "$_md_file"
+		fi
 	fi
 	
 	demarkdown --subsection --subsection < "$_md_file" > "$_readme_file"
@@ -113,7 +127,8 @@ if [ ! -f "${_md_file}" ] || [ $_md5sums_changed = 1 ] ; then
 fi
 
 _rsspart_file="feed.rsspart"
-if [ $is_snapshot = 1 ] && [ ! -z "${project_files_url:-}" ] && [ ! -f "$_rsspart_file" ] ; then
+if [ $flat_files_tree = 0 ] && [ $is_snapshot = 1 ] && [ ! -z "${project_files_url:-}" ] \
+   && [ ! -f "$_rsspart_file" ] ; then
 	
 	_time="$(stat -c "%Y" "${project}-${version}${archives[source-build]}")"
 	_snapshots_url="${project_files_url}snapshots/${project}-${version}/"
@@ -128,16 +143,19 @@ fi
 
 popd
 
-for _outdir in "$outdir" ; do
-	[ -d "$_outdir" ] || continue
-	pushd "$_outdir"
-	for dir in "$project"-* ; do
-		e touch "$dir" --reference="$dir/$dir${archives[source-build]}"
+if [ $flat_files_tree = 0 ] ; then
+	for _outdir in "$outdir" ; do
+		[ -d "$_outdir" ] || continue
+		pushd "$_outdir"
+		for dir in "$project"-* ; do
+			e touch "$dir" --reference="$dir/$dir${archives[source-build]}"
+		done
+		popd
 	done
-	popd
-done
+fi
 
-if [ $is_snapshot = 1 ] && [ -d "$outdir" ] && [ ! -z "${project_files_url:-}" ] ; then
+if [ $flat_files_tree = 0 ] && [ $is_snapshot = 1 ] && [ -d "$outdir" ] \
+   && [ ! -z "${project_files_url:-}" ] ; then
 	pushd "$outdir"
 	_snapshots_url="${project_files_url}snapshots/"
 	_snapshot_time=0
