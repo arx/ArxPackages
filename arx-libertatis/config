@@ -32,6 +32,32 @@ sign_key='F87D7DF750859A5E' # release@arx-libertatis.org
 # Arx is not a small project, use better source compression
 archives['source-build']='.tar.xz'
 
+prepare_source() {
+	
+	# Include pre-built data files in the source tarball
+	
+	local version_file="$sourcedir/VERSION"
+	[ -f "$version_file" ] || die "Could not find VERSION file in source tree!"
+	data_version="$(
+		grep -iP 'data version\:' "${version_file}" | sed 's/^.*://g;s/ //g'
+	)"
+	
+	local data_archive
+	local data_dir
+	e get_output_of data_archive datadir 'arx-libertatis-data' "$data_version"
+	[ -f "$data_archive" ] || die "Could not find archive for data version $data_version!"
+	e extract "$data_archive"
+	
+	e rsync --archive --verbose \
+		--exclude '/CHANGELOG*' \
+		--exclude '/COPYING*' \
+		--exclude '/LICENSE*' \
+		--exclude '/README*' \
+		--exclude '/VERSION*' \
+		"$datadir/" "$sourcedir/data/"
+	
+}
+
 # Additional options to pass to CMake
 cmake_options+=(
 	-DUSE_STATIC_LIBS=1
