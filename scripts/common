@@ -253,7 +253,7 @@ run() {
 
 runall() {
 	if [ -z "${pkgtype-}" ] ; then
-		for _pkgtype in "${pkgtypes[@]}" ; do
+		for _pkgtype in "${pkgtypes[@]:+${pkgtypes[@]}}" ; do
 			run "$_pkgtype" "$@" || return 1
 		done
 	else
