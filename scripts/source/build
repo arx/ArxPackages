@@ -62,5 +62,13 @@ $_rest"
 	fi
 fi
 
+function call_prepare_source() {
+	
+	local sourcedir="$_outdir"
+	
+	prepare_source
+}
+call_prepare_source
+
 # Build the source tarball
 e make_archive "$_out" "$_outdir" || die fail
