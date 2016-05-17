@@ -192,7 +192,7 @@ make
 
 %files -n libArxIO
 %defattr(-,root,root)
-%{_libdir}/libArxIO.so
+%{_libdir}/libArxIO.so*
 
 %files -n libArxIO-devel
 %defattr(-,root,root)
