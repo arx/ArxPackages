@@ -1,7 +1,7 @@
 usr/bin/arx-install-data
 usr/games/arx
 usr/share/games/arx
-usr/share/pixmaps/arx-libertatis.png
+usr/share/icons/hicolor/*/apps/arx-libertatis.png
 usr/share/applications/arx-libertatis.desktop
 usr/share/man/man1/arx-install-data.1*
 usr/share/man/man6/arx.6*
