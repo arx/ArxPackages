@@ -171,6 +171,9 @@ make
 %{_bindir}/arx
 %{_bindir}/arx-install-data
 %{_datadir}/arx
+%dir %{_datadir}/icons/hicolor
+%dir %{_datadir}/icons/hicolor/*
+%dir %{_datadir}/icons/hicolor/*/apps
 %{_datadir}/icons/hicolor/*/apps/arx-libertatis.png
 %{_datadir}/applications/arx-libertatis.desktop
 %{_mandir}/man1/arx-install-data.1*
