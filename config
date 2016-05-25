@@ -55,6 +55,9 @@ _linker_flags_msvc=(
 	/OPT:REF
 	/OPT:ICF
 	
+	# Don't embed an absulute path to the .pdb file in the executable
+	/PDBALTPATH:%_PDB%
+	
 )
 shared_linker_flags_msvc+=( "${_linker_flags_msvc[@]}" )
 exe_linker_flags_msvc+=( "${_linker_flags_msvc[@]}" )
