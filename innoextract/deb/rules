@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 # -*- makefile -*-
-# We don't need any custom rules as debhelper is able to fugure out everything.
+# We don't need any custom rules as debhelper is able to figure out everything.
 
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
