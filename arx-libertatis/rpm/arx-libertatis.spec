@@ -59,6 +59,8 @@ BuildRequires:  xz
 %if 0%{?suse_version}
 BuildRequires:  update-desktop-files
 %endif
+BuildRequires:  blender-rpm-macros
+BuildRequires:  blender
 Recommends:     arxcrashreporter
 Suggests:       arxunpak
 Suggests:       arxsavetool
@@ -134,6 +136,7 @@ Group:          Productivity/Graphics/3D Editors
 Group:          Applications/Editors
 %endif
 Requires:       libArxIO = %{version}-%{release}
+Requires:       blender
 Enhances:       blender
 BuildArch:      noarch
 %description -n arx-blender-addon
@@ -147,7 +150,9 @@ Blender addon to edit Arx Fatalis data files.
 	-DCMAKE_INSTALL_DATAROOTDIR="%{_datadir}" \
 	-DCMAKE_INSTALL_MANDIR="%{_mandir}" \
 	-DCMAKE_INSTALL_BINDIR="%{_bindir}" \
+	-DCMAKE_INSTALL_LIBDIR="%{_libdir}" \
 	-DCMAKE_INSTALL_LIBEXECDIR="%{_libexecdir}" \
+	-DINSTALL_BLENDER_PLUGINDIR="%{blender_addons}/arx" \
 	-DINSTALL_DATADIR="%{_datadir}/arx" \
 	-DRUNTIME_DATADIR=""
 make
@@ -203,7 +208,8 @@ make
 
 %files -n arx-blender-addon
 %defattr(-,root,root)
-%{_datadir}/blender
+%dir %{blender_addons}
+%{blender_addons}
 
 %post
 %desktop_database_post
