@@ -1,7 +1,7 @@
 #
 # spec file for package arx-libertatis, arx, arxunpak, arxsavetool and arxcrashreporter
 #
-# Copyright (c) 2012-2015 Daniel Scharrer <daniel@constexpr.org>
+# Copyright (c) 2012-2016 Daniel Scharrer <daniel@constexpr.org>
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
