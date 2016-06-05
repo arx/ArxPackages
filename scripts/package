@@ -11,23 +11,16 @@ mkdir -p "$outdir"
 elog "${white}packaging ${project}-${version}${reset}"
 
 # Update source version and changelog data
-if [ $is_test_version = 0 ] && [ $is_snapshot = 0 ] ; then
-	make_changelog
-	runall update-version
-fi
+make_changelog
+runall update-version
 
-# Build the source archives
+# Build the source archive
 run source build
-[ $is_test_version = 0 ] && [ $is_snapshot = 0 ] && runscript finalize
+runscript finalize
 
 # Send build jobs for Linux packages to the repective build servers
-if [ $is_test_version = 0 ] ; then
-	if [ $is_snapshot = 0 ] \
-	   || [ ! -z "${obs_snapshot_project:-}" ] || [ ! -z "${launchpad_snapshot_ppa:-}" ] ; then
-		runall prepare
-		runall dispatch
-	fi
-fi
+runall prepare
+runall dispatch
 
 # Build (portable) binary archives
 runall build

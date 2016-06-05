@@ -1,6 +1,9 @@
 #!/bin/bash
 
 . "${BASH_SOURCE[0]%/*}/../common"
+. "${BASH_SOURCE[0]%/*}/common.check"
+
+[ -e "$phony" ] || exit_true
 
 get_output _output
 
@@ -9,11 +12,10 @@ pushd "$_output"
 	for ubuntu_ver in "${ubuntu_versions[@]}" ; do
 		
 		echo "Checking $ubuntu_ver package"
-		[ -f *~${ubuntu_ver}*.dsc ] || exit 0
+		[ -f *~${ubuntu_ver}*.dsc ] || exit_false
 		
 	done
 	
 popd
 
-_no_backtrace=1
-exit 1
+exit_false

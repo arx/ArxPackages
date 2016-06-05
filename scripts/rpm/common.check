@@ -1,0 +1,11 @@
+#!/bin/bash
+
+[ ! $is_test_version = 0 ] && exit_false
+
+if [ ! $is_snapshot = 0 ] ; then
+	[ -z "${obs_project:-}" ] && [ -z "${launchpad_ppa:-}" ] && exit_false
+else
+	[ -z "${obs_snapshot_project:-}" ] && [ -z "${launchpad_snapshot_ppa:-}" ] && exit_false
+fi
+
+true

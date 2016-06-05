@@ -1,0 +1,10 @@
+#!/bin/bash
+
+. "${BASH_SOURCE[0]%/*}/../common"
+. "${BASH_SOURCE[0]%/*}/common.check"
+
+[ $is_snapshot = 0 ] || exit_false
+
+[ -e "$phony" ] || exit_true
+
+exit_false

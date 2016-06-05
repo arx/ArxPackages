@@ -63,6 +63,9 @@ _make_changelog() {
 
 make_changelog() {
 	
+	[ $is_test_version = 0 ] || return $true
+	[ $is_snapshot = 0 ] || return $true
+	
 	[ ! -z "${1-}" ] && local version="$1"
 	
 	mkdir -p "$changelogdir"

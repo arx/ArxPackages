@@ -9,6 +9,15 @@ false=1
 set -e
 set -u
 
+exit_true() {
+	exit $true
+}
+
+exit_false() {
+	_no_backtrace=1
+	exit $false
+}
+
 backtrace() {
 	i=${1:-0}
 	while [ "${FUNCNAME[$((i+1))]}" = 'e' ] ; do i=$((i+1)) ; done
@@ -219,14 +228,16 @@ run() {
 	fi
 	
 	local _update_inplace=0
+	local _check="${_script}.check"
 	if [ -e "$_phony" ] && [ $forced = 0 ] ; then
-		local _check="${_script}.check"
 		if [ ! -x "${scriptdir}/${_check}" ] || ! pkgtype='' phony="$_phony" runscript "$_check" ; then
 			elog "- ${_name} (skipped)"
 			return 0;
 		else
 			_update_inplace=1
 		fi
+	elif [ -x "${scriptdir}/${_check}" ] && ! pkgtype='' phony="$_phony" runscript "$_check" ; then
+		return 0;
 	fi
 	
 	elog "- ${white}${_name}${reset}"
