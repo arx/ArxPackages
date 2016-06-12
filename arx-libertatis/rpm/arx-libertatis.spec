@@ -107,14 +107,14 @@ Requires:       gdb
 A GUI tool to report detailed information to https://bugs.arx-libertatis.org/
 if Arx Libertatis crashes.
 
-%package -n libArxIO
+%package -n libArxIO0
 Summary:        Arx compression helper library
 %if 0%{?suse_version}
 Group:          System/Libraries
 %else
 Group:          System Environment/Libraries
 %endif
-%description -n libArxIO
+%description -n libArxIO0
 Arx Fatalis compression helper library used by the Blender addon.
 
 %package -n libArxIO-devel
@@ -124,7 +124,7 @@ Group:          Development/Libraries/C and C++
 %else
 Group:          Development/Libraries
 %endif
-Requires:       libArxIO = %{version}-%{release}
+Requires:       libArxIO0 = %{version}-%{release}
 %description -n libArxIO-devel
 Arx Fatalis compression helper library used by the Blender addon (development files).
 
@@ -135,7 +135,7 @@ Group:          Productivity/Graphics/3D Editors
 %else
 Group:          Applications/Editors
 %endif
-Requires:       libArxIO = %{version}-%{release}
+Requires:       libArxIO0 = %{version}-%{release}
 Requires:       blender
 Enhances:       blender
 BuildArch:      noarch
@@ -198,7 +198,7 @@ make
 %defattr(-,root,root)
 %{_libexecdir}/arxcrashreporter
 
-%files -n libArxIO
+%files -n libArxIO0
 %defattr(-,root,root)
 %{_libdir}/libArxIO.so*
 
