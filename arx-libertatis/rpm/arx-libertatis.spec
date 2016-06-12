@@ -200,11 +200,12 @@ make
 
 %files -n libArxIO0
 %defattr(-,root,root)
-%{_libdir}/libArxIO.so*
+%{_libdir}/libArxIO.so.*
 
 %files -n libArxIO-devel
 %defattr(-,root,root)
 %{_includedir}/ArxIO.h
+%{_libdir}/libArxIO.so
 
 %files -n arx-blender-addon
 %defattr(-,root,root)
