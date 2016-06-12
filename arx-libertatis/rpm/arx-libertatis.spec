@@ -218,8 +218,12 @@ echo "This package only installs the game binary."
 echo "You will also need the demo or full game data."
 echo "See http://arx.vg/data for more information."
 
+%post -n libArxIO0 -p /sbin/ldconfig
+
 %postun
 %desktop_database_postun
+
+%postun -n libArxIO0 -p /sbin/ldconfig
 
 %changelog
 * Thu Oct 17 2013 Daniel Scharrer <daniel@constexpr.org> - 1.1.2-1
