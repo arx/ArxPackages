@@ -135,7 +135,7 @@ Group:          Productivity/Graphics/3D Editors
 %else
 Group:          Applications/Editors
 %endif
-Requires:       libArxIO0 = %{version}-%{release}
+Requires:       libArxIO0 >= %{version}-%{release}
 Requires:       blender
 Enhances:       blender
 BuildArch:      noarch

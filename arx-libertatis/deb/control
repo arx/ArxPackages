@@ -67,7 +67,7 @@ Description: Arx compression helper library (development files)
 Package: arx-blender-addon
 Section: utils
 Architecture: all
-Depends: ${misc:Depends}, libarxio0 (= ${binary:Version})
+Depends: ${misc:Depends}, libarxio0 (>= ${binary:Version})
 Description: Arx Libertatis Blender addon
  Blender addon to edit Arx Fatalis data files.
 
