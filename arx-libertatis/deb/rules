@@ -19,7 +19,7 @@ override_dh_installchangelogs:
 	dh_installchangelogs -parxcrashreporter
 	dh_installchangelogs -parxsavetool
 	dh_installchangelogs -parxunpak
-	dh_installchangelogs -plibarxio
+	dh_installchangelogs -plibarxio0
 	dh_installchangelogs -plibarxio-dev
 	dh_installchangelogs -parx-blender-addon
 	dh_installchangelogs -parx-libertatis-dbg
