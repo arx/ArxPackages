@@ -56,6 +56,11 @@ prepare_source() {
 		--exclude '/VERSION*' \
 		"$datadir/" "$sourcedir/data/"
 	
+	# Remove git build instructions
+	
+	e perl -0777 -pi -e 's/\n#+[^\n]* [gG]it( [^\n]*)?(\n[^#\n][^\n]*|\n(?=\n))*//g' \
+		"$sourcedir/README.md"
+	
 }
 
 # Additional options to pass to CMake
