@@ -125,6 +125,13 @@ forbidden_libraries+=(
 	'libz.so*'
 	'zlib*'
 	
+	# Check that Qt was linked statically
+	'libicu*'
+	'icu*.dll'
+	'*Qt5Core*'
+	'*Qt5Gui*'
+	'*Qt5Widgets*'
+	
 )
 
 test_binaries() {
