@@ -18,13 +18,13 @@ runall update-version
 run source build
 runscript finalize
 
-# Send build jobs for Linux packages to the repective build servers
-runall prepare
-runall dispatch
-
 # Build (portable) binary archives
 runall build
 runall test
+
+# Send build jobs for Linux packages to the repective build servers
+runall prepare
+runall dispatch
 
 # Sign archives and create checksum and readme files
 runscript finalize
