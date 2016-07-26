@@ -77,6 +77,10 @@ cmake_options+=(
 	-DRUNTIME_DATADIR=".${env_separator}../.."
 )
 
+if [ $is_snapshot = 1 ] && [ $is_release_candidate = 0 ] ; then
+	cmake_options+=( -DDEBUG=1 )
+fi
+
 ################################################################################
 # Wrapper configuration
 
