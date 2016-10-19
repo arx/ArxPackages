@@ -210,4 +210,5 @@ ubuntu_versions+=(
 	'wily'    # 15.10      EOL: 2016-07
 	'xenial'  # 16.04 LTS  EOL: 2021-04
 	'yakkety' # 16.10      EOL: 2017-02
+	'zesty'   # 17.04      EOL: 2018-01
 )
