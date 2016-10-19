@@ -17,10 +17,6 @@ Description: Cross-platform port of Arx Fatalis, a first-person role-playing gam
  Arx Libertatis is a cross-platform port of the GPLed Arx Fatalis first-person
  role-playing game. This package only includes the game executable - you will
  also need the data files from the original game.
- .
- Besides the data files, this is all that is needed to run the game, but
- installing the main arx-libertatis package to get the arxcrashreporter is
- recommended.
 
 Package: arxcrashreporter
 Section: devel
