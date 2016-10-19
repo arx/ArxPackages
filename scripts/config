@@ -109,6 +109,9 @@ flat_files_tree=0
 
 prepare_source() { echo "no custom prepare steps" ; }
 
+# How to invoke the php preprocessor
+php_cmd='php'
+
 # Additional options to pass to CMake
 declare -a cmake_options
 

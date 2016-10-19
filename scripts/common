@@ -77,6 +77,35 @@ e()    {
 	"$@"
 }
 
+preprocess() {
+	local config="$1"
+	local input="$2"
+	local output="$3"
+	local command=(
+		"$php_cmd" -c "${scriptdir}/php.ini" -d "auto_prepend_file=${config}" "$input"
+	)
+	echo "$ $(escape_args "${command[@]}") > $(escape_args "$output")"
+	"${command[@]}" > "$output"
+	[ -s "$output" ] || e rm "$output"
+}
+
+preprocess_all() {
+	local config="$1"
+	local input="$(realpath -m "$2")"
+	local output="$(realpath -m "$3")"
+	pushd "$input"
+		while IFS= read -r -d '' path ; do
+			if [ -L "$path" ] ; then
+				e ln -s "$(readlink "$path")" "${output}/${path}"
+			elif [ -d "$path" ] ; then
+				e mkdir "${output}/${path}"
+			else
+				preprocess "$config" "$path" "${output}/${path}"
+			fi
+		done < <(find -print0)
+	popd
+}
+
 # make_archive <archive> <source> [<source>...]
 make_archive() {
 	local file="${1?missing file arg}"
