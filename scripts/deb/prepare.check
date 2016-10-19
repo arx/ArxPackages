@@ -12,7 +12,7 @@ pushd "$_output"
 	for ubuntu_ver in "${ubuntu_versions[@]}" ; do
 		
 		echo "Checking $ubuntu_ver package"
-		[ -f *~${ubuntu_ver}*.dsc ] || exit_false
+		[ -f *~${ubuntu_ver}*.dsc ] || exit_true
 		
 	done
 	
