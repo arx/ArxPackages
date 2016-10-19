@@ -62,6 +62,8 @@ BuildRequires:  update-desktop-files
 BuildRequires:  blender-rpm-macros
 BuildRequires:  blender
 Recommends:     arxcrashreporter
+Conflicts:      arxcrashreporter < %{version}
+Conflicts:      arxcrashreporter > %{version}-9999
 Suggests:       arxunpak
 Suggests:       arxsavetool
 Suggests:       innoextract

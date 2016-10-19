@@ -12,6 +12,7 @@ Package: arx-libertatis
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Recommends: arxcrashreporter
+Conflicts: arxcrashreporter (< ${binary:Version}), arxcrashreporter (> ${binary:Version})
 Suggests: arx-fatalis-data | arx-fatalis-demo-data | game-data-packager (>= 41)
 Description: Cross-platform port of Arx Fatalis, a first-person role-playing game
  Arx Libertatis is a cross-platform port of the GPLed Arx Fatalis first-person
