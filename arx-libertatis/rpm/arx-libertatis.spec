@@ -172,7 +172,7 @@ make
 %else
 %license LICENSE* COPYING*
 %endif
-%doc README.md AUTHORS CHANGELOG VERSION
+%doc README* AUTHORS CHANGELOG VERSION
 %{_bindir}/arx
 %{_bindir}/arx-install-data
 %{_datadir}/arx
