@@ -65,6 +65,7 @@ Package: arx-blender-addon
 Section: utils
 Architecture: all
 Depends: ${misc:Depends}, libarxio0 (>= ${binary:Version})
+Enhances: blender
 Description: Arx Libertatis Blender addon
  Blender addon to edit Arx Fatalis data files.
 
