@@ -34,7 +34,7 @@ pushd "$_sourcedir"
 		
 	fi
 	
-	for ubuntu_ver in "${ubuntu_versions[@]}" ; do
+	for ubuntu_ver in "${ubuntu_versions_src[@]}" ; do
 		
 		if [ ! -f "${_output}/"*~${ubuntu_ver}*.dsc ] ; then
 			

@@ -2,6 +2,7 @@
 
 . "${BASH_SOURCE[0]%/*}/../common"
 . "${BASH_SOURCE[0]%/*}/common.check"
+. "${BASH_SOURCE[0]%/*}/common"
 
 [ -e "$phony" ] || exit_true
 
@@ -9,7 +10,7 @@ get_output _output
 
 pushd "$_output"
 	
-	for ubuntu_ver in "${ubuntu_versions[@]}" ; do
+	for ubuntu_ver in "${ubuntu_versions_src[@]}" ; do
 		
 		echo "Checking $ubuntu_ver package"
 		[ -f *~${ubuntu_ver}*.dsc ] || exit_true

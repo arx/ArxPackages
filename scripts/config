@@ -471,5 +471,10 @@ system_packages=(
 # GPG key to use for Launchpad uploads
 #launchpad_key=''
 
+# Associative array from Ubuntu versions to launchpad build types
+# Build types can be 'disabled' or 'source'
+# Versions not mentioned in this array default to 'source'
+declare -A launchpad_builds
+
 # Ubuntu versions for which to push build jobs to Launchpad
 declare -a ubuntu_versions
