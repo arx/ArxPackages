@@ -15,6 +15,9 @@
 # Please submit bugfixes or comments via http://bugs.arx-libertatis.org/
 #
 
+# The blender plugin requires python 3
+%define __python %{__python3}
+
 Name:           arx-libertatis
 Version:        1.1.2
 Release:        1%{?dist}
