@@ -48,3 +48,19 @@
 # $ i686-w64-mingw32-windres /home/dscharrer/pro/package/build/arx-libertatis-1.2-dev-2015-07-29-windows-build/arx-libertatis-1.2-dev-2015-07-29-windows/bin/x86/arx.exe -O coff -o /home/dscharrer/pro/package/build/arx-libertatis-1.2-dev-2015-07-29-windows-build/build-wrapper-arx.exe/resources.obj
 # i686-w64-mingw32-windres: /home/dscharrer/pro/package/build/arx-libertatis-1.2-dev-2015-07-29-windows-build/arx-libertatis-1.2-dev-2015-07-29-windows/bin/x86/arx.exe: resource name: address out of bound
 =cross-i686-w64-mingw32/binutils-2.25.1*
+=cross-i686-w64-mingw32/binutils-2.26.1*
+
+# dpkg-genbuildinfo: error: cannot open /var/lib/dpkg/status: No such file or directory
+=app-arch/dpkg-1.18.14
+=app-arch/dpkg-1.18.15
+=app-arch/dpkg-1.18.18
+=app-arch/dpkg-1.18.22
+=app-arch/dpkg-1.18.23
+
+# Undefined references in LTO builds
+=cross-i686-bindist-linux-gnu/binutils-2.27
+=cross-x86_64-bindist-linux-gnu/binutils-2.27
+=cross-armv6j-hardfloat-linux-gnueabi/binutils-2.27
+=cross-i686-gentoo-freebsd9.1/binutils-2.27
+=cross-x86_64-gentoo-freebsd9.1/binutils-2.27
+=cross-i686-w64-mingw32/binutils-2.27
