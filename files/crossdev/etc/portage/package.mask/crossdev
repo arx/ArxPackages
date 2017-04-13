@@ -1,3 +1,19 @@
+# Keep old glibc for ABI compatibility
+
+>=cross-armv6j-hardfloat-linux-gnueabi/glibc-2.15
+
+>=cross-i686-bindist-linux-gnu/glibc-2.6.2
+
+>=cross-x86_64-bindist-linux-gnu/glibc-2.6.2
+
+# Keep FreeBSD at 9.1 for ABI compatibility
+
+>=cross-i686-gentoo-freebsd9.1/freebsd-lib-9.1.1
+
+>=cross-x86_64-gentoo-freebsd9.1/freebsd-lib-9.1.1
+
+>=sys-freebsd/freebsd-mk-defs-9.2_rc1
+
 # Prevent automatic GCC upgrades
 
 <cross-armv6j-hardfloat-linux-gnueabi/gcc-4.9.0
@@ -17,9 +33,6 @@
 
 <cross-x86_64-gentoo-freebsd9.1/gcc-4.9.0
 >=cross-x86_64-gentoo-freebsd9.1/gcc-4.10.0
-
-# Keep FreBSD at 9.1
->=sys-freebsd/freebsd-mk-defs-9.2_rc1
 
 # GCC Borked
 # /usr/libexec/gcc/i686-gentoo-freebsd9.1/ld: cannot find /usr/i686-gentoo-freebsd9.1/usr/lib/libc.so.7 inside /usr/i686-gentoo-freebsd9.1
