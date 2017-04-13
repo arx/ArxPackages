@@ -1,0 +1,18 @@
+diff --git a/gcc-4.9.4.bak/libgcc/config/i386/t-crtfm b/gcc-4.9.4/libgcc/config/i386/t-crtfm
+index b9da06b..9968540 100644
+--- a/gcc-4.9.4.bak/libgcc/config/i386/t-crtfm
++++ b/gcc-4.9.4/libgcc/config/i386/t-crtfm
+@@ -1,4 +1,4 @@
+ # This is an endfile, Use -minline-all-stringops to ensure
+ # that __builtin_memset doesn't refer to the lib function memset().
+ crtfastmath.o: $(srcdir)/config/i386/crtfastmath.c
+-	$(gcc_compile) -mfxsr -msse -c $<
++	$(gcc_compile) -mfxsr -msse -c -fno-lto $<
+diff --git a/gcc-4.9.4.bak/libgcc/config/t-crtfm b/gcc-4.9.4/libgcc/config/t-crtfm
+index 61e6269..747b58b 100644
+--- a/gcc-4.9.4.bak/libgcc/config/t-crtfm
++++ b/gcc-4.9.4/libgcc/config/t-crtfm
+@@ -1,2 +1,2 @@
+ crtfastmath.o: $(srcdir)/config/$(cpu_type)/crtfastmath.c
+-	$(gcc_compile) -c $<
++	$(gcc_compile) -c -fno-lto $<
