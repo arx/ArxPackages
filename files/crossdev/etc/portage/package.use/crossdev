@@ -2,9 +2,13 @@ cross-i686-bindist-linux-gnu/glibc        lto glibc-omitfp
 
 cross-i686-bindist-linux-gnu/gcc          lto -fortran graphite mudflap
 cross-x86_64-bindist-linux-gnu/gcc        lto -fortran graphite mudflap
-cross-i686-gentoo-freebsd9.1/gcc          lto -fortran graphite mudflap -sanitize
-cross-x86_64-gentoo-freebsd9.1/gcc        lto -fortran graphite mudflap -sanitize
+cross-i686-gentoo-freebsd9.1/gcc          lto -fortran graphite mudflap -sanitize -vtv
+cross-x86_64-gentoo-freebsd9.1/gcc        lto -fortran graphite mudflap -sanitize -vtv
 cross-armv6j-hardfloat-linux-gnueabi/gcc  lto -fortran graphite mudflap
-cross-i686-w64-mingw32/gcc                lto -fortran graphite -sanitize
+cross-i686-w64-mingw32/gcc                lto -fortran graphite -sanitize -vtv
+
+# incompatible with =dev-libs/isl-0.15, =dev-libs/isl-0.16.1
+=cross-i686-gentoo-freebsd9.1/gcc-4.9.2 -graphite
+=cross-x86_64-gentoo-freebsd9.1/gcc-4.9.2 -graphite
 
 cross-armv6j-hardfloat-linux-gnueabi/gdb  expat
