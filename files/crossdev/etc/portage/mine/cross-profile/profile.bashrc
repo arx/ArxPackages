@@ -57,7 +57,7 @@ if [ "$PN" = "libarchive" ] ; then
 fi
 
 if [ "$PN" = "libsdl" ] ; then
-	LDFLAGS="$LDFLAGS -static-libgcc"
+	CC="${CC:-$CHOST-gcc} -static-libgcc" # I hate libtool
 	rename_func econf orig_econf
 	econf() {
 		local args=( )
@@ -77,6 +77,10 @@ if [ "$PN" = "libsdl" ] ; then
 fi
 
 if [ "$PN" = "libsdl2" ] ; then
+	CC="${CC:-$CHOST-gcc} -static-libgcc" # I hate libtool
+	strip-flags() {
+		true
+	}
 	rename_func econf orig_econf
 	econf() {
 		local args=( )
@@ -109,7 +113,7 @@ if [ "$PN" = "libsdl2" ] ; then
 				*) args+=( "$arg" )
 			esac
 		done
-		LDFLAGS="$LDFLAGS -static-libgcc" CFLAGS="$CFLAGS -std=gnu99" orig_econf "${args[@]}" \
+		CFLAGS="$CFLAGS -std=gnu99" orig_econf "${args[@]}" \
 			--disable-timers \
 			--disable-file \
 			--disable-cpuinfo \
