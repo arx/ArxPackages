@@ -1,0 +1,4 @@
+my_CFLAGS="-O2 -pipe -march=generic"
+
+CFLAGS="${my_CFLAGS}"
+CXXFLAGS="${my_CFLAGS}"
