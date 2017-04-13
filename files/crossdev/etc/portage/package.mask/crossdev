@@ -41,7 +41,6 @@
 >=cross-x86_64-gentoo-freebsd9.1/binutils-2.24-r2
 
 # lto1: internal compiler error: in read_cgraph_and_symbols, at lto/lto.c:2922
-# note: might gimple mismatch that could be fixed by rebuilding cross-world
 =cross-i686-gentoo-freebsd9.1/gcc-4.9.3
 =cross-x86_64-gentoo-freebsd9.1/gcc-4.9.3
 
