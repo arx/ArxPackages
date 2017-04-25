@@ -146,9 +146,14 @@ test_binaries() {
 	# Test that the program runs at all
 	expect_success arx --help
 	expect_success arx --list-dirs
+	expect_failure arx --unknown-option
+	
+	# Test that the program runs at all
+	expect_success arxunpak --help
+	expect_success arxunpak --list-dirs
+	expect_failure arxunpak --unknown-option
 	
 	# Exit code 1 if no files given
-	expect_failure arxunpak
 	expect_failure arxsavetool
 	
 	true
