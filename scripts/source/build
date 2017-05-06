@@ -44,7 +44,7 @@ if [ -f "$_version_file" ] ; then
 	else
 		# Adjust version for test/patch releases
 		_vername="$(head --lines=1 "$_version_file")"
-		_commit="$(git --git-dir="$_repodir" rev-parse --short=5 "$commit")"
+		_commit="$(git --git-dir="$_repodir" rev-parse --short="$commit_prefix_length" "$commit")"
 		if [[ "${version-}" == *.* ]] || [ $is_snapshot = 1 ] ; then
 			_vername="${_vername% *} ${version} + ${_commit}"
 		else

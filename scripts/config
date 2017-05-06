@@ -104,6 +104,9 @@ codename_required=0
 # Don't create a subdirectory for each version
 flat_files_tree=0
 
+# Commit prefix length
+commit_prefix_length=7
+
 ################################################################################
 # Build configuration
 
