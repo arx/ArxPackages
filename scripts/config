@@ -96,6 +96,9 @@ project_name="$project"
 # URL where output files can be accessed
 #project_files_url='http://example.com/files/'
 
+# URL where commits can be accessed
+#project_commits_url='http://example.com/commit/'
+
 # GPG key id to sign builds with - empty key disables signing
 sign_key=''
 

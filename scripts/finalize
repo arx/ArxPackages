@@ -114,7 +114,21 @@ if [ ! -f "${_md_file}" ] || [ $_md5sums_changed = 1 ] ; then
 			echo "$_changelog" >> "$_md_file"
 		else
 			echo >> "$_md_file"
-			echo "This release is a development snapshot!" >> "$_md_file"
+			_commit_file='COMMIT'
+			echo -n "This release is a development snapshot" >> "$_md_file"
+			if [ -f "$_commit_file" ] ; then
+				_commit="$(cat "$_commit_file")"
+				_commit="${_commit:0:$commit_prefix_length}"
+				echo -n " of " >> "$_md_file"
+				if [ ! -z "${project_commits_url:-}" ] ; then
+					echo -n "[" >> "$_md_file"
+				fi
+				echo -n "commit ${_commit}" >> "$_md_file"
+				if [ ! -z "${project_commits_url:-}" ] ; then
+					echo -n "](${project_commits_url}${_commit})" >> "$_md_file"
+				fi
+			fi
+			echo "!" >> "$_md_file"
 		fi
 		if [ ! -z "${project_changelog_url-}" ] ; then
 			echo >> "$_md_file"

@@ -21,6 +21,9 @@ project_changelog_url='http://constexpr.org/innoextract/changelog'
 # URL where output files can be accessed
 project_files_url='http://constexpr.org/innoextract/files/'
 
+# URL where commits can be accessed
+project_commits_url='https://github.com/dscharrer/innoextract/commits/'
+
 # GPG key id to sign builds with - empty key disables signing
 sign_key='28555A66D7E1DEC9' # daniel@constexpr.org
 

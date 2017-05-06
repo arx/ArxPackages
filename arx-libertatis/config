@@ -23,6 +23,9 @@ project_changelog_url='http://wiki.arx-libertatis.org/Changelog'
 # URL where output files can be accessed
 project_files_url='http://arx-libertatis.org/files/'
 
+# URL where commits can be accessed
+project_commits_url='http://arx.vg/'
+
 # GPG key id to sign builds with - empty key disables signing
 sign_key='F87D7DF750859A5E' # release@arx-libertatis.org
 
