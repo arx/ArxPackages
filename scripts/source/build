@@ -59,6 +59,9 @@ if [ -f "$_version_file" ] ; then
 		[ ! -z "$_rest" ] && _vername="$_vername
 $_rest"
 		echo "$_vername" > "$_version_file"
+		if [ $flat_files_tree = 0 ] ; then
+			git --git-dir="$_repodir" rev-parse "$commit" > "${_out%/*}/COMMIT"
+		fi
 	fi
 fi
 
