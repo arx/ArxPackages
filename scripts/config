@@ -424,6 +424,7 @@ declare -A licenses=(
 	['/usr/lib/opengl/xorg-x11/lib/libGL.so*']=''
 	['/usr/lib/libGL.so*']=''
 	['/usr/lib/libX11.so*']=''
+	['/usr/include/X11/*']=''
 	# Windows
 	['*/Program Files/Windows Kits/*']=''
 	['advapi32.lib']=''
