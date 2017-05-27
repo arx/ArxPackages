@@ -153,7 +153,6 @@ test_binaries() {
 	# Test that the program runs at all
 	expect_success arx --help
 	expect_success arx --list-dirs
-	expect_failure arx --unknown-option
 	
 	# Test that the program runs at all
 	expect_success arxunpak --help
