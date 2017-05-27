@@ -147,6 +147,7 @@ licenses+=(
 	
 	['/usr/include/AL/*']='OpenAL_Soft'
 	['/usr/lib/libopenal.*']='OpenAL_Soft'
+	['/usr/share/openal/*']='OpenAL_Soft'
 	['*/Code/OpenAL-Soft-*']='OpenAL_Soft'
 	['*/Code/OpenAL-Soft/*']='OpenAL_Soft'
 	

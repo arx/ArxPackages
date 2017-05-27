@@ -87,6 +87,10 @@ if [ $is_snapshot = 1 ] && [ $is_release_candidate = 0 ] ; then
 	)
 fi
 
+copy_from_tree+=(
+	'share/openal/hrtf'
+)
+
 ################################################################################
 # Wrapper configuration
 
