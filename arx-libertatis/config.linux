@@ -2,6 +2,6 @@
 
 architectures=( 'i686' 'amd64' )
 
-copy_from_tree+=( 'bsdtar' )
+copy_from_tree+=( 'bin/bsdtar' )
 
 . "${projectdir}/config.unix"

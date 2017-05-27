@@ -159,30 +159,13 @@ build() {
 	fi
 	[ -z "$root" ] || binroots+=( "$root" )
 	
-	local binarch="$arch"
-	[ -f "$rootdir/arch" ] && binarch="$(cat "$rootdir/arch")"
-	local suffixes=(
-		'' "$binarch"
-		"bin" "bin/$binarch" "lib" "lib/$binarch"
-		"usr/bin" "usr/bin/$binarch" "usr/lib" "usr/lib/$binarch"
-	)
 	
 	# Copy binaries from the crossdev tree
-	for binary in "${copy_from_tree[@]:+${copy_from_tree[@]}}" ; do
-		local found=0
-		for binroot in "${binroots[@]:+${binroots[@]}}" ; do
-			for suffix in "${suffixes[@]}" ; do
-				local file="${binroot}/${suffix}/${binary}"
-				[ -f "$file" ] || continue
-				e mkdir -p "${bindir}/libexec"
-				e cp --preserve=all "$file" "${bindir}/libexec/"
-				readlink -f "$file" >> "$depsdir/copy_from_tree"
-				found=1
-				break
-			done
-			[ $found = 1 ] && break
-		done
-		[ $found = 1 ] || die "missing ${binary} for ${pkgtype}-${arch}"
+	for target in "${copy_from_tree[@]:+${copy_from_tree[@]}}" ; do
+		local type="${target%%/*}"
+		target="${target#*/}"
+		cmake "${options[@]}" -DTYPE="${type}" -DTARGET="${target}" -DLOGFILE="$depsdir/copy_from_tree" \
+			-P "${scriptdir}/copy-from-tree.cmake"
 	done
 	
 	# Get licenses for dependencies
