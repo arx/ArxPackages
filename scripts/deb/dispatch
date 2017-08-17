@@ -28,7 +28,7 @@ if [ $is_snapshot = 0 ] || [ ! -z "${launchpad_snapshot_ppa:-}" ] ; then
 	fi
 	
 	for changes in "${_debsource}/${project}_${_deb_version}"-*ppa*~*_source.changes ; do
-		e dput "$_launchpad_ppa" "$changes"
+		[ -f "${changes%.changes}.ppa.upload" ] || e dput "$_launchpad_ppa" "$changes"
 	done
 	
 fi
