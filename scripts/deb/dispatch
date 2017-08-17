@@ -20,5 +20,5 @@ e execute deploy-obs \
 	--add "${_debsource}/${project}_${_deb_release}.debian".*
 
 for changes in "${_debsource}/${project}_${_deb_version}"-*ppa*~*_source.changes ; do
-	e dput "$launchpad_ppa" "$changes"
+	[ -f "${changes%.changes}.ppa.upload" ] || e dput "$launchpad_ppa" "$changes"
 done
