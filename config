@@ -211,5 +211,6 @@ ubuntu_versions+=(
 	'trusty'  # 14.04 LTS  EOL: 2019-04
 	'xenial'  # 16.04 LTS  EOL: 2021-04
 	'zesty'   # 17.04      EOL: 2018-01
-	'artful'  # 17.10
+	'artful'  # 17.10      EOL: 2018-07
+	'bionic'  # 18.04 LTS
 )
