@@ -163,6 +163,7 @@ licenses+=(
 	['*/Code/SDL/*']='SDL'
 	
 	['/usr/include/SDL2/*']='SDL2'
+	['/usr/include/*/SDL2/*']='SDL2'
 	['/usr/lib/libSDL2.so*']='SDL2'
 	['/usr/lib/libSDL2-*.so*']='SDL2'
 	['*/Code/SDL2-*']='SDL2'
