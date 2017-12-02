@@ -8,7 +8,7 @@ cross-armv6j-hardfloat-linux-gnueabi/gcc  lto -fortran graphite mudflap
 cross-i686-w64-mingw32/gcc                lto -fortran graphite -sanitize -vtv
 
 # incompatible with =dev-libs/isl-0.15, =dev-libs/isl-0.16.1
-=cross-i686-gentoo-freebsd9.1/gcc-4.9.2 -graphite
-=cross-x86_64-gentoo-freebsd9.1/gcc-4.9.2 -graphite
+=cross-i686-gentoo-freebsd9.1/gcc-4.9.2 -graphite -pgo
+=cross-x86_64-gentoo-freebsd9.1/gcc-4.9.2 -graphite -pgo
 
 cross-armv6j-hardfloat-linux-gnueabi/gdb  expat

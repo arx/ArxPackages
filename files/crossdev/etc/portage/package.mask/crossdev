@@ -37,12 +37,9 @@
 # GCC Borked
 # /usr/libexec/gcc/i686-gentoo-freebsd9.1/ld: cannot find /usr/i686-gentoo-freebsd9.1/usr/lib/libc.so.7 inside /usr/i686-gentoo-freebsd9.1
 # /usr/libexec/gcc/i686-gentoo-freebsd9.1/ld: cannot find /usr/i686-gentoo-freebsd9.1/usr/lib/libssp_nonshared.a inside /usr/i686-gentoo-freebsd9.1
+# still broken as of binutils 2.29.1
 >=cross-i686-gentoo-freebsd9.1/binutils-2.24-r2
 >=cross-x86_64-gentoo-freebsd9.1/binutils-2.24-r2
-
-# lto1: internal compiler error: in read_cgraph_and_symbols, at lto/lto.c:2922
-=cross-i686-gentoo-freebsd9.1/gcc-4.9.3
-=cross-x86_64-gentoo-freebsd9.1/gcc-4.9.3
 
 # windres borked
 # $ i686-w64-mingw32-windres /home/dscharrer/pro/package/build/arx-libertatis-1.2-dev-2015-07-29-windows-build/arx-libertatis-1.2-dev-2015-07-29-windows/bin/x86/arx.exe -O coff -o /home/dscharrer/pro/package/build/arx-libertatis-1.2-dev-2015-07-29-windows-build/build-wrapper-arx.exe/resources.obj
@@ -56,11 +53,5 @@
 =app-arch/dpkg-1.18.18
 =app-arch/dpkg-1.18.22
 =app-arch/dpkg-1.18.23
-
-# Undefined references in LTO builds
-=cross-i686-bindist-linux-gnu/binutils-2.27
-=cross-x86_64-bindist-linux-gnu/binutils-2.27
-=cross-armv6j-hardfloat-linux-gnueabi/binutils-2.27
-=cross-i686-gentoo-freebsd9.1/binutils-2.27
-=cross-x86_64-gentoo-freebsd9.1/binutils-2.27
-=cross-i686-w64-mingw32/binutils-2.27
+=app-arch/dpkg-1.18.24
+=app-arch/dpkg-1.19.0.4
