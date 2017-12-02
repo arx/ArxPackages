@@ -1,7 +1,7 @@
 
 post_src_configure() {
 	elog "Enabling FreeBSD cross-compile"
-	OPTIONS+=" toolset=gcc target-os=freebsd --without-wave"
+	OPTIONS+=( toolset=gcc target-os=freebsd --without-wave )
 }
 
 # Ugly hack to work around boost ebuilds expecting shared libraries.
