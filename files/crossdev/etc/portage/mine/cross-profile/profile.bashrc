@@ -177,6 +177,10 @@ if [ "$PN" = "openal" ] ; then
 	LDFLAGS="$LDFLAGS -static-libgcc"
 fi
 
+if [ "$PN" = "zlib" ] ; then
+	LDFLAGS="$LDFLAGS -static-libgcc"
+fi
+
 if [ "$PN" = "libX11" ] || [ "$PN" = "libXext" ] || [ "$PN" = "libXxf86vm" ] ; then
 	LDFLAGS="$LDFLAGS -static-libgcc"
 	rename_func econf orig_econf
