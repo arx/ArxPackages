@@ -3,7 +3,7 @@ media-plugins/alsa-plugins -pulseaudio
 media-sound/pulseaudio -alsa -asyncns -caps -gdbm -glib -orc -ssl -tcpd -udev -webrtc-aec
 
 media-libs/libsdl X xinerama opengl -audio -sound -joystick custom-cflags -static-libs
-media-libs/libsdl2 X dbus opengl -threads -alsa -audio -sound -joystick -udev -haptic -tslib custom-cflags -static-libs
+media-libs/libsdl2 X dbus opengl gles -threads -oss -alsa -audio -sound -joystick -udev -haptic -tslib custom-cflags -static-libs
 
 media-libs/freetype -bzip2
 
