@@ -37,7 +37,7 @@ function rename_func() {
 }
 
 if [ "$PN" = "libarchive" ] ; then
-	LDFLAGS="$LDFLAGS -static-libgcc ${ROOT}usr/lib/libz.a"
+	LDFLAGS="$LDFLAGS -static-libgcc"
 	rename_func econf orig_econf
 	econf() {
 		local args=( )
@@ -48,6 +48,7 @@ if [ "$PN" = "libarchive" ] ; then
 				*) args+=( "$arg" )
 			esac
 		done
+		sed -i 's:\-lz:${ROOT}usr/lib/libz.a:g' "${S}/configure"
 		orig_econf "${args[@]}" \
 			--without-xml2 --without-expat --without-openssl \
 			--disable-acl --disable-xattr \
