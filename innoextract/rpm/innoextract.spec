@@ -38,7 +38,16 @@ BuildRequires:  c++_compiler
 BuildRequires:  gcc-c++
 %endif
 BuildRequires:  cmake
+%if 0%{?suse_version} > 1325
+BuildRequires:  libboost_headers-devel
+BuildRequires:  libboost_iostreams-devel
+BuildRequires:  libboost_filesystem-devel
+BuildRequires:  libboost_date_time-devel
+BuildRequires:  libboost_system-devel
+BuildRequires:  libboost_program_options-devel
+%else
 BuildRequires:  boost-devel
+%endif
 BuildRequires:  xz-devel
 
 %description
