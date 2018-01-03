@@ -144,6 +144,13 @@ _rsspart_file="feed.rsspart"
 if [ $flat_files_tree = 0 ] && [ $is_snapshot = 1 ] && [ ! -z "${project_files_url:-}" ] \
    && [ ! -f "$_rsspart_file" ] ; then
 	
+	get_changelog _changelog
+	_changelog="$(echo "$_changelog" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g; s/"/\&quot;/g; s/'"'"'/\&#39;/g')"
+	_changelog="<h2>Changes:</h2>
+<ul>
+$(echo "$_changelog" | sed 's/^\*/<li>/')
+</ul>"
+	_changelog="$(echo "$_changelog" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g; s/"/\&quot;/g; s/'"'"'/\&#39;/g')"
 	_time="$(stat -c "%Y" "${project}-${version}${archives[source-build]}")"
 	_snapshots_url="${project_files_url}snapshots/${project}-${version}/"
 		echo "<item>
@@ -151,6 +158,9 @@ if [ $flat_files_tree = 0 ] && [ $is_snapshot = 1 ] && [ ! -z "${project_files_u
 <link>${_snapshots_url}</link>
 <pubDate>$(date --rfc-2822 --utc --date="@${_time}")</pubDate>
 <guid isPermaLink=\"true\">${_snapshots_url}</guid>
+<description>
+${_changelog}
+</description>
 </item>" > "$_rsspart_file"
 	
 fi
