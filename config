@@ -156,6 +156,11 @@ licenses+=(
 	['*/Code/GLEW-*']='GLEW'
 	['*/Code/GLEW/*']='GLEW'
 	
+	['/usr/include/epoxy/*']='libepoxy'
+	['/usr/lib/libepoxy.*']='libepoxy'
+	['*/Code/libepoxy-*']='libepoxy'
+	['*/Code/libepoxy/*']='libepoxy'
+	
 	['/usr/include/SDL/*']='SDL'
 	['/usr/lib/libSDL.so*']='SDL'
 	['/usr/lib/libSDL-1.2.so*']='SDL'
