@@ -183,12 +183,15 @@ if [ $flat_files_tree = 0 ] && [ $is_snapshot = 1 ] && [ -d "$outdir" ] \
 <language>en-us</language>
 <atom:link href=\"${_snapshots_url}feed.rss\" rel=\"self\" type=\"application/rss+xml\" />" \
 		 > feed.rss
+	_i=0
 	for dir in $(ls -d -- "$project"-* | sort --version-sort --reverse) ; do
 		_rsspart_file="${dir}/feed.rsspart"
 		[ -f "$_rsspart_file" ] || continue
 		_time="$(stat -c "%Y" "$dir")"
 		[ "$_time" -gt "$_snapshot_time" ] && _snapshot_time="$_time"
 		cat "$_rsspart_file" >> feed.rss
+		((_i++)) || true
+		[ $_i -lt 5 ] || break
 	done
 	echo '</channel>
 </rss>' >> feed.rss
