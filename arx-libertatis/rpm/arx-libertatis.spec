@@ -52,7 +52,7 @@ BuildRequires:  freetype-devel >= 2.3.0
 %endif
 BuildRequires:  openal-devel
 BuildRequires:  pkgconfig(gl)
-BuildRequires:  glew-devel >= 1.5.2
+BuildRequires:  pkgconfig(epoxy) >= 1.2
 BuildRequires:  pkgconfig(Qt5Core) >= 5.0.0
 BuildRequires:  pkgconfig(Qt5Concurrent) >= 5.0.0
 BuildRequires:  pkgconfig(Qt5Gui) >= 5.0.0
