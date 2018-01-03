@@ -16,6 +16,12 @@ _get_changelog() {
 	[ ! -z "${3-}" ] && local version="3"
 	
 	local changelogfile="${changelogdir}/${version}${suffix}"
+	if [ ! $is_snapshot = 0 ] ; then
+		local output
+		local _outdir
+		get_output output _outdir "$version" source
+		changelogfile="${output%/*}/${suffix}"
+	fi
 	
 	[ ! -f "$changelogfile" ] && die "missing changelog ${changelogfile}"
 	
@@ -25,11 +31,19 @@ _get_changelog() {
 }
 
 get_changelog() {
-	_get_changelog '.md' "$@"
+	if [ $is_snapshot = 0 ] ; then
+		_get_changelog '.md' "$@"
+	else
+		_get_changelog 'CHANGELOG.md' "$@"
+	fi
 }
 
 get_shortlog() {
-	_get_changelog '.shortlog' "$@"
+	if [ $is_snapshot = 0 ] ; then
+		_get_changelog '.shortlog' "$@"
+	else
+		_get_changelog 'SHORTLOG' "$@"
+	fi
 }
 
 get_codename() {
@@ -64,26 +78,37 @@ _make_changelog() {
 make_changelog() {
 	
 	[ $is_test_version = 0 ] || return $true
-	[ $is_snapshot = 0 ] || return $true
+	[ $is_snapshot = 0 ] || [ $flat_files_tree = 0 ] || return $true
 	
 	[ ! -z "${1-}" ] && local version="$1"
 	
 	mkdir -p "$changelogdir"
 	local file="${changelogdir}/${version}"
+	local changelogfile="$file.md"
+	local shortlogfile="$file.shortlog"
+	if [ ! $is_snapshot = 0 ] ; then
+		local out
+		local _outdir
+		get_output output _outdir "$version" source
+		changelogfile="${output%/*}/CHANGELOG.md"
+		shortlogfile="${output%/*}/SHORTLOG"
+		template='* This is an automatically generated development snapshot!'
+	fi
 	
-	if [ $codename_required = 1 ] ; then
+	if [ ! $is_snapshot = 0 ] && [ $codename_required = 1 ] ; then
 		[ -f "$file.codename" ] || _make_changelog "$file.codename" 'codename' '%' ''
 	fi
 	
-	[ -f "$file.md" ] || _make_changelog "$file.md" 'changelog' '%' '* ...'
+	[ -f "$changelogfile" ] || _make_changelog "$changelogfile" 'changelog' '%' '* ...'
 	
-	file="${file}.shortlog"
-	[ -f "$file" ] && return
+	[ -f "$shortlogfile" ] && return
 	
 	get_changelog changelog
-	shortlog="- Bump version to $version (new upstream release):
+	shortlog="- Bump version to $version (new upstream release):"
+	[ $is_snapshot = 0 ] || shortlog='- This is an automatically generated development snapshot!'
+	shortlog+="
 $( echo "$changelog" | demarkdown | grep -P '^ ( |\-)' | sed 's/^ //' )"
-	_make_changelog "$file" 'package log' '#' "$shortlog"
+	_make_changelog "$shortlogfile" 'package log' '#' "$shortlog"
 }
 
 if [ $_changelog_is_sourced = 0 ] ; then make_changelog "$@" ; fi

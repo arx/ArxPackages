@@ -2,6 +2,7 @@
 
 . "${BASH_SOURCE[0]%/*}/../common"
 . "${BASH_SOURCE[0]%/*}/common"
+. "${scriptdir}/changelog"
 
 _specfile="${pkgsrcdir}/${project}.spec"
 
@@ -44,8 +45,8 @@ else
 	
 	_new_specfile="${PWD}/${project}.spec"
 	cp "$_specfile" "$_new_specfile"
-	update_rpm_version "$_new_specfile" "$_rpm_version" \
-		"- This is an automatically generated development snapshot!"
+	get_shortlog _changelog
+	update_rpm_version "$_new_specfile" "$_rpm_version" "${_changelog:?bad changelog}"
 	_specfile="$_new_specfile"
 	
 	_rpm_source="$(escape_sed "${project_files_url}snapshots/${_source##*/}")"

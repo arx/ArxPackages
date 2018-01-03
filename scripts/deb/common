@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. "${scriptdir}/changelog"
+
 ubuntu_versions_src=( )
 for ubuntu_ver in "${ubuntu_versions[@]}" ; do
 	case "${launchpad_builds["$ubuntu_ver"]:-source}" in
@@ -43,9 +45,13 @@ add_snapshot_deb_changelog_entry() {
 		else local deb_release="${_deb_version}-0ppa1~${series}"
 	fi
 	
+	local changelog
+	get_shortlog changelog
+	changelog="$(echo "$changelog" | sed 's/^-/*/;s/^/  /')"
+	
 	echo "${project} (${deb_release}) ${series}; urgency=low
 
-  * This is an automatically generated development snapshot!
+${changelog:?bad changelog}
 
  -- ${packager}  $(date --rfc-2822)
 " > "$tmpfile"
