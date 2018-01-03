@@ -130,10 +130,12 @@ forbidden_libraries+=(
 	'libc++.so*'
 	'libgcc*.so*'
 	
-	# We link Boost, GLEW, FreeType and ZLIB statically - check for that
+	# We link Boost, GLEW, libepoxy, FreeType and ZLIB statically - check for that
 	'libboost_*'
 	'libGLEW*'
 	'glew*'
+	'libepoxy*'
+	'epoxy*'
 	'libfreetype*'
 	'freetype*'
 	'libz.so*'
