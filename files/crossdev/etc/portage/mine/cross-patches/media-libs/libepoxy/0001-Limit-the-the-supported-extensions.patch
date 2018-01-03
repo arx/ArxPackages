@@ -1,0 +1,130 @@
+From 318e3ff075d542dd8ac5d51e4f0c17f7718876f6 Mon Sep 17 00:00:00 2001
+From: Daniel Scharrer <daniel@constexpr.org>
+Date: Wed, 3 Jan 2018 19:35:41 +0100
+Subject: [PATCH] Limit the the supported extensions
+
+---
+ src/extensions.txt  | 22 ++++++++++++++++++++++
+ src/gen_dispatch.py | 32 +++++++++++++++++++++++++++-----
+ 2 files changed, 49 insertions(+), 5 deletions(-)
+ create mode 100644 src/extensions.txt
+
+diff --git a/src/extensions.txt b/src/extensions.txt
+new file mode 100644
+index 0000000..1c9683f
+--- /dev/null
++++ b/src/extensions.txt
+@@ -0,0 +1,22 @@
++GL_ARB_buffer_storage
++GL_ARB_debug_output
++GL_ARB_draw_elements_base_vertex
++GL_ARB_ES2_compatibility
++GL_ARB_map_buffer_range
++GL_ARB_sample_shading
++GL_ARB_texture_filter_anisotropic
++GL_ARB_texture_non_power_of_two
++GL_ATI_meminfo
++GL_EXT_buffer_storage
++GL_EXT_draw_elements_base_vertex
++GL_EXT_map_buffer_range
++GL_EXT_texture_filter_anisotropic
++GL_KHR_debug
++GL_NV_fog_distance
++GL_NVX_gpu_memory_info
++GL_OES_draw_elements_base_vertex
++GL_OES_mapbuffer
++GL_OES_required_internalformat
++GL_OES_sample_shading
++GL_OES_single_precision
++GL_OES_texture_npot
+diff --git a/src/gen_dispatch.py b/src/gen_dispatch.py
+index 28dad2b..a3f70af 100644
+--- a/src/gen_dispatch.py
++++ b/src/gen_dispatch.py
+@@ -275,6 +275,12 @@ class Generator(object):
+         for name in weird_functions:
+             del self.functions[name]
+ 
++    def drop_functions_without_providers(self):
++        for name in list(self.functions.keys()):
++             if not self.functions[name].providers:
++                 print("dropping function without providers: {}".format(name), file=sys.stderr)
++                 del self.functions[name]
++
+     def resolve_aliases(self):
+         for func in self.functions.values():
+             # Find the root of the alias tree, and add ourselves to it.
+@@ -323,7 +329,7 @@ class Generator(object):
+             func = self.functions[name]
+             func.add_provider(condition, loader, human_name)
+ 
+-    def parse_function_providers(self, reg):
++    def parse_function_providers(self, reg, whitelist):
+         for feature in reg.findall('feature'):
+             api = feature.get('api') # string gl, gles1, gles2, glx
+             m = re.match(r'([0-9])\.([0-9])', feature.get('number'))
+@@ -386,6 +392,9 @@ class Generator(object):
+ 
+             self.supported_extensions.add(extname)
+ 
++            if not extname in whitelist:
++                continue
++
+             # 'supported' is a set of strings like gl, gles1, gles2,
+             # or glx, which are separated by '|'
+             apis = extension.get('supported').split('|')
+@@ -423,7 +432,7 @@ class Generator(object):
+         func.providers = {}
+         func.add_provider('true', loader, 'always present')
+ 
+-    def parse(self, xml_file):
++    def parse(self, xml_file, whitelist):
+         reg = ET.parse(xml_file)
+         comment = reg.find('comment')
+         if comment is not None:
+@@ -433,7 +442,7 @@ class Generator(object):
+         self.parse_typedefs(reg)
+         self.parse_enums(reg)
+         self.parse_function_definitions(reg)
+-        self.parse_function_providers(reg)
++        self.parse_function_providers(reg, whitelist)
+ 
+     def write_copyright_comment_body(self):
+         for line in self.copyright_comment.splitlines():
+@@ -577,7 +586,7 @@ class Generator(object):
+             'glBindRenderbuffer' : 'glBindRenderbufferEXT',
+             'glBindRenderbufferEXT' : 'glBindRenderbuffer',
+         }
+-        if func.name in half_aliases:
++        if func.name in half_aliases and half_aliases[func.name] in self.functions:
+             alias_func = self.functions[half_aliases[func.name]]
+             for provider in alias_func.providers.values():
+                 providers.append(provider)
+@@ -884,10 +893,23 @@ if not build_source and not build_header:
+ for f in args.files:
+     name = os.path.basename(f).split('.xml')[0]
+     generator = Generator(name)
+-    generator.parse(f)
++
++    whitelist = [ ]
++    with open(os.path.join(os.path.dirname(__file__), 'extensions.txt')) as listfile:
++        whitelist = listfile.readlines()
++    whitelist.append('GLX_ARB_get_proc_address')
++    whitelist.append('WGL_ARB_extensions_string')
++    whitelist.append('WGL_ARB_make_current_read')
++    whitelist.append('WGL_EXT_make_current_read')
++    whitelist.append('WGL_AMD_gpu_association')
++    whitelist = [x.strip() for x in whitelist]
++
++    generator.parse(f, whitelist)
+ 
+     generator.drop_weird_glx_functions()
+ 
++    generator.drop_functions_without_providers()
++
+     # This is an ANSI vs Unicode function, handled specially by
+     # include/epoxy/wgl.h
+     if 'wglUseFontBitmaps' in generator.functions:
+-- 
+2.15.1
+
