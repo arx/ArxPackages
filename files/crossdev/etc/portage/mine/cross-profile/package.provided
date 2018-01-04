@@ -1,6 +1,5 @@
 dev-lang/python-2.7.4
 app-admin/eselect-opengl-1.2.7
 sys-apps/util-linux-2.23
-dev-libs/libxml2-2.9.0-r2
 dev-libs/openssl-1.0.1e-r1
 sys-libs/glibc-2.18

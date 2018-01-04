@@ -79,6 +79,7 @@ fi
 
 if [ "$PN" = "libsdl2" ] ; then
 	CC="${CC:-$CHOST-gcc} -static-libgcc" # I hate libtool
+	LDFLAGS+=" -pthread"
 	strip-flags() {
 		true
 	}

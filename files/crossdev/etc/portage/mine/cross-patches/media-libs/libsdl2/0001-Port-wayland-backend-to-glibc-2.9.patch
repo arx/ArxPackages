@@ -1,0 +1,64 @@
+From 8bd50ba5d322ee7f29e55b30ae082e7a66e9656a Mon Sep 17 00:00:00 2001
+From: Daniel Scharrer <daniel@constexpr.org>
+Date: Thu, 4 Jan 2018 15:45:53 +0100
+Subject: [PATCH] Port wayland backend to glibc < 2.9
+
+---
+ src/video/wayland/SDL_waylanddatamanager.c | 15 ++++++++++++++-
+ src/video/wayland/SDL_waylandmouse.c       |  3 ++-
+ 2 files changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/src/video/wayland/SDL_waylanddatamanager.c b/src/video/wayland/SDL_waylanddatamanager.c
+index e10d291..08e3181 100644
+--- a/src/video/wayland/SDL_waylanddatamanager.c
++++ b/src/video/wayland/SDL_waylanddatamanager.c
+@@ -325,6 +325,7 @@ Wayland_data_offer_receive(SDL_WaylandDataOffer *offer,
+ {
+     SDL_WaylandDataDevice *data_device = NULL;
+  
++    int flags;
+     int pipefd[2];
+     void *buffer = NULL;
+     *length = 0;
+@@ -333,9 +334,21 @@ Wayland_data_offer_receive(SDL_WaylandDataOffer *offer,
+         SDL_SetError("Invalid data offer");
+     } else if ((data_device = offer->data_device) == NULL) {
+         SDL_SetError("Data device not initialized");
+-    } else if (pipe2(pipefd, O_CLOEXEC|O_NONBLOCK) == -1) {
++    } else if (pipe(pipefd) == -1) {
+         SDL_SetError("Could not read pipe");
+     } else {
++        fcntl(pipefd[0], F_SETFD, FD_CLOEXEC);
++        fcntl(pipefd[1], F_SETFD, FD_CLOEXEC);
++        flags = fcntl(pipefd[0], F_GETFL, 0);
++        if (flags == -1) {
++            flags = 0;
++        }
++        fcntl(pipefd[0], F_SETFL, flags | O_NONBLOCK);
++        flags = fcntl(pipefd[1], F_GETFL, 0);
++        if (flags == -1) {
++            flags = 0;
++        }
++        fcntl(pipefd[1], F_SETFL, flags | O_NONBLOCK);
+         wl_data_offer_receive(offer->offer, mime_type, pipefd[1]);
+ 
+         /* TODO: Needs pump and flush? */
+diff --git a/src/video/wayland/SDL_waylandmouse.c b/src/video/wayland/SDL_waylandmouse.c
+index d621aca..a8eaaa7 100644
+--- a/src/video/wayland/SDL_waylandmouse.c
++++ b/src/video/wayland/SDL_waylandmouse.c
+@@ -71,9 +71,10 @@ wayland_create_tmp_file(off_t size)
+     SDL_strlcpy(tmp_path, xdg_path, PATH_MAX);
+     SDL_strlcat(tmp_path, template, PATH_MAX);
+ 
+-    fd = mkostemp(tmp_path, O_CLOEXEC);
++    fd = mkstemp(tmp_path);
+     if (fd < 0)
+         return -1;
++    fcntl(fd, F_SETFD, FD_CLOEXEC);
+ 
+     if (ftruncate(fd, size) < 0) {
+         close(fd);
+-- 
+2.15.1
+
