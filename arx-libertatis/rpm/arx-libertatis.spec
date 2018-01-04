@@ -43,14 +43,10 @@ BuildRequires:  gcc-c++
 BuildRequires:  cmake
 BuildRequires:  boost-devel >= 1.48
 BuildRequires:  glm-devel >= 0.9.5.0
-BuildRequires:  zlib-devel
+BuildRequires:  pkgconfig(zlib)
 BuildRequires:  pkgconfig(sdl2) >= 2.0.0
-%if 0%{?suse_version}
-BuildRequires:  freetype2-devel >= 2.3.0
-%else
-BuildRequires:  freetype-devel >= 2.3.0
-%endif
-BuildRequires:  openal-devel
+BuildRequires:  pkgconfig(freetype2) >= 2.3.0
+BuildRequires:  pkgconfig(openal)
 BuildRequires:  pkgconfig(gl)
 BuildRequires:  pkgconfig(epoxy) >= 1.2
 BuildRequires:  pkgconfig(Qt5Core) >= 5.0.0
