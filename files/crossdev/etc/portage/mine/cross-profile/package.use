@@ -5,6 +5,8 @@ media-sound/pulseaudio -alsa -asyncns -caps -gdbm -glib -orc -ssl -tcpd -udev -w
 media-libs/libsdl X xinerama opengl -audio -sound -joystick custom-cflags -static-libs
 media-libs/libsdl2 X wayland dbus opengl gles -threads -oss -alsa -audio -sound -joystick -udev -haptic -tslib custom-cflags -static-libs
 
+media-libs/libepoxy X
+
 media-libs/freetype -bzip2
 
 media-libs/mesa -pic shared-glapi -gbm -dri3 -udev egl gles1 gles2

@@ -2,3 +2,5 @@ media-libs/openal -alsa -oss -pulseaudio
 
 media-libs/libsdl -X -xinerama -opengl
 media-libs/libsdl2 -X -xinerama opengl -wayland -dbus
+
+media-libs/libepoxy -X
