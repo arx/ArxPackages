@@ -80,7 +80,8 @@ if [ ! -f "${_md_file}" ] || [ $_md5sums_changed = 1 ] ; then
 		echo "This directory contains files for [${project_name}](${project_url})." >> "$_md_file"
 	else
 		if [ "${#_files[@]}" = 1 ] ; then _and_binaries='' ; else _and_binaries=' and binaries' ; fi
-		echo -n "This directory contains source code${_and_binaries} for version ${version} of [${project_name}](${project_url})" >> "$_md_file"
+		if [ $is_snapshot = 0 ] ; then _for_version='for version' ; else _for_version='for development snapshot' ; fi
+		echo -n "This directory contains source code${_and_binaries} ${_for_version} ${version} of [${project_name}](${project_url})" >> "$_md_file"
 		if [ ! -z "${project_tagline-}" ] ; then
 		echo -n ", ${project_tagline}" >> "$_md_file"
 		fi
@@ -88,7 +89,10 @@ if [ ! -f "${_md_file}" ] || [ $_md5sums_changed = 1 ] ; then
 	fi
 	
 	# Alternate download locations
-	if [ ! -z "${project_downloads_url-}" ] ; then 
+	if [ ! $is_snapshot = 0 ] && [ ! -z "${project_snapshot_downloads_url-}" ] ; then
+		echo                                   >> "$_md_file"
+		echo "See the [snapshot downloads page](${project_snapshot_downloads_url}) for ${project_downloads_url_desc}." >> "$_md_file"
+	elif [ ! -z "${project_downloads_url-}" ] ; then
 		echo                                   >> "$_md_file"
 		echo "See the main [downloads page](${project_downloads_url}) for ${project_downloads_url_desc}." >> "$_md_file"
 	fi
