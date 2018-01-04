@@ -5,3 +5,7 @@ architectures=( 'i686' 'amd64' )
 copy_from_tree+=( 'bin/bsdtar' )
 
 . "${projectdir}/config.unix"
+
+cmake_options+=(
+	-DUSE_WAYLAND=1
+)

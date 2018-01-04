@@ -5,6 +5,7 @@ inherit_projects+=( 'innoextract' )
 cmake_options+=(
 	-DICON_TYPE=png
 	-DWITH_OPENGL=epoxy
+	-DUSE_X11=1
 )
 
 required_binaries+=(
