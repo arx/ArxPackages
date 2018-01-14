@@ -2,6 +2,7 @@
 
 readme_transforms+=(
 	--discard '* os x *'
+	--discard '* macos *'
 	--discard '* linux *'
 	--discard '* unix *'
 	--discard '* unix-like *'

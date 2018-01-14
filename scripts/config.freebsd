@@ -3,6 +3,7 @@
 readme_transforms+=(
 	--discard '* windows *'
 	--discard '* os x *'
+	--discard '* macos *'
 )
 
 has_elf_rpath=1
