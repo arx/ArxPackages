@@ -212,9 +212,9 @@ launchpad_key='28555A66D7E1DEC9'
 
 # Ubuntu versions for which to push build jobs to Launchpad
 ubuntu_versions+=(
-	'precise' # 12.04 LTS  EOL: 2017-04
 	'trusty'  # 14.04 LTS  EOL: 2019-04
 	'xenial'  # 16.04 LTS  EOL: 2021-04
 	'artful'  # 17.10      EOL: 2018-07
-	'bionic'  # 18.04 LTS
+	'bionic'  # 18.04 LTS  EOL: 2023-04
+	'cosmic'  # 18.10
 )
