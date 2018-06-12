@@ -1,3 +1,17 @@
+innoextract (1.7-0.1) stable; urgency=low
+
+  * Bump version to 1.7 (new upstream release):
+  * Added support for Inno Setup 5.6.0 installers
+  * Added support for new GOG installers with GOG Galaxy file parts
+  * Added support for encrypted installers
+  * Added --list-sizes and --list-checksums options to print file information
+  * Adde a --data-version (-V) option to check if an executable is an
+    Inno Setup installer
+  * Fixed case-sensitivity in parent directory when creating subdirectories
+  * Fixed issues with names used to load .bin slice files
+
+ -- Daniel Scharrer <daniel@constexpr.org>  Tue, 12 Jun 2018 20:50:32 +0200
+
 innoextract (1.6-0.1) stable; urgency=low
 
   * Added support for Inno Setup 5.5.7 (and 5.5.8) installers

@@ -1,7 +1,7 @@
 #
 # spec file for package innoextract
 #
-# Copyright (c) 2012-2016 Daniel Scharrer <daniel@constexpr.org>
+# Copyright (c) 2012-2018 Daniel Scharrer <daniel@constexpr.org>
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -16,7 +16,7 @@
 #
 
 Name:           innoextract
-Version:        1.6
+Version:        1.7
 Release:        1%{?dist}
 %if 0%{?suse_version}
 License:        Zlib
@@ -84,6 +84,17 @@ make %{?_smp_mflags}
 %{_mandir}/man1/innoextract.1*
 
 %changelog
+* Tue Jun 12 2018 Daniel Scharrer <daniel@constexpr.org> - 1.7-1
+- Bump version to 1.7 (new upstream release):
+- Added support for Inno Setup 5.6.0 installers
+- Added support for new GOG installers with GOG Galaxy file parts
+- Added support for encrypted installers
+- Added --list-sizes and --list-checksums options to print file information
+- Adde a --data-version (-V) option to check if an executable is an
+  Inno Setup installer
+- Fixed case-sensitivity in parent directory when creating subdirectories
+- Fixed issues with names used to load .bin slice files
+
 * Thu Mar 24 2016 Daniel Scharrer <daniel@constexpr.org> - 1.6-1
 - Added support for Inno Setup 5.5.7 (and 5.5.8) installers
 - Added a --collisions=rename-all option
