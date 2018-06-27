@@ -8,4 +8,23 @@ copy_from_tree+=( 'bin/bsdtar' )
 
 cmake_options+=(
 	-DUSE_WAYLAND=1
+	-DBUILD_CRASHREPORTER=1
+)
+
+cmake_options_linux_i686+=(
+	-DCMAKE_PREFIX_PATH="$deps/Qt-5.1-32"
+)
+
+cmake_options_linux_amd64+=(
+	-DCMAKE_PREFIX_PATH="$deps/Qt-5.1-64"
+)
+
+system_libraries+=(
+	'libQt5*'
+	'libcurl.so*'
+)
+
+licenses+=(
+	['/include/Qt*']=''
+	['/usr/include/curl/*']=''
 )
