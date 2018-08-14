@@ -16,7 +16,6 @@ runall update-version
 
 # Build the source archive
 run source build
-runscript finalize
 
 # Build (portable) binary archives
 runall build
