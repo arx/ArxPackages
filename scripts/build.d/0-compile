@@ -204,6 +204,10 @@ build() {
 			[ $found = 1 ] || die "dependency outside root: ${dependency}"
 		fi
 		
+		local file="${dependency##*/}"
+		[ "$case_insensitive_fs" = 1 ] && file="$(echo "$file" | tolower)"
+		match_in_array "$file" "${system_libraries[@]:+${system_libraries[@]}}" && continue
+		
 		local license_found=0
 		local license=''
 		for pattern in "${!licenses[@]}" ; do
