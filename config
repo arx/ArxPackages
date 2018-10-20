@@ -19,11 +19,16 @@ _compiler_flags=(
 	-flto
 	-fdata-sections
 	-ffunction-sections
+	-fmerge-all-constants
+	# newer gcc -fdevirtualize-at-ltrans
+	-fipa-pta
 )
 c_flags+=( "${_compiler_flags[@]}" )
 cxx_flags+=( "${_compiler_flags[@]}" )
 _compiler_flags_msvc=(
-	/GL
+	/Gy # function sections
+	/Gw # data sections
+	/GL # whole program optimizations
 )
 c_flags_msvc+=( "${_compiler_flags_msvc[@]}" )
 cxx_flags_msvc+=( "${_compiler_flags_msvc[@]}" )
