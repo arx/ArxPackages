@@ -12,7 +12,7 @@ git_repository='git://github.com/arx/ArxLibertatis.git'
 project_url='http://arx-libertatis.org/'
 
 # Project description as in "$project_name, ..." (OPTIONAL)
-project_tagline='a cross-platform, open source port of [Arx Fatalis](http://www.arkane-studios.com/uk/arx.php)'
+project_tagline="a cross-platform, open source port of Arx Fatalis"
 
 # URL for alternate downloads (OPTIONAL)
 project_downloads_url='http://wiki.arx-libertatis.org/Download'
