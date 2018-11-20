@@ -99,7 +99,15 @@ make_changelog() {
 		[ -f "$file.codename" ] || _make_changelog "$file.codename" 'codename' '%' ''
 	fi
 	
-	[ -f "$changelogfile" ] || _make_changelog "$changelogfile" 'changelog' '%' '* ...'
+	if [ ! -f "$changelogfile" ] ; then
+		local templatefile="${projectdir}/CHANGELOG.md"
+		local template=''
+		[ -f "$templatefile" ] && template="$(cat "$templatefile")"
+		[ -z "$template" ] && template='* ...'
+		_make_changelog "$changelogfile" 'changelog' '%' "$template"
+		[ -f "$templatefile" ] && rm "$templatefile"
+		echo > "$templatefile"
+	fi
 	
 	[ -f "$shortlogfile" ] && return
 	
