@@ -269,6 +269,7 @@ system_libraries=(
 	'oleaut32.dll'
 	'opengl32.dll'
 	'psapi.dll'
+	'setupapi.dll'
 	'shell32.dll'
 	'user32.dll'
 	'uuid.dll'
