@@ -2,8 +2,8 @@
 
 architectures=( 'x86' 'x64' )
 
-toolchains[windows-x86]='msvc-12-32'
-toolchains[windows-x64]='msvc-12-64'
+toolchains[windows-x86]='msvc-12-0-x86'
+toolchains[windows-x64]='msvc-12-0-x64'
 
 readme_transforms+=(
 	--discard '* scripts *'
