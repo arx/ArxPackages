@@ -20,8 +20,9 @@ _compiler_flags=(
 	-fdata-sections
 	-ffunction-sections
 	-fmerge-all-constants
-	# newer gcc -fdevirtualize-at-ltrans
-	-fipa-pta
+	-fdevirtualize-at-ltrans
+	# -fipa-pta (ICE with GCC 8.2)
+	-Wno-odr # false positives with static libraries with LTO upjects where headers were in a different location
 )
 c_flags+=( "${_compiler_flags[@]}" )
 cxx_flags+=( "${_compiler_flags[@]}" )

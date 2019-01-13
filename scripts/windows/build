@@ -42,6 +42,13 @@ create_launcher() {
 		-DLAUNCHER_USE_CMD_PATH=$wrapper_use_cmd_path
 		-DLAUNCHER_COMMAND="$command"
 		-DLAUNCHER_SCOMMAND="$scommand"
+		-flto
+		-fuse-linker-plugin
+		-fdata-sections
+		-ffunction-sections
+		-Wl,--gc-sections
+		-fwhole-program
+		-fvisibility=hidden
 	)
 	
 	local binary="${bindir}/${architectures[0]}/${command}"
