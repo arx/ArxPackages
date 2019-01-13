@@ -38,6 +38,7 @@ include(\"${toolchain_files["$toolchain"]}\")" >> "$file"
 	if [ ! -z "$root" ] ; then
 		echo "
 # location of the target environment
+set(CMAKE_SYSROOT \"${root}\")
 set(CMAKE_FIND_ROOT_PATH \"${root}\")
 # Also tell pkg-config because CMake doesn't
 set(_cross_pkgconfig \"${root}/usr/lib/pkgconfig\")
