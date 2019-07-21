@@ -36,19 +36,25 @@ create_launcher() {
 		-static-libgcc
 		-s
 		-Os
+		-fdata-sections
+		-ffunction-sections
+		-flto
+		-fno-asynchronous-unwind-tables
+		-fno-ident
+		-fno-stack-protector
+		-fno-unwind-tables
+		-fomit-frame-pointer
+		-fuse-linker-plugin
+		-fvisibility=hidden
+		-fwhole-program
+		-Wl,--gc-sections
+		-Wl,--build-id=none
 		-DUNICODE
 		-D_UNICODE
 		-DLAUNCHER_USE_PATH="$use_path"
 		-DLAUNCHER_USE_CMD_PATH=$wrapper_use_cmd_path
 		-DLAUNCHER_COMMAND="$command"
 		-DLAUNCHER_SCOMMAND="$scommand"
-		-flto
-		-fuse-linker-plugin
-		-fdata-sections
-		-ffunction-sections
-		-Wl,--gc-sections
-		-fwhole-program
-		-fvisibility=hidden
 	)
 	
 	local binary="${bindir}/${architectures[0]}/${command}"
