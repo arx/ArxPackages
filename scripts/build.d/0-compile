@@ -224,6 +224,7 @@ build() {
 			# Ignore system stuff
 			local package="$(qfile --nocolor "$raw_dependency")"
 			package="${package%% *}"
+			package="${package%%:*}"
 			package="${package##*/}"
 			
 			match_in_array "$package" "${system_packages[@]:+${system_packages[@]}}" && continue
