@@ -31,7 +31,7 @@ convert_man_pages() {
 		local mantextfile="${mantext##*/}"
 		
 		echo "converting manpage ${manpage}..."
-		man "$manpage" \
+		MANWIDTH=120 man "$manpage" \
 			| sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" \
 			| col -xb \
 			> "$mantext"
