@@ -1,7 +1,7 @@
 #
 # spec file for package innoextract
 #
-# Copyright (c) 2012-2018 Daniel Scharrer <daniel@constexpr.org>
+# Copyright (c) 2012-2019 Daniel Scharrer <daniel@constexpr.org>
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -16,7 +16,7 @@
 #
 
 Name:           innoextract
-Version:        1.7
+Version:        1.8
 Release:        1%{?dist}
 %if 0%{?suse_version}
 License:        Zlib
@@ -84,6 +84,20 @@ make %{?_smp_mflags}
 %{_mandir}/man1/innoextract.1*
 
 %changelog
+* Sun Sep 15 2019 Daniel Scharrer <daniel@constexpr.org> - 1.8-1
+- Bump version to 1.8 (new upstream release):
+- Added support for Inno Setup 5.6.2 to 6.0.2 installers
+- Added support for modified Inno Setup variants
+- Added support for older Inno Setup installers, including My Inno Setup
+  Extensions installers
+- Encoding for non-Unicode installers is now determined from the languages
+  supported by the installer, overridable using the --codepage option
+- Changed filesystem and output encoding to WTF-8 (extended UTF-8) to represent
+  broken UTF-16 data
+- The architecture-specific suffixes @32bit and @64bit are now used to
+  disambiguate colliding files
+- Fixed various bugs and improved robustness
+
 * Tue Jun 12 2018 Daniel Scharrer <daniel@constexpr.org> - 1.7-1
 - Bump version to 1.7 (new upstream release):
 - Added support for Inno Setup 5.6.0 installers
