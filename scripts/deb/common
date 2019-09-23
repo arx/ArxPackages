@@ -45,6 +45,10 @@ add_snapshot_deb_changelog_entry() {
 		else local deb_release="${_deb_version}-0ppa1~${series}"
 	fi
 	
+	local sourcefile=''
+	local sourcedir=''
+	get_output sourcefile sourcedir "$version" 'source'
+	
 	local changelog
 	get_shortlog changelog
 	changelog="$(echo "$changelog" | sed 's/^-/*/;s/^/  /')"
@@ -53,7 +57,7 @@ add_snapshot_deb_changelog_entry() {
 
 ${changelog:?bad changelog}
 
- -- ${packager}  $(date --rfc-2822)
+ -- ${packager}  $(date --rfc-2822 --reference="$sourcefile")
 " > "$tmpfile"
 	
 	cat "$changelogfile" >> "$tmpfile"

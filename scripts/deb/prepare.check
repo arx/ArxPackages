@@ -12,8 +12,10 @@ pushd "$_output"
 	
 	for ubuntu_ver in "${ubuntu_versions_src[@]}" ; do
 		
+		[ "$ubuntu_ver" = "$rebuild" ] && exit_true
+		
 		echo "Checking $ubuntu_ver package"
-		[ -f *~${ubuntu_ver}*.dsc ] || exit_true
+		[ -f *-0ppa1~${ubuntu_ver}*.dsc ] || exit_true
 		
 	done
 	

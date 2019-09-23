@@ -43,6 +43,7 @@ trap '[ $? != 0 ] && [ ${_no_backtrace:-0} = 0 ] && backtrace' EXIT
 
 is_snapshot=0
 forced=0
+rebuild=''
 while [ $# != 0 ] ; do
 	case "$1" in
 		--root=*)    root="${1#*=}" ;;
@@ -50,12 +51,14 @@ while [ $# != 0 ] ; do
 		--pkgtype=*) pkgtype="${1#*=}" ;;
 		--version=*) version="${1#*=}" ;;
 		--commit=*)  commit="${1#*=}" ;;
+		--rebuild=*) rebuild="${1#*=}" ;;
 		--snapshot)  is_snapshot=1 ;;
 		--force)     forced=1 ;;
 		-p) shift ; project="$1" ;;
 		-t) shift ; pkgtype="$1" ;;
 		-v) shift ; version="$1" ;;
 		-c) shift ; commit="$1" ;;
+		-r) shift ; rebuild="$1" ;;
 		-s) is_snapshot=1 ;;
 		-f) forced=1 ;;
 		--) shift ; break ;;
@@ -217,6 +220,7 @@ execute() {
 	[ -z "${pkgtype-}" ] || args+=( --pkgtype="$pkgtype" )
 	[ -z "${version-}" ] || args+=( --version="$version" )
 	[ -z "${commit-}" ]  || args+=( --commit="$commit" )
+	[ -z "${rebuild-}" ] || args+=( --rebuild="$rebuild" )
 	[ $is_snapshot = 0 ] || args+=( --snapshot )
 	[ $forced = 0 ]      || args+=( --force )
 	if [ -z "${package_execute_level-}" ] ; then

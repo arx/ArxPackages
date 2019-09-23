@@ -41,3 +41,13 @@ First, update the `ubuntu_versions` array in the `config` file. Then re-run
 This should automatically re-run dep.prepare and deb.dispatch steps for new distro releases. Source packages, local builds and packages for existing distro releases will not be touched with this option.
 
 Note that creating debian packages only works for the latest version as the changelog is hardcoded in the package config files in the update-version step.
+
+### Rebuilding Launchpad packages
+
+It's 2019 and Launchpad still does not automatically rebuild packages if dependencies are updated :/
+
+To manually trigger a rebuild of an already released version, run
+
+    $ ./package -p package -v x.y -r series
+
+where series is the Ubuntu release for which you want to rebuild the package. This is not needed for OBS-based builds.

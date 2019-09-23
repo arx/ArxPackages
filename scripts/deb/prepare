@@ -28,15 +28,20 @@ pushd "$_sourcedir"
 		echo "  ${white}:: building source package for debian${reset}" >&2
 		
 		e dpkg-buildpackage -S -us -uc -d -p"$_gpg_command" 2>&1
-		e require_file *.dsc
-		e require_file *_source.changes
-		e require_file *.debian.tar.*
+		e require_file *-0.1.dsc
+		e require_file *-0.1_source.changes
+		e require_file *-0.1.debian.tar.*
 		
 	fi
 	
 	for ubuntu_ver in "${ubuntu_versions_src[@]}" ; do
 		
-		if [ ! -f "${_output}/"*~${ubuntu_ver}*.dsc ] ; then
+		_build=1
+		while [ "$ubuntu_ver" = "$rebuild" ] && [ -f "${_output}/"*-0ppa${_build}~${ubuntu_ver}*.dsc ] ; do
+			((++_build))
+		done
+		
+		if [ ! -f "${_output}/"*-0ppa${_build}~${ubuntu_ver}*.dsc ] ; then
 			
 			echo "  ${white}:: building source package for ubuntu ${ubuntu_ver}${reset}" >&2
 			
@@ -53,10 +58,22 @@ pushd "$_sourcedir"
 				
 			fi
 			
+			if [ $_build -gt 1 ] ; then
+				_tmpfile="${PWD}/changelog.temp"
+				echo "${project} (${_deb_version}-0ppa${_build}~${ubuntu_ver}) ${ubuntu_ver}; urgency=low
+
+  * Rebuild only
+
+ -- ${packager}  $(date --rfc-2822)
+" > "$_tmpfile"
+				cat "debian/changelog" >> "$_tmpfile"
+				e mv "$_tmpfile" "debian/changelog"
+			fi
+			
 			e dpkg-buildpackage -S -d -p"$_gpg_command" 2>&1
-			e require_file *~${ubuntu_ver}*.dsc
-			e require_file *~${ubuntu_ver}_source.changes
-			e require_file *~${ubuntu_ver}.debian.tar.*
+			e require_file *-0ppa${_build}~${ubuntu_ver}*.dsc
+			e require_file *-0ppa${_build}~${ubuntu_ver}_source.changes
+			e require_file *-0ppa${_build}~${ubuntu_ver}.debian.tar.*
 			
 		fi
 		
