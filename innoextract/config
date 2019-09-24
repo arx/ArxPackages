@@ -7,19 +7,19 @@
 git_repository='git://github.com/dscharrer/innoextract.git'
 
 # URL for the project website
-project_url='http://constexpr.org/innoextract/'
+project_url='https://constexpr.org/innoextract/'
 
 # Project description as in "$project_name, ..." (OPTIONAL)
 project_tagline='a tool to unpack installers created by [Inno Setup](http://www.jrsoftware.org/isinfo.php)'
 
 # URL for alternate downloads (OPTIONAL)
-project_downloads_url='http://constexpr.org/innoextract/#download'
+project_downloads_url='https://constexpr.org/innoextract/#download'
 
 # URL for the full changelog (OPTIONAL)
-project_changelog_url='http://constexpr.org/innoextract/changelog'
+project_changelog_url='https://constexpr.org/innoextract/changelog'
 
 # URL where output files can be accessed
-project_files_url='http://constexpr.org/innoextract/files/'
+project_files_url='https://constexpr.org/innoextract/files/'
 
 # URL where commits can be accessed
 project_commits_url='https://github.com/dscharrer/innoextract/commits/'
