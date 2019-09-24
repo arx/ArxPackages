@@ -49,7 +49,7 @@ else
 	update_rpm_version "$_new_specfile" "$_rpm_version" "${_changelog:?bad changelog}"
 	_specfile="$_new_specfile"
 	
-	_rpm_source="$(escape_sed "${project_files_url}snapshots/${_source##*/}")"
+	_rpm_source="$(escape_sed "${project_files_url}${_source##*/}")"
 	e sed -i "s/^\\(Source\:[ \\t][ \\t]*\\).*\\/%{name}\\-%{version}\\.tar.*$/\\1${_rpm_source}/" \
 		"$_specfile" || die "failed to set new source"
 	
