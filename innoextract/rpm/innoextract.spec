@@ -12,7 +12,7 @@
 # license that conforms to the Open Source Definition (Version 1.9)
 # published by the Open Source Initiative.
 
-# Please submit bugfixes or comments via http://innoextract.constexpr.org/issues
+# Please submit bugfixes or comments via https://innoextract.constexpr.org/issues
 #
 
 Name:           innoextract

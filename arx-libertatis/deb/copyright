@@ -1,6 +1,6 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: Arx Libertatis
-Source: http://arx-libertatis.org/
+Source: https://arx-libertatis.org/
 
 Files: *
 Copyright: Copyright 2011-2016 Arx Libertatis Team (see the AUTHORS file)

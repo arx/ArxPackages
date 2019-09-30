@@ -12,7 +12,7 @@
 # license that conforms to the Open Source Definition (Version 1.9)
 # published by the Open Source Initiative.
 
-# Please submit bugfixes or comments via http://bugs.arx-libertatis.org/
+# Please submit bugfixes or comments via https://bugs.arx-libertatis.org/
 #
 
 # The blender plugin requires python 3
@@ -27,13 +27,13 @@ License:        GPL-3.0+
 License:        GPLv3+
 %endif
 Summary:        Cross-platform port of Arx Fatalis, a first-person role-playing game
-URL:            http://arx-libertatis.org/
+URL:            https://arx-libertatis.org/
 %if 0%{?suse_version}
 Group:          Amusements/Games/RPG
 %else
 Group:          Amusements/Games
 %endif
-Source:         http://arx-libertatis.org/files/%{name}-%{version}.tar.xz
+Source:         https://arx-libertatis.org/files/%{name}-%{version}.tar.xz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 %if 0%{?suse_version}
 BuildRequires:  c++_compiler
@@ -217,7 +217,7 @@ make
 %desktop_database_post
 echo "This package only installs the game binary."
 echo "You will also need the demo or full game data."
-echo "See http://arx.vg/data for more information."
+echo "See https://arx.vg/data for more information."
 
 %post -n libArxIO0 -p /sbin/ldconfig
 

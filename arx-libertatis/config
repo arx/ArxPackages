@@ -9,25 +9,25 @@ project_name='Arx Libertatis'
 git_repository='git://github.com/arx/ArxLibertatis.git'
 
 # URL for the project website
-project_url='http://arx-libertatis.org/'
+project_url='https://arx-libertatis.org/'
 
 # Project description as in "$project_name, ..." (OPTIONAL)
 project_tagline="a cross-platform, open source port of Arx Fatalis"
 
 # URL for alternate downloads (OPTIONAL)
-project_downloads_url='http://wiki.arx-libertatis.org/Download'
+project_downloads_url='https://wiki.arx-libertatis.org/Download'
 
 # URL for alternate snapshot download (OPTIONAL)
-project_snapshot_downloads_url='http://wiki.arx-libertatis.org/Development_snapshots'
+project_snapshot_downloads_url='https://wiki.arx-libertatis.org/Development_snapshots'
 
 # URL for the full changelog (OPTIONAL)
-project_changelog_url='http://wiki.arx-libertatis.org/Changelog'
+project_changelog_url='https://wiki.arx-libertatis.org/Changelog'
 
 # URL where output files can be accessed
-project_files_url='http://arx-libertatis.org/files/'
+project_files_url='https://arx-libertatis.org/files/'
 
 # URL where commits can be accessed
-project_commits_url='http://arx.vg/'
+project_commits_url='https://arx.vg/'
 
 # GPG key id to sign builds with - empty key disables signing
 sign_key='F87D7DF750859A5E' # release@arx-libertatis.org

@@ -10,7 +10,7 @@ git_repository='git://github.com/dscharrer/innoextract.git'
 project_url='https://constexpr.org/innoextract/'
 
 # Project description as in "$project_name, ..." (OPTIONAL)
-project_tagline='a tool to unpack installers created by [Inno Setup](http://www.jrsoftware.org/isinfo.php)'
+project_tagline='a tool to unpack installers created by [Inno Setup](http://jrsoftware.org/isinfo.php)'
 
 # URL for alternate downloads (OPTIONAL)
 project_downloads_url='https://constexpr.org/innoextract/#download'
