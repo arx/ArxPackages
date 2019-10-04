@@ -70,14 +70,14 @@ demarkdown_flush() {
 	
 	# Change list syntax
 	
-	local width=80
+	local width=100
 	local list=''
 	local table=''
 	local compact_table=1
 	if [[ "$buffer" == '* '* ]] ; then
 		list=' '
 		buffer="${buffer#\* }"
-		width=77
+		width=97
 		table_row=0
 	elif demarkdown_is_list "$buffer" ; then
 		list='   '
@@ -86,13 +86,13 @@ demarkdown_flush() {
 		buffer="${buffer#\*}"
 		buffer="${buffer#\*}"
 		buffer="${buffer# }"
-		width=75
+		width=95
 		table_row=0
 	elif demarkdown_is_table "$buffer" ; then
 		table=' '
 		list=' '
 		buffer="${buffer#|}"
-		width=77
+		width=97
 		table_row=$((table_row + 1))
 		if [ $table_row = 1 ] ; then
 			table_columns=( )
@@ -134,7 +134,7 @@ demarkdown_flush() {
 		if [ ! -z "$table" ] ; then
 			list="$(printf '%s' "$table" | perl -pe 's/./ /g' | perl -pe 's/^..//')"
 			buffer="${buffer#"$table"}"
-			width=$((80 - ${#table}))
+			width=$((100 - ${#table}))
 		fi
 		table_row=0
 	fi
