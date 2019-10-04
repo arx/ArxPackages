@@ -411,6 +411,7 @@ if [ ! -z "${project-}" ] ; then
 	projectdir="$root/$project"
 	pkgtypes=($(subdirs "$projectdir" | sort | uniq))
 	obs_package=${obs_package:-"$project"}
+	obs_bin_package=${obs_bin_package:-"$obs_package.bin"}
 fi
 
 # Make sure package-type specific scripts are called from the $pkgsrcdir

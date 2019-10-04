@@ -7,7 +7,7 @@ get_output _debsource _sourcedir "$version" "$pkgtype" 'prepare'
 
 if [ $is_snapshot = 0 ] || [ ! -z "${obs_snapshot_project:-}" ] ; then
 	
-	e execute deploy-obs \
+	e execute deploy-obs "$obs_package" \
 		--del "${project}*.dsc" \
 		--del "${project}_*.orig.*" \
 		--del "${project}_*.debian.*" \

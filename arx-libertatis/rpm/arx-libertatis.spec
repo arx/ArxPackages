@@ -1,7 +1,7 @@
 #
 # spec file for package arx-libertatis, arx, arxunpak, arxsavetool and arxcrashreporter
 #
-# Copyright (c) 2012-2016 Daniel Scharrer <daniel@constexpr.org>
+# Copyright (c) 2012-2019 Daniel Scharrer <daniel@constexpr.org>
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -34,7 +34,11 @@ Group:          Amusements/Games/RPG
 Group:          Amusements/Games
 %endif
 Source:         https://arx-libertatis.org/files/%{name}-%{version}.tar.xz
-BuildRoot:      %{_tmppath}/%{name}-%{version}-build
+<? if($bin): ?>
+%global         privatelibs libSDL2.*|libopenal
+%global         __provides_exclude ^(%{privatelibs})\\.so
+%global         __requires_exclude ^(%{privatelibs})\\.so
+<? else: ?>
 %if 0%{?suse_version}
 BuildRequires:  c++_compiler
 %else
@@ -47,8 +51,8 @@ BuildRequires:  pkgconfig(zlib)
 BuildRequires:  pkgconfig(sdl2) >= 2.0.0
 BuildRequires:  pkgconfig(freetype2) >= 2.3.0
 BuildRequires:  pkgconfig(openal)
-BuildRequires:  pkgconfig(gl)
 BuildRequires:  pkgconfig(epoxy) >= 1.2
+<? endif ?>
 BuildRequires:  pkgconfig(Qt5Core) >= 5.0.0
 BuildRequires:  pkgconfig(Qt5Concurrent) >= 5.0.0
 BuildRequires:  pkgconfig(Qt5Gui) >= 5.0.0
@@ -147,6 +151,22 @@ Blender addon to edit Arx Fatalis data files.
 %setup -q
 
 %build
+<? if($bin): ?>
+# select binary architecture
+%ifarch x86_64
+mv bin/amd64/* bin/
+%else
+mv bin/i686/* bin/
+%endif
+rm -r bin/i686
+rm -r bin/amd64
+# remove unwanted files
+rm bin/innoextract
+rm license/innoextract.*
+rm bin/bsdtar
+rm license/libarchive.*
+rm data/README
+<? else: ?>
 %cmake \
 	-DCMAKE_INSTALL_DATAROOTDIR="%{_datadir}" \
 	-DCMAKE_INSTALL_MANDIR="%{_mandir}" \
@@ -157,21 +177,67 @@ Blender addon to edit Arx Fatalis data files.
 	-DINSTALL_DATADIR="%{_datadir}/arx" \
 	-DRUNTIME_DATADIR=""
 make
+<? endif ?>
 
 %install
+<? if($bin): ?>
+# blender plugin
+install -d "%{buildroot}/%{_libdir}"
+mv bin/libArxIO.so* "%{buildroot}/%{_libdir}/"
+install -d "%{buildroot}/%{_includedir}"
+mv bin/ArxIO.h "%{buildroot}/%{_includedir}/"
+install -d "%{buildroot}/%{blender_addons}"
+mv plugins/blender/arx_addon "%{buildroot}/%{blender_addons}/arx"
+# tools
+install -d "%{buildroot}/%{_bindir}"
+mv bin/arxunpak "%{buildroot}/%{_bindir}/"
+mv bin/arxsavetool "%{buildroot}/%{_bindir}/"
+mv bin/arx-install-data "%{buildroot}/%{_bindir}/"
+install -d "%{buildroot}/%{_libexecdir}"
+mv bin/arxcrashreporter "%{buildroot}/%{_libexecdir}/"
+# main binary and support libraries
+install -d "%{buildroot}/%{_libexecdir}/arx"
+mv bin/* "%{buildroot}/%{_libexecdir}/arx/"
+ln -rs "%{buildroot}/%{_libexecdir}/arx/arx" "%{buildroot}/%{_bindir}/arx"
+# man pages
+install -d "%{buildroot}/%{_mandir}/man1"
+mv doc/*.1 "%{buildroot}/%{_mandir}/man1/"
+install -d "%{buildroot}/%{_mandir}/man6"
+mv doc/*.6 "%{buildroot}/%{_mandir}/man6/"
+# data
+install -d "%{buildroot}/%{_datadir}/arx"
+mv data/* "%{buildroot}/%{_datadir}/arx/"
+# icons
+install -d "%{buildroot}/%{_datadir}/icons/hicolor/16x16/apps"
+mv arx-libertatis_16.png "%{buildroot}/%{_datadir}/icons/hicolor/16x16/apps/arx-libertatis.png"
+install -d "%{buildroot}/%{_datadir}/icons/hicolor/22x22/apps"
+mv arx-libertatis_22.png "%{buildroot}/%{_datadir}/icons/hicolor/22x22/apps/arx-libertatis.png"
+install -d "%{buildroot}/%{_datadir}/icons/hicolor/24x24/apps"
+mv arx-libertatis_24.png "%{buildroot}/%{_datadir}/icons/hicolor/24x24/apps/arx-libertatis.png"
+install -d "%{buildroot}/%{_datadir}/icons/hicolor/32x32/apps"
+mv arx-libertatis_32.png "%{buildroot}/%{_datadir}/icons/hicolor/32x32/apps/arx-libertatis.png"
+install -d "%{buildroot}/%{_datadir}/icons/hicolor/128x128/apps"
+mv arx-libertatis.png "%{buildroot}/%{_datadir}/icons/hicolor/128x128/apps/arx-libertatis.png"
+install -d "%{buildroot}/%{_datadir}/applications"
+mv arx-libertatis.desktop "%{buildroot}/%{_datadir}/applications/"
+<? else: ?>
 %if 0%{?suse_version}
 %cmake_install
-%suse_update_desktop_file %name
 %else
 %make_install
+%endif
+<? endif ?>
+%if 0%{?suse_version}
+%suse_update_desktop_file %name
 %endif
 
 %files
 %defattr(-,root,root)
+<? $lincense_files = $bin ? 'license/*' : 'LICENSE* COPYING*' ?>
 %if 0%{?suse_version}
-%doc LICENSE* COPYING*
+%doc <?= $lincense_files . "\n" ?>
 %else
-%license LICENSE* COPYING*
+%license <?= $lincense_files . "\n" ?>
 %endif
 %doc README* AUTHORS CHANGELOG VERSION
 %{_bindir}/arx
@@ -184,6 +250,12 @@ make
 %{_datadir}/applications/arx-libertatis.desktop
 %{_mandir}/man1/arx-install-data.1*
 %{_mandir}/man6/arx.6*
+<? if($bin): ?>
+%dir %{_libexecdir}/arx
+%{_libexecdir}/arx/arx
+%{_libexecdir}/arx/libSDL2-2.0.so.*
+%{_libexecdir}/arx/libopenal.so.*
+<? endif ?>
 
 %files -n arxunpak
 %defattr(-,root,root)

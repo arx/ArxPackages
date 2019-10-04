@@ -178,3 +178,5 @@ test_binaries() {
 echo "${version:-kek}" | grep -P '^\d+\.\d+$' > /dev/null && codename_required=1
 
 launchpad_builds['precise']='disabled' # GLM is too old
+
+obs_bin_rpm=1

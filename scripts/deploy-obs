@@ -2,18 +2,20 @@
 
 . "${BASH_SOURCE[0]%/*}/common"
 
+_obs_package="$1" ; shift
+
 if [ $is_snapshot = 0 ] ; then
-	[ -z "$obs_project" ] && die
-	_repodir="${builddir}/${project}.osc"
+	_repodir="${builddir}/${_obs_package}.osc"
 	_obs_project="$obs_project"
 else
-	[ -z "$obs_snapshot_project" ] && die
-	_repodir="${builddir}/${project}-snapshots.osc"
+	_repodir="${builddir}/${_obs_package}-snapshots.osc"
 	_obs_project="$obs_snapshot_project"
 fi
 
+[ -z "$_obs_project" ] && die
+
 if [ ! -e "$_repodir" ] ; then
-	e osc checkout --output-dir="$_repodir" "$_obs_project" "$obs_package"
+	e osc checkout --output-dir="$_repodir" "$_obs_project" "$_obs_package"
 fi
 
 pushd "$_repodir" > /dev/null

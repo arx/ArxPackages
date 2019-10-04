@@ -498,9 +498,12 @@ system_packages=(
 #launchpad_key=''
 
 # Associative array from Ubuntu versions to launchpad build types
-# Build types can be 'disabled' or 'source'
+# Build types can be 'disabled', 'source' or 'binary'
 # Versions not mentioned in this array default to 'source'
 declare -A launchpad_builds
+
+# Whether or not to push binary RPM packages to OBS
+obs_bin_rpm=0
 
 # Ubuntu versions for which to push build jobs to Launchpad
 declare -a ubuntu_versions
