@@ -263,13 +263,13 @@ run() {
 	local _update_inplace=0
 	local _check="${_script}.check"
 	if [ -e "$_phony" ] && [ $forced = 0 ] ; then
-		if [ ! -x "${scriptdir}/${_check}" ] || ! pkgtype='' phony="$_phony" runscript "$_check" ; then
+		if [ $forced = 0 ] && [ ! -x "${scriptdir}/${_check}" ] || ! pkgtype='' phony="$_phony" runscript "$_check" ; then
 			elog "- ${_name} (skipped)"
 			return 0;
 		else
 			_update_inplace=1
 		fi
-	elif [ -x "${scriptdir}/${_check}" ] && ! pkgtype='' phony="$_phony" runscript "$_check" ; then
+	elif [ $forced = 0 ] && [ -x "${scriptdir}/${_check}" ] && ! pkgtype='' phony="$_phony" runscript "$_check" ; then
 		return 0;
 	fi
 	
