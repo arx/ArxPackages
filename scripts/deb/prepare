@@ -5,9 +5,7 @@
 
 get_output _source _sourcedir "$version" 'source'
 
-e cp "$_source" "${project}_${_deb_version}.orig.tar.${_source##*.}"
 
-e extract "$_source"
 
 _gpg_command="${PWD}/gpg-wrapper"
 echo "#!/bin/bash
@@ -17,74 +15,116 @@ chmod +x "$_gpg_command"
 
 get_output _output
 
-pushd "$_sourcedir"
+for series in source binary "${ubuntu_versions[@]}" ; do
 	
-	e rsync -a "${pkgsrcdir}/" 'debian'
+	ubuntu_ver=''
+	case "$series" in
+		source)
+			archive='source'
+		;;
+		binary)
+			[ $obs_bin_deb = 0 ] && continue
+			archive='linux'
+		;;
+		*)
+			ubuntu_ver="$series"
+			case "${launchpad_builds["$ubuntu_ver"]:-source}" in
+				disabled) continue ;;
+				source) archive='source' ;;
+				binary) archive='linux' ;;
+				*) die "Unknown build type for $ubuntu_ver: '${launchpad_builds["$ubuntu_ver"]:-source}'"
+			esac
+		;;
+	esac
+	[ -z "$ubuntu_ver" ] && series='stable'
 	
-	[ $is_snapshot = 0 ] || add_snapshot_deb_changelog_entry 'debian/changelog' 'stable'
+	_config="${PWD}/config.php"
+	case "$archive" in
+		source)
+			echo "<? \$bin = false;" > "$_config"
+			_deb_ver="$_deb_version"
+			_deb_rel="$_deb_release"
+			_suffix=''
+		;;
+		*)
+			echo "<? \$bin = true;" > "$_config"
+			_deb_ver="$_deb_bin_version"
+			_deb_rel="$_deb_bin_release"
+			_suffix=' (prebuilt binaries)'
+	esac
+	echo "\$series = '$series';" >> "$_config"
 	
-	if [ ! -f "${_output}/${project}.dsc" ] ; then
-		
-		echo "  ${white}:: building source package for debian${reset}" >&2
-		
-		e dpkg-buildpackage -S -us -uc -d -p"$_gpg_command" 2>&1
-		e require_file *-0.1.dsc
-		e require_file *-0.1_source.changes
-		e require_file *-0.1.debian.tar.*
-		
+	if [ ! -z "$ubuntu_ver" ] ; then
+		_build=1
+		_deb_rel="${_deb_ver}-0ppa${_build}~${ubuntu_ver}"
+		while [ "$ubuntu_ver" = "$rebuild" ] && [ -f "${_output}/${project}_${_deb_rel}.dsc" ] ; do
+			((++_build))
+			_deb_rel="${_deb_ver}-0ppa${_build}~${ubuntu_ver}"
+		done
 	fi
 	
-	for ubuntu_ver in "${ubuntu_versions_src[@]}" ; do
+	[ -f "${_output}/${project}_${_deb_rel}.dsc" ] && continue
+	
+	get_output _source _sourcedir "$version" "$archive"
+	e cp "$_source" "${project}_${_deb_ver}.orig.tar.${_source##*.}"
+	
+	[ -e "$_sourcedir" ] && e rm -rf "$_sourcedir"
+	e extract "$_source"
+	
+	if [ -z "$ubuntu_ver" ] ; then
+		echo "  ${white}:: building source package for debian${_suffix}${reset}" >&2
+	else
+		echo "  ${white}:: building source package for ubuntu ${ubuntu_ver}${_suffix}${reset}" >&2
+	fi
+	
+	pushd "$_sourcedir"
 		
-		_build=1
-		while [ "$ubuntu_ver" = "$rebuild" ] && [ -f "${_output}/"*-0ppa${_build}~${ubuntu_ver}*.dsc ] ; do
-			((++_build))
-		done
+		e preprocess_all "$_config" "${pkgsrcdir}" "debian"
 		
-		if [ ! -f "${_output}/"*-0ppa${_build}~${ubuntu_ver}*.dsc ] ; then
-			
-			echo "  ${white}:: building source package for ubuntu ${ubuntu_ver}${reset}" >&2
-			
-			# Change the Debian version to an Ubuntu ppa version
-			e cp "$pkgsrcdir/changelog" 'debian/changelog'
-			
-			if [ $is_snapshot = 0 ] ; then
-				
-				e sed -i "s/^\\([^ ]*\\) (\\([^\\-]*\\)-\\([0-9]*\\)\\.\\([0-9]*\\)) \\([^;]*\\);/\\1 (\\2-\\3ppa\\4~${ubuntu_ver}) ${ubuntu_ver};/" 'debian/changelog'
-				
-			else
-				
-				add_snapshot_deb_changelog_entry 'debian/changelog' "$ubuntu_ver"
-				
-			fi
-			
-			if [ $_build -gt 1 ] ; then
-				_tmpfile="${PWD}/changelog.temp"
-				echo "${project} (${_deb_version}-0ppa${_build}~${ubuntu_ver}) ${ubuntu_ver}; urgency=low
+		if [ ! $is_snapshot = 0 ] ; then
+			_tmpfile="${PWD}/changelog.temp"
+			get_shortlog _changelog
+			_changelog="$(echo "$_changelog" | sed 's/^-/*/;s/^/  /')"
+			echo "${project} (${_deb_release}) stable; urgency=low
+
+${_changelog:?bad changelog}
+
+ -- ${packager}  $(date --rfc-2822 --reference="$_source")
+" > "$_tmpfile"
+		cat "debian/changelog" >> "$_tmpfile"
+			e mv "$_tmpfile" "debian/changelog"
+		fi
+		
+		if [ ! -z "$ubuntu_ver" ] && [ $_build -gt 1 ] ; then
+			_tmpfile="${PWD}/changelog.temp"
+			echo "${project} (${_deb_rel}) ${ubuntu_ver}; urgency=low
 
   * Rebuild only
 
  -- ${packager}  $(date --rfc-2822)
 " > "$_tmpfile"
-				cat "debian/changelog" >> "$_tmpfile"
-				e mv "$_tmpfile" "debian/changelog"
-			fi
-			
-			e dpkg-buildpackage -S -d -p"$_gpg_command" 2>&1
-			e require_file *-0ppa${_build}~${ubuntu_ver}*.dsc
-			e require_file *-0ppa${_build}~${ubuntu_ver}_source.changes
-			e require_file *-0ppa${_build}~${ubuntu_ver}.debian.tar.*
-			
+			cat "debian/changelog" >> "$_tmpfile"
+			e mv "$_tmpfile" "debian/changelog"
+		elif [ ! "$_deb_rel" = "$_deb_release" ] ; then
+			e sed -i "s/^\\([^ ]*\\) ($(escape_sed "$_deb_release")) \\([^;]*\\);/\\1 ($(escape_sed "$_deb_rel")) ${series};/" 'debian/changelog'
 		fi
 		
-	done
+		if [ -z "$ubuntu_ver" ] ; then
+			# Build unsigned .dsc file for OBS
+			e dpkg-buildpackage -S -us -uc -d -p"$_gpg_command" 2>&1
+		else
+			# Build signed .dsc file for Launchpad
+			e dpkg-buildpackage -S -d -p"$_gpg_command" 2>&1
+		fi
+		
+		e require_file "${_output}/${project}_${_deb_rel}.dsc"
+		e require_file "${_output}/${project}_${_deb_rel}_source.changes"
+		e require_file "${_output}/${project}_${_deb_rel}.debian.tar".*
+		
+	popd
 	
-popd
-
-if [ ! -f "${_output}/${project}.dsc" ] ; then
-	e cp "${project}_${_deb_release}.dsc" "${project}.dsc"
-fi
+done
 
 # Preserve the output files
 [ -d "$_output" ] || e mkdir "$_output"
-e find -mindepth 1 -maxdepth 1 -type f ! -name gpg-wrapper -exec mv -n {} "$_output/" \;
+e find -mindepth 1 -maxdepth 1 -type f -name "${project}*" -exec mv -n {} "$_output/" \;

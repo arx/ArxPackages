@@ -2,15 +2,6 @@
 
 . "${scriptdir}/changelog"
 
-ubuntu_versions_src=( )
-for ubuntu_ver in "${ubuntu_versions[@]}" ; do
-	case "${launchpad_builds["$ubuntu_ver"]:-source}" in
-		disabled) true ;;
-		source) ubuntu_versions_src+=( "$ubuntu_ver" ) ;;
-		*) die "Unknown build type for $ubuntu_ver: '${launchpad_builds["$ubuntu_ver"]:-source}'"
-	esac
-done
-
 to_deb_version() {
 	sed 's:\-\([a-z]\):~\1:g;s:\([a-z]\)\-:\1+:g'
 }
@@ -33,35 +24,5 @@ else
 	
 fi
 
-add_snapshot_deb_changelog_entry() {
-	
-	local changelogfile="$1"
-	local series="$2"
-	
-	local tmpfile="${PWD}/changelog.temp"
-	
-	if [ "$series" = 'stable' ]
-		then local deb_release="$_deb_release"
-		else local deb_release="${_deb_version}-0ppa1~${series}"
-	fi
-	
-	local sourcefile=''
-	local sourcedir=''
-	get_output sourcefile sourcedir "$version" 'source'
-	
-	local changelog
-	get_shortlog changelog
-	changelog="$(echo "$changelog" | sed 's/^-/*/;s/^/  /')"
-	
-	echo "${project} (${deb_release}) ${series}; urgency=low
-
-${changelog:?bad changelog}
-
- -- ${packager}  $(date --rfc-2822 --reference="$sourcefile")
-" > "$tmpfile"
-	
-	cat "$changelogfile" >> "$tmpfile"
-	
-	e mv "$tmpfile" "$changelogfile"
-	
-}
+_deb_bin_version="${_deb_version}+bin"
+_deb_bin_release="${_deb_bin_version}${_deb_release#"$_deb_version"}"

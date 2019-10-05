@@ -96,14 +96,18 @@ preprocess_all() {
 	local config="$1"
 	local input="$(realpath -m "$2")"
 	local output="$(realpath -m "$3")"
+	e mkdir "$output"
 	pushd "$input"
 		while IFS= read -r -d '' path ; do
+			[ "$path" = '.' ] && continue
+			path="${path#./}"
 			if [ -L "$path" ] ; then
 				e ln -s "$(readlink "$path")" "${output}/${path}"
 			elif [ -d "$path" ] ; then
 				e mkdir "${output}/${path}"
 			else
 				preprocess "$config" "$path" "${output}/${path}"
+				[ -f "${output}/${path}" ] && [ -x "$path" ] && e chmod +x "${output}/${path}"
 			fi
 		done < <(find -print0)
 	popd

@@ -1,10 +1,80 @@
-#!/usr/bin/make -f
+<?= "#!/usr/bin/make -f\n" ?>
 # -*- makefile -*-
 # We don't need any custom rules as debhelper is able to figure out everything.
 
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+<? if($bin): ?>
+DESTDIR = $(CURDIR)/debian/tmp
+
+override_dh_auto_build:
+	ls # TODO remove
+	# select binary architecture
+ifeq ($(DEB_HOST_MULTIARCH),x86_64-linux-gnu)
+	mv bin/amd64/* bin/
+else
+	mv bin/i686/* bin/
+endif
+	rm -r bin/i686
+	rm -r bin/amd64
+	# remove unwanted files
+	rm bin/innoextract
+	rm license/innoextract.*
+	rm bin/bsdtar
+	rm license/libarchive.*
+<? if($bin && $series == 'stable'): ?>
+	rm bin/arxcrashreporter
+<? endif ?>
+	rm data/README
+
+override_dh_auto_install:
+	# blender plugin
+	install -d "$(DESTDIR)/usr/lib/$(DEB_HOST_MULTIARCH)"
+	mv bin/libArxIO.so* "$(DESTDIR)/usr/lib/$(DEB_HOST_MULTIARCH)/"
+	install -d "$(DESTDIR)/usr/include"
+	mv bin/ArxIO.h "$(DESTDIR)/usr/include/"
+	install -d "$(DESTDIR)/usr/share/blender/scripts/addons"
+	mv plugins/blender/arx_addon "$(DESTDIR)/usr/share/blender/scripts/addons/arx"
+	# tools
+	install -d "$(DESTDIR)/usr/bin"
+	mv bin/arxunpak "$(DESTDIR)/usr/bin/"
+	mv bin/arxsavetool "$(DESTDIR)/usr/bin/"
+	mv bin/arx-install-data "$(DESTDIR)/usr/bin/"
+<? if(!$bin || $series != 'stable'): ?>
+	install -d "$(DESTDIR)/usr/lib/arx"
+	mv bin/arxcrashreporter "$(DESTDIR)/usr/lib/arx/"
+<? endif ?>
+	# main binary and support libraries
+	install -d "$(DESTDIR)/usr/lib/arx"
+	mv bin/* "$(DESTDIR)/usr/lib/arx/"
+	install -d "$(DESTDIR)/usr/games"
+	ln -s "../lib/arx/arx" "$(DESTDIR)/usr/games/arx"
+	# man pages
+	install -d "$(DESTDIR)/usr/share/man/man1"
+	mv doc/*.1 "$(DESTDIR)/usr/share/man/man1/"
+	install -d "$(DESTDIR)/usr/share/man/man6"
+	mv doc/*.6 "$(DESTDIR)/usr/share/man/man6/"
+	# data
+	install -d "$(DESTDIR)/usr/share/games/arx"
+	mv data/* "$(DESTDIR)/usr/share/games/arx/"
+	# icons
+	install -d "$(DESTDIR)/usr/share/icons/hicolor/16x16/apps"
+	mv arx-libertatis_16.png "$(DESTDIR)/usr/share/icons/hicolor/16x16/apps/arx-libertatis.png"
+	install -d "$(DESTDIR)/usr/share/icons/hicolor/22x22/apps"
+	mv arx-libertatis_22.png "$(DESTDIR)/usr/share/icons/hicolor/22x22/apps/arx-libertatis.png"
+	install -d "$(DESTDIR)/usr/share/icons/hicolor/24x24/apps"
+	mv arx-libertatis_24.png "$(DESTDIR)/usr/share/icons/hicolor/24x24/apps/arx-libertatis.png"
+	install -d "$(DESTDIR)/usr/share/icons/hicolor/32x32/apps"
+	mv arx-libertatis_32.png "$(DESTDIR)/usr/share/icons/hicolor/32x32/apps/arx-libertatis.png"
+	install -d "$(DESTDIR)/usr/share/icons/hicolor/128x128/apps"
+	mv arx-libertatis.png "$(DESTDIR)/usr/share/icons/hicolor/128x128/apps/arx-libertatis.png"
+	install -d "$(DESTDIR)/usr/share/applications"
+	mv arx-libertatis.desktop "$(DESTDIR)/usr/share/applications/"
+
+override_dh_installdocs:
+	dh_installdocs license/*
+<? else: ?>
 override_dh_auto_configure:
 	dh_auto_configure -- \
 		-DCMAKE_INSTALL_LIBEXECDIR=lib/arx \
@@ -13,6 +83,7 @@ override_dh_auto_configure:
 
 override_dh_strip:
 	dh_strip --dbg-package=arx-libertatis-dbg
+<? endif ?>
 
 override_dh_installchangelogs:
 	dh_installchangelogs -parx-libertatis CHANGELOG
@@ -22,7 +93,9 @@ override_dh_installchangelogs:
 	dh_installchangelogs -plibarxio0
 	dh_installchangelogs -plibarxio-dev
 	dh_installchangelogs -parx-blender-addon
+<? if(!$bin): ?>
 	dh_installchangelogs -parx-libertatis-dbg
+<? endif ?>
 
 %:
 	dh $@

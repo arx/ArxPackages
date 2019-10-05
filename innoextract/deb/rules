@@ -1,4 +1,4 @@
-#!/usr/bin/make -f
+<?= "#!/usr/bin/make -f\n" ?>
 # -*- makefile -*-
 # We don't need any custom rules as debhelper is able to figure out everything.
 

@@ -5,3 +5,8 @@ usr/share/icons/hicolor/*/apps/arx-libertatis.png
 usr/share/applications/arx-libertatis.desktop
 usr/share/man/man1/arx-install-data.1*
 usr/share/man/man6/arx.6*
+<? if($bin): ?>
+usr/lib/arx/arx
+usr/lib/arx/libSDL2-2.0.so.*
+usr/lib/arx/libopenal.so.*
+<? endif ?>

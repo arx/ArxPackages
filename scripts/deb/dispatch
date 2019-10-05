@@ -7,13 +7,30 @@ get_output _debsource _sourcedir "$version" "$pkgtype" 'prepare'
 
 if [ $is_snapshot = 0 ] || [ ! -z "${obs_snapshot_project:-}" ] ; then
 	
-	e execute deploy-obs "$obs_package" \
-		--del "${project}*.dsc" \
-		--del "${project}_*.orig.*" \
-		--del "${project}_*.debian.*" \
-		--add "${_debsource}/${project}_${_deb_release}.dsc" \
-		--add "${_debsource}/${project}_${_deb_version}.orig".* \
-		--add "${_debsource}/${project}_${_deb_release}.debian".*
+	for archive in source linux ; do
+		
+		case "$archive" in
+			source)
+				_obs_package="$obs_package"
+				_deb_ver="$_deb_version"
+				_deb_rel="$_deb_release"
+			;;
+			*)
+				[ $obs_bin_deb = 0 ] && continue
+				_obs_package="$obs_bin_package"
+				_deb_ver="$_deb_bin_version"
+				_deb_rel="$_deb_bin_release"
+		esac
+		
+		e execute deploy-obs "$_obs_package" \
+			--del "${project}_*.orig.*" \
+			--del "${project}_*.debian.*" \
+			--del "*.dsc" \
+			--add "${_debsource}/${project}_${_deb_ver}.orig".* \
+			--add "${_debsource}/${project}_${_deb_rel}.debian".* \
+			--add "${_debsource}/${project}_${_deb_rel}.dsc"
+		
+	done
 	
 fi
 
@@ -27,7 +44,7 @@ if [ $is_snapshot = 0 ] || [ ! -z "${launchpad_snapshot_ppa:-}" ] ; then
 		_launchpad_ppa="$launchpad_snapshot_ppa"
 	fi
 	
-	for changes in "${_debsource}/${project}_${_deb_version}"-*ppa*~*_source.changes ; do
+	for changes in "${_debsource}/${project}_"*ppa*"_source.changes" ; do
 		[ -f "${changes%.changes}.ppa.upload" ] || e dput "$_launchpad_ppa" "$changes"
 	done
 	

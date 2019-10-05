@@ -10,12 +10,24 @@ get_output _output
 
 pushd "$_output"
 	
-	for ubuntu_ver in "${ubuntu_versions_src[@]}" ; do
+	[ -f "${project}_${_deb_release}.dsc" ] || exit_true
+	
+	if [ ! $obs_bin_deb = 0 ] ; then
+		[ -f "${project}_${_deb_bin_release}.dsc" ] || exit_true
+	fi
+	
+	for ubuntu_ver in "${ubuntu_versions[@]}" ; do
+		
+		case "${launchpad_builds["$ubuntu_ver"]:-source}" in
+			disabled) continue ;;
+			source) _deb_ver="$_deb_version" ;;
+			binary) _deb_ver="$_deb_bin_version" ;;
+		esac
 		
 		[ "$ubuntu_ver" = "$rebuild" ] && exit_true
 		
 		echo "Checking $ubuntu_ver package"
-		[ -f *-0ppa1~${ubuntu_ver}*.dsc ] || exit_true
+		[ -f "${project}_${_deb_ver}-0ppa1~${ubuntu_ver}.dsc" ] || exit_true
 		
 	done
 	
