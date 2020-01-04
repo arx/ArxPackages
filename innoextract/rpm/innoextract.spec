@@ -59,17 +59,26 @@ non-windows systems without running the actual installer using wine.
 %setup -q
 
 %build
-%cmake \
-	-DCMAKE_INSTALL_DATAROOTDIR="%{_datadir}" \
-	-DCMAKE_INSTALL_MANDIR="%{_mandir}" \
-	-DCMAKE_INSTALL_BINDIR="%{_bindir}"
+%cmake
+%if 0%{?sle_version} >= 150100 || 0%{?mageia} >= 8
+%cmake_build
+%else
+%if 0%{?suse_version}
 make %{?_smp_mflags}
+%else
+%make_build
+%endif
+%endif
 
 %install
-%if 0%{?suse_version}
+%if 0%{?suse_version} || 0%{?mageia} >= 8
 %cmake_install
 %else
+%if 0%{?mageia}
+%make_install -C build
+%else
 %make_install
+%endif
 %endif
 
 %files

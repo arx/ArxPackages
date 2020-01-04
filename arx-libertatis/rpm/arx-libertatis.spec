@@ -168,15 +168,19 @@ rm license/libarchive.*
 rm data/README
 <? else: ?>
 %cmake \
-	-DCMAKE_INSTALL_DATAROOTDIR="%{_datadir}" \
-	-DCMAKE_INSTALL_MANDIR="%{_mandir}" \
-	-DCMAKE_INSTALL_BINDIR="%{_bindir}" \
-	-DCMAKE_INSTALL_LIBDIR="%{_libdir}" \
 	-DCMAKE_INSTALL_LIBEXECDIR="%{_libexecdir}" \
 	-DINSTALL_BLENDER_PLUGINDIR="%{blender_addons}/arx" \
 	-DINSTALL_DATADIR="%{_datadir}/arx" \
 	-DRUNTIME_DATADIR=""
-make
+%if 0%{?sle_version} >= 150100 || 0%{?mageia} >= 8
+%cmake_build
+%else
+%if 0%{?suse_version}
+make %{?_smp_mflags}
+%else
+%make_build
+%endif
+%endif
 <? endif ?>
 
 %install
@@ -221,10 +225,14 @@ mv arx-libertatis.png "%{buildroot}/%{_datadir}/icons/hicolor/128x128/apps/arx-l
 install -d "%{buildroot}/%{_datadir}/applications"
 mv arx-libertatis.desktop "%{buildroot}/%{_datadir}/applications/"
 <? else: ?>
-%if 0%{?suse_version}
+%if 0%{?suse_version} || 0%{?mageia} >= 8
 %cmake_install
 %else
+%if 0%{?mageia}
+%make_install -C build
+%else
 %make_install
+%endif
 %endif
 <? endif ?>
 %if 0%{?suse_version}
