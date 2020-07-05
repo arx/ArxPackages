@@ -46,7 +46,7 @@
 
 #include <stdio.h>
 
-BOOL is_wow64() {
+static BOOL is_wow64() {
 	
 	typedef BOOL (WINAPI * IsWow64Process_t)(HANDLE, PBOOL);
 	IsWow64Process_t IsWow64Process_p;
@@ -66,7 +66,7 @@ BOOL is_wow64() {
 	return result;
 }
 
-void flush_slashes(LPTSTR * opp, unsigned * slash_countp) {
+static void flush_slashes(LPTSTR * opp, unsigned * slash_countp) {
 	LPTSTR op = *opp;
 	unsigned slash_count = *slash_countp;
 	for(; slash_count; slash_count--) {
@@ -77,7 +77,7 @@ void flush_slashes(LPTSTR * opp, unsigned * slash_countp) {
 	*slash_countp = 0;
 }
 
-void append_cmdline(LPTSTR * opp, unsigned * slash_countp, LPCTSTR str) {
+static void append_cmdline(LPTSTR * opp, unsigned * slash_countp, LPCTSTR str) {
 	LPTSTR op = *opp;
 	unsigned slash_count = *slash_countp;
 	for(; *str; str++) {
@@ -201,13 +201,6 @@ int CALLBACK WinMain(HINSTANCE a, HINSTANCE b, PSTR c, INT d) {
 	if(!GetExitCodeProcess(pi.hProcess, &exitcode)) {
 		return 1;
 	}
-	#endif
-	
-	// Close process and thread handles. 
-	CloseHandle(pi.hProcess);
-	CloseHandle(pi.hThread);
-	
-	#if LAUNCHER_WAIT
 	return exitcode;
 	#else
 	return 0;
