@@ -11,9 +11,3 @@ required_binaries+=(
 	arx-install-data
 )
 
-copy_files+=(
-	
-	# Create a data subdirectory (with a README)
-	[':data/README.md']='data/'
-	
-)

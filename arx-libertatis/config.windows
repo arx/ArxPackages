@@ -19,9 +19,6 @@ cmake_options_windows_x64+=(
 
 copy_files+=(
 	
-	# Create a data subdirectory (with a README)
-	[':data/README.windows.md']='data/README.txt'
-	
 	[':arx.bat']='/'
 	
 )

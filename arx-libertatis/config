@@ -95,6 +95,13 @@ copy_from_tree+=(
 	'share/openal/hrtf'
 )
 
+copy_files+=(
+	
+	# Create a data subdirectory (with a README)
+	[':data/README.md']='data/'
+	
+)
+
 ################################################################################
 # Wrapper configuration
 
