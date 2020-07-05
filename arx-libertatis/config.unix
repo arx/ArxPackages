@@ -11,3 +11,6 @@ required_binaries+=(
 	arx-install-data
 )
 
+# TODO remove this once it is no longer needed for arx-install-data
+wrapper_use_path=1
+wrapper_use_cmd_path=1
