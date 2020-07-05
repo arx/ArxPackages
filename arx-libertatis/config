@@ -71,6 +71,7 @@ prepare_source() {
 
 # Additional options to pass to CMake
 cmake_options+=(
+	-DSTRICT_USE=1
 	-DUSE_STATIC_LIBS=1
 	-DBUILD_CRASHREPORTER=0 # it's a bit wasteful to include Qt just for the crash reporter
 	-DSCRIPTDIR='bin'
