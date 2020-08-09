@@ -60,7 +60,7 @@ non-windows systems without running the actual installer using wine.
 
 %build
 %cmake
-%if 0%{?sle_version} >= 150100 || 0%{?mageia} >= 8
+%if 0%{?sle_version} >= 150100 || 0%{?mageia} >= 8 || 0%{?fedora_version} >= 33
 %cmake_build
 %else
 %if 0%{?suse_version}
@@ -71,7 +71,7 @@ make %{?_smp_mflags}
 %endif
 
 %install
-%if 0%{?suse_version} || 0%{?mageia} >= 8
+%if 0%{?suse_version} || 0%{?mageia} >= 8 || 0%{?fedora_version} >= 33
 %cmake_install
 %else
 %if 0%{?mageia}
