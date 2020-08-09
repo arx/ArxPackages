@@ -1,7 +1,7 @@
 #
 # spec file for package innoextract
 #
-# Copyright (c) 2012-2019 Daniel Scharrer <daniel@constexpr.org>
+# Copyright (c) 2012-2020 Daniel Scharrer <daniel@constexpr.org>
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -16,7 +16,7 @@
 #
 
 Name:           innoextract
-Version:        1.8
+Version:        1.9
 Release:        1%{?dist}
 %if 0%{?suse_version}
 License:        Zlib
@@ -93,6 +93,15 @@ make %{?_smp_mflags}
 %{_mandir}/man1/innoextract.1*
 
 %changelog
+* Sun Aug 09 2020 Daniel Scharrer <daniel@constexpr.org> - 1.9-1
+- Bump version to 1.9 (new upstream release):
+- Added preliminary support for Inno Setup 6.1.0
+- Added support for a modified Inno Setup 5.4.2 variant
+- Fixed output directory being created for unsupported installers
+- Fixed some safe non-ASCII characters being stripped from filenames
+- Fixed handling of path separators in Japanese and Korean installers
+- Fixed build with newer Boost versions
+
 * Sun Sep 15 2019 Daniel Scharrer <daniel@constexpr.org> - 1.8-1
 - Bump version to 1.8 (new upstream release):
 - Added support for Inno Setup 5.6.2 to 6.0.2 installers

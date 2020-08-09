@@ -1,3 +1,15 @@
+innoextract (1.9-0.1) stable; urgency=low
+
+  * Bump version to 1.9 (new upstream release):
+  * Added preliminary support for Inno Setup 6.1.0
+  * Added support for a modified Inno Setup 5.4.2 variant
+  * Fixed output directory being created for unsupported installers
+  * Fixed some safe non-ASCII characters being stripped from filenames
+  * Fixed handling of path separators in Japanese and Korean installers
+  * Fixed build with newer Boost versions
+
+ -- Daniel Scharrer <daniel@constexpr.org>  Sun, 09 Aug 2020 20:48:02 +0200
+
 innoextract (1.8-0.1) stable; urgency=low
 
   * Bump version to 1.8 (new upstream release):
