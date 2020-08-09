@@ -62,8 +62,10 @@ BuildRequires:  xz
 %if 0%{?suse_version}
 BuildRequires:  update-desktop-files
 %endif
+%if 0%{?mageia} != 6
 BuildRequires:  blender-rpm-macros
 BuildRequires:  blender
+%endif
 Recommends:     arxcrashreporter
 Conflicts:      arxcrashreporter < %{version}
 Conflicts:      arxcrashreporter > %{version}-9999
@@ -133,6 +135,7 @@ Requires:       libArxIO0 = %{version}-%{release}
 %description -n libArxIO-devel
 Arx Fatalis compression helper library used by the Blender addon (development files).
 
+%if 0%{?mageia} != 6
 %package -n arx-blender-addon
 Summary:        Arx Libertatis Blender addon
 %if 0%{?suse_version}
@@ -146,6 +149,7 @@ Enhances:       blender
 BuildArch:      noarch
 %description -n arx-blender-addon
 Blender addon to edit Arx Fatalis data files.
+%endif
 
 %prep
 %setup -q
@@ -167,11 +171,20 @@ rm bin/bsdtar
 rm license/libarchive.*
 rm data/README
 <? else: ?>
+%if 0%{?mageia} != 6
 %cmake \
 	-DCMAKE_INSTALL_LIBEXECDIR="%{_libexecdir}" \
 	-DINSTALL_BLENDER_PLUGINDIR="%{blender_addons}/arx" \
 	-DINSTALL_DATADIR="%{_datadir}/arx" \
 	-DRUNTIME_DATADIR=""
+%else
+%cmake \
+	-DCMAKE_INSTALL_LIBEXECDIR="%{_libexecdir}" \
+	-DINSTALL_BLENDER_PLUGIN=OFF \
+	-DBUILD_IO_LIBRARY=ON \
+	-DINSTALL_DATADIR="%{_datadir}/arx" \
+	-DRUNTIME_DATADIR=""
+%endif
 %if 0%{?sle_version} >= 150100 || 0%{?mageia} >= 8 || 0%{?fedora_version} >= 33
 %cmake_build
 %else
@@ -190,8 +203,10 @@ install -d "%{buildroot}/%{_libdir}"
 mv bin/libArxIO.so* "%{buildroot}/%{_libdir}/"
 install -d "%{buildroot}/%{_includedir}"
 mv bin/ArxIO.h "%{buildroot}/%{_includedir}/"
+%if 0%{?mageia} != 6
 install -d "%{buildroot}/%{blender_addons}"
 mv plugins/blender/arx_addon "%{buildroot}/%{blender_addons}/arx"
+%endif
 # tools
 install -d "%{buildroot}/%{_bindir}"
 mv bin/arxunpak "%{buildroot}/%{_bindir}/"
@@ -288,10 +303,12 @@ mv arx-libertatis.desktop "%{buildroot}/%{_datadir}/applications/"
 %{_includedir}/ArxIO.h
 %{_libdir}/libArxIO.so
 
+%if 0%{?mageia} != 6
 %files -n arx-blender-addon
 %defattr(-,root,root)
 %dir %{blender_addons}
 %{blender_addons}
+%endif
 
 %post
 %desktop_database_post
