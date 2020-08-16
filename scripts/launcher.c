@@ -46,24 +46,33 @@
 
 #include <stdio.h>
 
-static BOOL is_wow64() {
+static BOOL is_x64() {
 	
 	typedef BOOL (WINAPI * IsWow64Process_t)(HANDLE, PBOOL);
-	IsWow64Process_t IsWow64Process_p;
+	typedef BOOL (WINAPI * IsWow64Process2_t)(HANDLE, USHORT *, USHORT *);
 	
 	// IsWow64Process is not available on all versions of Windows - load it dynamically.
 	HMODULE handle = GetModuleHandle(TEXT("kernel32"));
-	IsWow64Process_p = (IsWow64Process_t)GetProcAddress(handle, "IsWow64Process");
-	if(!IsWow64Process_p) {
-		return FALSE;
+	HANDLE process = GetCurrentProcess();
+	
+	IsWow64Process2_t IsWow64Process2_p = (IsWow64Process2_t)GetProcAddress(handle, "IsWow64Process2");
+	USHORT processArch;
+	USHORT systemArch;
+	if(IsWow64Process2_p && IsWow64Process2_p(process, &processArch, &systemArch)) {
+		switch(systemArch) {
+			case 0: break;
+			case 0x8664: return TRUE;
+			default:     return FALSE;
+		}
 	}
 	
+	IsWow64Process_t IsWow64Process_p = (IsWow64Process_t)GetProcAddress(handle, "IsWow64Process");
 	BOOL result;
-	if(!IsWow64Process_p(GetCurrentProcess(), &result)) {
-		return FALSE;
+	if(IsWow64Process_p && IsWow64Process_p(process, &result)) {
+		return result;
 	}
 	
-	return result;
+	return FALSE;
 }
 
 static void flush_slashes(LPTSTR * opp, unsigned * slash_countp) {
@@ -155,7 +164,7 @@ int CALLBACK WinMain(HINSTANCE a, HINSTANCE b, PSTR c, INT d) {
 	
 	// Determine the subdirectory for the appropriate variant
 	LPCTSTR prefix;
-	if(is_wow64()) {
+	if(is_x64()) {
 		prefix = TEXT("\\bin\\x64");
 	} else {
 		prefix = TEXT("\\bin\\x86");
