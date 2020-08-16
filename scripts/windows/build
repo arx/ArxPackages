@@ -36,9 +36,10 @@ create_launcher() {
 		-static-libgcc
 		-s
 		-Os
+		-flto
 		-fdata-sections
 		-ffunction-sections
-		-flto
+		-fmerge-all-constants
 		-fno-asynchronous-unwind-tables
 		-fno-ident
 		-fno-stack-protector
@@ -47,8 +48,17 @@ create_launcher() {
 		-fuse-linker-plugin
 		-fvisibility=hidden
 		-fwhole-program
+		-falign-functions=1
+		-mpreferred-stack-boundary=2
+		-falign-jumps=1
+		-falign-loops=1
 		-Wl,--gc-sections
 		-Wl,--build-id=none
+		-Wl,--as-needed
+		-nostdlib
+		-lkernel32
+		-lshell32
+		-Wl,--script="$scriptdir/i386pe.x"
 		-DUNICODE
 		-D_UNICODE
 		-DLAUNCHER_USE_PATH="$use_path"
@@ -63,8 +73,9 @@ create_launcher() {
 	e mkdir -p "$builddir"
 	
 	# Select between GUI and console subsystems
+	local copy_resources=0
 	case "$(file "$binary")" in
-		*' executable (GUI)'*) wrapper_options+=( -mwindows -DLAUNCHER_ATTACH_CONSOLE=1 ) ;;
+		*' executable (GUI)'*) wrapper_options+=( -mwindows -DLAUNCHER_ATTACH_CONSOLE=1 ) ; copy_resources=1 ;;
 		*' executable (console)'*) wrapper_options+=( -DLAUNCHER_WAIT=1 ) ;;
 		*) die "Unknown binary type: $binary: $(file "$binary")"
 	esac
@@ -94,9 +105,11 @@ create_launcher() {
 	fi
 	
 	# Copy resources (icons) to the wrapper
-	local resources="$builddir/resources.obj"
-	e "$target-windres" "$binary" -O coff -o "$resources" 2>&1
-	[ -f "$resources" ] && wrapper_options+=( "$resources" )
+	if [ $copy_resources = 1 ] ; then
+		local resources="$builddir/resources.obj"
+		e "$target-windres" "$binary" -O coff -o "$resources" 2>&1
+		[ -f "$resources" ] && wrapper_options+=( "$resources" )
+	fi
 	
 	e "$target-gcc" "$scriptdir/launcher.c" -o "$wrapper" "${wrapper_options[@]}"
 }
