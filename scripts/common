@@ -135,12 +135,12 @@ make_archive() {
 						*/*) dir="${2#*/}" ;;
 						*)   dir='.' ;;
 					esac
-					e zip -9r "$file" "$dir"
+					e 7z a -mm=Deflate -mfb=258 -mpass=15 -r "$file" "$dir"
 					local ret="${PIPESTATUS[0]}"
 				popd
 				return "$ret"
 			else
-				e zip -9r "$file" "${@:2}"
+				e 7z a -mm=Deflate -mfb=258 -mpass=15 -r "$file" "${@:2}"
 			fi
 		;;
 		*)
