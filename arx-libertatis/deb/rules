@@ -23,6 +23,8 @@ endif
 	rm license/innoextract.*
 	rm bin/bsdtar
 	rm license/libarchive.*
+	rm bin/arxsavetool
+	rm bin/arxunpak
 <? if($bin && $series == 'stable'): ?>
 	rm bin/arxcrashreporter
 <? endif ?>
@@ -38,11 +40,12 @@ override_dh_auto_install:
 	mv plugins/blender/arx_addon "$(DESTDIR)/usr/share/blender/scripts/addons/arx"
 	# tools
 	install -d "$(DESTDIR)/usr/bin"
-	mv bin/arxunpak "$(DESTDIR)/usr/bin/"
-	mv bin/arxsavetool "$(DESTDIR)/usr/bin/"
+	ln -s lib/arx/arxtool "$(DESTDIR)/usr/bin/arxunpak"
+	ln -s lib/arx/arxtool "$(DESTDIR)/usr/bin/arxsavetool"
 	mv bin/arx-install-data "$(DESTDIR)/usr/bin/"
-<? if(!$bin || $series != 'stable'): ?>
 	install -d "$(DESTDIR)/usr/lib/arx"
+	mv bin/arxtool "$(DESTDIR)/usr/lib/arx/"
+<? if(!$bin || $series != 'stable'): ?>
 	mv bin/arxcrashreporter "$(DESTDIR)/usr/lib/arx/"
 <? endif ?>
 	# main binary and support libraries

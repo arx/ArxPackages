@@ -1,0 +1,5 @@
+usr/bin/arxsavetool
+usr/bin/arxunpak
+usr/share/man/man1/arxsavetool.1*
+usr/share/man/man1/arxunpak.1*
+usr/lib/arx/arxtool

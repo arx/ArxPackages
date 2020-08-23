@@ -9,12 +9,17 @@ readme_transforms+=(
 	--discard '* scripts *'
 )
 
-cmake_options_windows_x86+=(
-	-DBUILD_CRASHREPORTER=1
+cmake_options_windows_x64+=(
+	-DBUILD_TOOLS=0
+	-DBUILD_CRASHREPORTER=0
+	-DRUNTIME_LIBEXECDIR='.;..;../x86'
 )
 
-cmake_options_windows_x64+=(
-	-DRUNTIME_LIBEXECDIR='.;..;../x86'
+required_binaries_x86+=(
+	arxtool
+	arxsavetool
+	arxunpak
+	arxcrashreporter
 )
 
 copy_files+=(

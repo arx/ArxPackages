@@ -73,7 +73,8 @@ prepare_source() {
 cmake_options+=(
 	-DSTRICT_USE=1
 	-DUSE_STATIC_LIBS=1
-	-DBUILD_CRASHREPORTER=0 # it's a bit wasteful to include Qt just for the crash reporter
+	-DBUILD_TOOLS_MERGED=1
+	-DBUILD_CRASHREPORTER=1
 	-DSCRIPTDIR='bin'
 	-DAPPDIR='.'
 	-DICONDIR='.'
@@ -130,8 +131,6 @@ readme_transforms+=(
 # List of binaries that must be present in binary packages
 required_binaries+=(
 	arx
-	arxunpak
-	arxsavetool
 )
 
 # Libraries that should not be linked
@@ -173,13 +172,19 @@ test_binaries() {
 	expect_success arx --help
 	expect_success arx --list-dirs
 	
+	[ $pkgtype = windows ] && [ ! $arch = x86 ] && return
+	
 	# Test that the program runs at all
-	expect_success arxunpak --help
-	expect_success arxunpak --list-dirs
-	expect_failure arxunpak --unknown-option
+	local arxunpak=( arxunpak )
+	[ $pkgtype = windows ] && arxunpak=( arxtool unpak )
+	expect_success "${arxunpak[@]}" --help
+	expect_success "${arxunpak[@]}" --list-dirs
+	expect_failure "${arxunpak[@]}" --unknown-option
 	
 	# Exit code 1 if no files given
-	expect_failure arxsavetool
+	local arxsavetool=( arxsavetool )
+	[ $pkgtype = windows ] && arxsavetool=( arxtool save )
+	expect_failure "${arxsavetool[@]}"
 	
 	true
 }

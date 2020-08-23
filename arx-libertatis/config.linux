@@ -8,7 +8,6 @@ copy_from_tree+=( 'bin/bsdtar' )
 
 cmake_options+=(
 	-DUSE_WAYLAND=1
-	-DBUILD_CRASHREPORTER=1
 )
 
 cmake_options_linux_i686+=(

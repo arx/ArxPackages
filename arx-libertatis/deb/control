@@ -18,7 +18,9 @@ Package: arx-libertatis
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 <? if(!$bin || $series != 'stable'): ?>
-Recommends: arxcrashreporter
+Recommends: arxcrashreporter, arx-libertatis-tools
+<? else: ?>
+Recommends: arx-libertatis-tools
 <? endif; ?>
 Conflicts: arxcrashreporter (< ${binary:Version}), arxcrashreporter (> ${binary:Version})
 Suggests: arx-fatalis-data | arx-fatalis-demo-data | game-data-packager (>= 41)
@@ -37,23 +39,18 @@ Description: Arx Libertatis crash reporter
  if Arx Libertatis crashes.
 <? endif; ?>
 
-Package: arxsavetool
+Package: arx-libertatis-tools
 Section: utils
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: Tool to inspect and modify Arx Libertatis save files
- Tool to inspect and modify Arx Libertatis save files. Allows one to extract
- individual files from save file containers and re-pack them. Also allows
- listing the information contained in save files and fixing some errors caused
- by broken versions of the game.
-
-Package: arxunpak
-Section: utils
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: Tool to extract the Arx Fatalis .pak files containing the game assets
- Tool to extract the .pak files containing the game assets of the original
- Arx Fatalis.
+Provides: arxsavetool, arxunpak
+Conflicts: arxsavetool, arxunpak
+Replaces: arxsavetool, arxunpak
+Description: Tools to work with Arx Fatalis data
+ .
+ arxsavetool can inspect and extract .sav files containing saved game states.
+ .
+ arxunpak can extract the .pak files containing the game assets of the original Arx Fatalis.
  .
  This is not required to run Arx Libertatis but can be useful for development.
 

@@ -1,5 +1,5 @@
 #
-# spec file for package arx-libertatis, arx, arxunpak, arxsavetool and arxcrashreporter
+# spec file for arx-libertatis
 #
 # Copyright (c) 2012-2019 Daniel Scharrer <daniel@constexpr.org>
 #
@@ -67,40 +67,36 @@ BuildRequires:  blender-rpm-macros
 BuildRequires:  blender
 %endif
 Recommends:     arxcrashreporter
+Recommends:     arx-libertatis-tools
 Conflicts:      arxcrashreporter < %{version}
 Conflicts:      arxcrashreporter > %{version}-9999
-Suggests:       arxunpak
-Suggests:       arxsavetool
 Suggests:       innoextract
 %description
 Cross-platform port of Arx Fatalis, a first-person role-playing game.
 This package only includes the game executable - you will also need
 the data files from the original game.
 
-%package -n arxunpak
-Summary:        Tool to extract the Arx Fatalis .pak files containing the game assets
+%package tools
+Summary:        Arx Libertatis tools
 %if 0%{?suse_version}
 Group:          Productivity/Archiving/Compression
 %else
 Group:          Applications/Archiving
 %endif
-%description -n arxunpak
-Tool to extract the .pak files containing the game assets of the original Arx Fatalis.
+Provides:       arxsavetool = %{version}
+Provides:       arxunpak = %{version}
+Conflicts:      arxsavetool < %{version}
+Conflicts:      arxunpak < %{version}
+Obsoletes:      arxsavetool < %{version}
+Obsoletes:      arxunpak < %{version}
+%description tools
+Tools to work with Arx Fatalis data:
+
+arxsavetool can inspect and extract .sav files containing saved game states.
+
+arxunpak can extract the .pak files containing the game assets of the original Arx Fatalis.
 
 This is not required to run Arx Libertatis but can be useful for development.
-
-%package -n arxsavetool
-Summary:        Tool to inspect and modify Arx Libertatis save files
-%if 0%{?suse_version}
-Group:          Development/Tools/Other
-%else
-Group:          Development/Tools
-%endif
-%description -n arxsavetool
-Tool to inspect and modify Arx Libertatis save files. Allows to extract
-individual files from save file containers and re-pack them. Also allows
-listing the information contained in save files and fixing some errors caused
-by broken versions of the game.
 
 %package -n arxcrashreporter
 Summary:        Arx Libertatis crash reporter
@@ -169,6 +165,8 @@ rm bin/innoextract
 rm license/innoextract.*
 rm bin/bsdtar
 rm license/libarchive.*
+rm bin/arxsavetool
+rm bin/arxunpak
 rm data/README
 <? else: ?>
 %if 0%{?mageia} != 6
@@ -209,10 +207,11 @@ mv plugins/blender/arx_addon "%{buildroot}/%{blender_addons}/arx"
 %endif
 # tools
 install -d "%{buildroot}/%{_bindir}"
-mv bin/arxunpak "%{buildroot}/%{_bindir}/"
-mv bin/arxsavetool "%{buildroot}/%{_bindir}/"
+ln -rs "%{buildroot}/%{_libexecdir}/arxtool" "%{buildroot}/%{_bindir}/arxunpak"
+ln -rs "%{buildroot}/%{_libexecdir}/arxtool" "%{buildroot}/%{_bindir}/arxsavetool"
 mv bin/arx-install-data "%{buildroot}/%{_bindir}/"
 install -d "%{buildroot}/%{_libexecdir}"
+mv bin/arxtool "%{buildroot}/%{_libexecdir}/"
 mv bin/arxcrashreporter "%{buildroot}/%{_libexecdir}/"
 # main binary and support libraries
 install -d "%{buildroot}/%{_libexecdir}/arx"
@@ -280,15 +279,13 @@ mv arx-libertatis.desktop "%{buildroot}/%{_datadir}/applications/"
 %{_libexecdir}/arx/libopenal.so.*
 <? endif ?>
 
-%files -n arxunpak
+%files tools
 %defattr(-,root,root)
 %{_bindir}/arxunpak
-%{_mandir}/man1/arxunpak.1*
-
-%files -n arxsavetool
-%defattr(-,root,root)
 %{_bindir}/arxsavetool
+%{_mandir}/man1/arxunpak.1*
 %{_mandir}/man1/arxsavetool.1*
+%{_libexecdir}/arxtool
 
 %files -n arxcrashreporter
 %defattr(-,root,root)

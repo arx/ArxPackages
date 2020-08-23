@@ -8,6 +8,10 @@ cmake_options+=(
 )
 
 required_binaries+=(
+	arxtool
+	arxsavetool
+	arxunpak
+	arxcrashreporter
 	arx-install-data
 )
 
