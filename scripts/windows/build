@@ -32,6 +32,21 @@ create_launcher() {
 	[ "${#prefix_files[@]}" -gt 1 ] && use_path=1
 	[ $wrapper_use_path = 1 ] || use_path=0
 	
+	local binary=""
+	for arch in x86 x64 ; do
+		eval "local have_$arch=0"
+		[ -f "${bindir}/${arch}/${command}" ] || continue
+		eval "have_$arch=1"
+		[ -z "$binary" ] || continue
+		binary="${bindir}/${arch}/${command}"
+		while [ -L "$binary" ] ; do
+			local linktarget="$(readlink "$binary")"
+			command="${linktarget#'libexec/'}"
+			binary="${bindir}/${arch}/${linktarget}"
+		done
+	done
+	[ -f "$binary" ] || die "missing ${bindir}/(x86|x64)/$command"
+	
 	local wrapper_options=(
 		-static-libgcc
 		-s
@@ -65,11 +80,11 @@ create_launcher() {
 		-DLAUNCHER_USE_CMD_PATH=$wrapper_use_cmd_path
 		-DLAUNCHER_COMMAND="$command"
 		-DLAUNCHER_SCOMMAND="$scommand"
+		-DHAVE_X86="$have_x86"
+		-DHAVE_X64="$have_x64"
 	)
 	
-	local binary="${bindir}/${architectures[0]}/${command}"
-	[ -f "$binary" ] || die "missing $binary"
-	local builddir="${buildroot}/build-wrapper-${command}"
+	local builddir="${buildroot}/build-wrapper-${wrapper##*/}"
 	e mkdir -p "$builddir"
 	
 	# Select between GUI and console subsystems

@@ -129,7 +129,7 @@ create_wrappers() {
 		eval "local prefix_path=\"$prefix\""
 		
 		local prefix_files=(
-			$(find "$prefix_path" -maxdepth 1 -executable -type f ! -name "$library_pattern")
+			$(find "$prefix_path" -maxdepth 1 -executable -xtype f ! -name "$library_pattern")
 		)
 		
 		if [ -d "$prefix_path/libexec" ]
@@ -214,6 +214,14 @@ flatten_libexec() {
 		local dir="${bindir}/${archname}"
 		dir="${dir%/}"
 		edir="${dir}/libexec"
+		for f in "$dir"/* ; do
+			[ -L "$f" ] || continue
+			local target="$(readlink "$f")"
+			if [[ "$target" == "libexec/"* ]] ; then
+				e rm "$f"
+				[ $allow_symlinks = 0 ] || e ln -s "${target#'libexec/'}" "$f"
+			fi
+		done
 		if [ -d "$edir" ] ; then
 			e mv "$edir"/* "$dir"/
 			e rmdir "$edir"

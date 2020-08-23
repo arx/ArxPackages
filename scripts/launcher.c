@@ -167,11 +167,17 @@ __declspec(dllexport) void wWinMainCRTStartup() {
 	
 	// Determine the subdirectory for the appropriate variant
 	WCHAR * prefix;
+	#if HAVE_X86 + HAVE_X64 > 1
 	if(is_x64()) {
 		prefix = L"\\bin\\x64\\";
 	} else {
 		prefix = L"\\bin\\x86\\";
 	}
+	#elif HAVE_X86
+	prefix = L"\\bin\\x86\\";
+	#elif HAVE_X64
+	prefix = L"\\bin\\x64\\";
+	#endif
 	p = copy(p, prefix);
 	
 	// Adjust %PATH%

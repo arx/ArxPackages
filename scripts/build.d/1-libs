@@ -308,7 +308,8 @@ check_dependencies() {
 	fi
 	
 	# Sanity check: did we build all required libraries
-	for binary in "${required_binaries[@]}" ; do
+	eval "local required_binaries_arch=( \"\${required_binaries[@]}\" \"\${required_binaries_${arch}[@]:+\${required_binaries_${arch}[@]}}\" )"
+	for binary in "${required_binaries_arch[@]}" ; do
 		[ -f "${bindir}/${binary}${exe_suffix}" ] \
 			|| [ -f "${bindir}/libexec/${binary}${exe_suffix}" ] \
 			|| [ -f "${scriptbindir}/${binary}${exe_suffix}" ] \
