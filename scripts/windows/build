@@ -74,7 +74,7 @@ create_launcher() {
 		-lkernel32
 		-lshell32
 		-Wl,--script="$scriptdir/i386pe.x"
-		-Wl,--entry='start'
+		-Wl,--entry='_start'
 		-DUNICODE
 		-D_UNICODE
 		-DLAUNCHER_USE_PATH="$use_path"
