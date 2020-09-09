@@ -92,7 +92,7 @@ create_launcher() {
 	local copy_resources=0
 	case "$(file "$binary")" in
 		*' executable (GUI)'*) wrapper_options+=( -mwindows -DLAUNCHER_ATTACH_CONSOLE=1 ) ; copy_resources=1 ;;
-		*' executable (console)'*) wrapper_options+=( -DLAUNCHER_WAIT=1 ) ;;
+		*' executable (console)'*) ;;
 		*) die "Unknown binary type: $binary: $(file "$binary")"
 	esac
 	

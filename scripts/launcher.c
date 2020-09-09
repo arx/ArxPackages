@@ -28,10 +28,6 @@
 #define LAUNCHER_USE_CMD_PATH 0
 #endif
 
-#ifndef LAUNCHER_WAIT
-#define LAUNCHER_WAIT 0
-#endif
-
 #ifndef LAUNCHER_ATTACH_CONSOLE
 #define LAUNCHER_ATTACH_CONSOLE 0
 #endif
@@ -203,12 +199,9 @@ extern void start() {
 		ExitProcess(42);
 	}
 	
-	#if LAUNCHER_WAIT
 	WaitForSingleObject(pi.hProcess, INFINITE);
 	DWORD exitcode = 1;
 	GetExitCodeProcess(pi.hProcess, &exitcode);
 	ExitProcess(exitcode);
-	#else
-	ExitProcess(0);
-	#endif
+	
 }
