@@ -118,7 +118,8 @@ static WCHAR * copy(WCHAR * dest, const WCHAR * src) {
 	return dest;
 }
 
-__declspec(dllexport) void wWinMainCRTStartup() {
+__attribute__((__visibility__("default")))
+extern void start() {
 	
 	// Save the console for our children
 	#if LAUNCHER_ATTACH_CONSOLE
