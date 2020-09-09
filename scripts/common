@@ -143,9 +143,8 @@ make_archive() {
 				e 7z a -mm=Deflate -mfb=258 -mpass=15 -r "$file" "${@:2}"
 			fi
 		;;
-		*)
-			e tar -caf "$file" --numeric-owner "${@:2}"
-		;;
+		*.tar.xz) e tar -I 'xz -9' -cf "$file" --numeric-owner "${@:2}" ;;
+		*)        e tar -caf "$file" --numeric-owner "${@:2}" ;;
 	esac
 }
 
