@@ -67,38 +67,27 @@ static BOOL is_x64() {
 	return FALSE;
 }
 
-static void flush_slashes(WCHAR ** opp, unsigned * slash_countp) {
-	WCHAR * op = *opp;
-	unsigned slash_count = *slash_countp;
-	for(; slash_count; slash_count--) {
-		*op++ = '\\';
-		*op++ = '\\';
-	}
-	*opp = op;
-	*slash_countp = 0;
-}
+typedef struct {
+	WCHAR * p;
+	unsigned slash_count;
+} cmdline_state;
 
-static void append_cmdline(WCHAR ** opp, unsigned * slash_countp, const WCHAR * str) {
-	WCHAR * op = *opp;
-	unsigned slash_count = *slash_countp;
+static cmdline_state append_cmdline(cmdline_state o, const WCHAR * str) {
 	for(; *str; str++) {
 		switch(*str) {
-			case '\\': slash_count++; continue;
-			case '"': flush_slashes(&op, &slash_count);
+			case L'\\': o.slash_count++; break;
+			case L'"': for(o.slash_count++; o.slash_count; o.slash_count--) { *o.p++ = L'\\'; } break;
+			default: o.slash_count = 0;
 		}
-		for(; slash_count; slash_count--) {
-			*op++ = '\\';
-		}
-		*op++ = *str;
+		*o.p++ = *str;
 	}
-	*opp = op;
-	*slash_countp = slash_count;
+	return o;
 }
 
 static WCHAR * path_end(WCHAR * path) {
 	WCHAR * end = NULL;
 	while(*path) {
-		if(*path == L'\\') {
+		if(*path == L'\\' || *path == L'/') {
 			end = path;
 		}
 		path++;
@@ -138,28 +127,27 @@ extern void start() {
 	// Fudge the commandline
 	WCHAR * cmdline = GetCommandLineW();
 	#ifdef LAUNCHER_ARGS
-	int n;
-	WCHAR ** args = CommandLineToArgvW(cmdline, &n);
+	int argc;
+	WCHAR ** argv = CommandLineToArgvW(cmdline, &argc);
 	#if !LAUNCHER_USE_CMD_PATH
 	*p = 0;
 	#endif
-	WCHAR * op = cmdline = VirtualAlloc(0, 8191 * 2, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-	unsigned slash_count = 0;
-	#define LAUNCHER_ARG_BEGIN()    *op++ = ' '; *op++ = '"'
-	#define LAUNCHER_ARG_TEXT(Text) append_cmdline(&op, &slash_count, (Text));
+	cmdline = VirtualAlloc(0, 8191 * 2, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+	cmdline_state o = { cmdline, 0 };
+	#define LAUNCHER_ARG_BEGIN()    *o.p++ = L' '; *o.p++ = L'"'
+	#define LAUNCHER_ARG_TEXT(Text) append_cmdline(o, (Text));
 	#define LAUNCHER_ARG_HERE()     LAUNCHER_ARG_TEXT(buffer)
-	#define LAUNCHER_ARG_END()      flush_slashes(&op, &slash_count); *op++ = '"'
-	*op++ = '"';
+	#define LAUNCHER_ARG_END()      for(; o.slash_count; o.slash_count--) { *o.p++ = L'\\'; }; *o.p++ = L'"'
+	*o.p++ = L'"';
 	LAUNCHER_ARG_TEXT(STR(LAUNCHER_COMMAND));
 	LAUNCHER_ARG_END();
 	LAUNCHER_ARGS;
-	int i = 1;
-	for(; i < n; i++) {
+	for(int i = 1; i < argc; i++) {
 		LAUNCHER_ARG_BEGIN();
-		LAUNCHER_ARG_TEXT(args[i]);
+		LAUNCHER_ARG_TEXT(argv[i]);
 		LAUNCHER_ARG_END();
 	}
-	*op = 0;
+	*o.p = 0;
 	#endif
 	
 	// Determine the subdirectory for the appropriate variant
