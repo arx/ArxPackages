@@ -1,7 +1,4 @@
 
-macro(add_definitions)
-endmacro()
-
 if(DEFINED CMAKE_TOOLCHAIN_FILE)
 	include(${CMAKE_TOOLCHAIN_FILE})
 endif()
