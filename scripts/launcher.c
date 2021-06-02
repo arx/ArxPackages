@@ -135,7 +135,7 @@ extern void start() {
 	cmdline = VirtualAlloc(0, 8191 * 2, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 	cmdline_state o = { cmdline, 0 };
 	#define LAUNCHER_ARG_BEGIN()    *o.p++ = L' '; *o.p++ = L'"'
-	#define LAUNCHER_ARG_TEXT(Text) append_cmdline(o, (Text));
+	#define LAUNCHER_ARG_TEXT(Text) o = append_cmdline(o, (Text));
 	#define LAUNCHER_ARG_HERE()     LAUNCHER_ARG_TEXT(buffer)
 	#define LAUNCHER_ARG_END()      for(; o.slash_count; o.slash_count--) { *o.p++ = L'\\'; }; *o.p++ = L'"'
 	*o.p++ = L'"';
