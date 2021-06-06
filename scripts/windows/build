@@ -70,6 +70,7 @@ create_launcher() {
 		-Wl,--gc-sections
 		-Wl,--build-id=none
 		-Wl,--as-needed
+		-Wl,--disable-reloc-section
 		-nostdlib
 		-lkernel32
 		-lshell32
