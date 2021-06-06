@@ -81,6 +81,7 @@ cmake_options+=(
 	-DINSTALL_DATADIR='data'
 	-DINSTALL_BLENDER_PLUGINDIR="plugins/blender/arx_addon"
 	-DWITH_SDL=2
+	-DWITH_QT=5
 	-DWITH_OPENGL=epoxy
 	-DRUNTIME_LIBEXECDIR=".${env_separator}.."
 	-DRUNTIME_DATADIR=".${env_separator}..${env_separator}../.."
