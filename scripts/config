@@ -133,6 +133,7 @@ c_flags=(
 	
 	# Enable optimization
 	-O3
+	--param max-gcse-memory=2000000000
 	
 )
 c_flags_msvc=(
