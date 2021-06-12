@@ -346,6 +346,7 @@ Function PageWelcomeFinishOnShow
 	${NSD_AddStyle} $R0 ${SS_CENTER}
 	SetCtlColors $R0 "774400" transparent
 	SendMessage $R0 ${WM_SETFONT} $0 1
+	${NSD_OnClick} $R0 OnClickProjectWebsite
 	
 	; Version suffix
 	<? if($version_suffix != ''): ?>
@@ -354,6 +355,7 @@ Function PageWelcomeFinishOnShow
 	${NSD_AddStyle} $R0 ${SS_CENTER}
 	SetCtlColors $R0 "774400" transparent
 	SendMessage $R0 ${WM_SETFONT} $0 1
+	${NSD_OnClick} $R0 OnClickProjectWebsite
 	<? endif; ?>
 	
 	; Snapshot warning text
@@ -371,6 +373,7 @@ Function PageWelcomeFinishOnShow
 	SetCtlColors $R0 "774400" transparent
 	CreateFont $2 "Arial Black" "24" "500"
 	SendMessage $R0 ${WM_SETFONT} $2 1
+	${NSD_OnClick} $R0 OnClickProjectWebsite
 	
 	; Version codename
 	<? if($version_codename != ''): ?>
@@ -379,6 +382,7 @@ Function PageWelcomeFinishOnShow
 	${NSD_AddStyle} $R0 ${SS_CENTER}
 	SetCtlColors $R0 "774400" transparent
 	SendMessage $R0 ${WM_SETFONT} $0 1
+	${NSD_OnClick} $R0 OnClickProjectWebsite
 	<? endif; ?>
 	
 	<? endif; ?>
@@ -389,11 +393,19 @@ Function PageWelcomeFinishOnShow
 	${NSD_AddStyle} $R0 ${SS_CENTER}
 	SetCtlColors $R0 "774400" transparent
 	SendMessage $R0 ${WM_SETFONT} $0 1
+	${NSD_OnClick} $R0 OnClickProjectWebsite
 	
 	; Move side image a bit and put it behind everything else
 	System::Call 'USER32::SetWindowPos(i $mui.WelcomePage.Image, i1, i $1, i0, i0, i0, i1)'
 	System::Call 'USER32::SetWindowPos(i $mui.FinishPage.Image, i1, i $1, i0, i0, i0, i1)'
 	
+	${NSD_OnClick} $mui.WelcomePage.Image OnClickProjectWebsite
+	${NSD_OnClick} $mui.FinishPage.Image OnClickProjectWebsite
+	
+FunctionEnd
+
+Function OnClickProjectWebsite
+	ExecShell "open" "<?= $project_url ?>" SW_SHOWNORMAL
 FunctionEnd
 
 
