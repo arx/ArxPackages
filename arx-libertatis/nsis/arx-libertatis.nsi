@@ -40,6 +40,8 @@ ManifestLongPathAware True
 
 !define MULTIUSER_USE_PROGRAMFILES64
 
+!define INSTALLERMUTEXNAME "ArxLibertatisSetup"
+
 !addincludedir include
 
 !include "MultiUser.nsh"
@@ -49,7 +51,9 @@ ManifestLongPathAware True
 !include "LogicLib.nsh"
 !include "x64.nsh"
 
+!include "SingleInstanceMutex.nsh"
 !include "UninstallLog.nsh"
+
 !include "ArxFatalisData.nsh"
 
 ;------------------------------------------------------------------------------
@@ -289,6 +293,8 @@ SectionEnd
 
 Function .onInit
 	
+	!insertmacro SingleInstanceMutex
+	
 	!insertmacro MUI_LANGDLL_DISPLAY
 	
 	File /oname=$PLUGINSDIR\Side_2x.bmp data\Side_2x.bmp
@@ -417,6 +423,8 @@ SectionEnd
 ;Uninstaller Functions
 
 Function un.onInit
+	
+	!insertmacro SingleInstanceMutex
 	
 	SetRegView 64
 	
