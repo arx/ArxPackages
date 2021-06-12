@@ -4,12 +4,6 @@
 
 get_output _output
 
-_config="${PWD}/config.php"
-echo "<? \$version = '$version';" > "$_config"
-echo "\$is_snapshot = '$is_snapshot';" >> "$_config"
-echo "\$outfile = '${_output##*/}';" >> "$_config"
-echo "\$outdir = '$PWD';" >> "$_config"
-
 get_output _source _sourcedir "$version" 'source'
 e extract "$_source"
 mv "$_sourcedir" "source"
@@ -17,6 +11,14 @@ mv "$_sourcedir" "source"
 get_output _build _builddir "$version" 'windows'
 e extract "$_build"
 mv "$_builddir" "build"
+
+_config="${PWD}/config.php"
+echo "<? \$version = '$version';" > "$_config"
+echo "\$is_snapshot = '$is_snapshot';" >> "$_config"
+echo "\$outfile = '${_output##*/}';" >> "$_config"
+echo "\$outdir = '$PWD';" >> "$_config"
+echo "\$project_url = '$project_url';" >> "$_config"
+[ -f "${pkgsrcdir}/config" ] && . "${pkgsrcdir}/config"
 
 e preprocess_all "$_config" "${BASH_SOURCE[0]%/*}/common"
 e preprocess_all "$_config" "${pkgsrcdir}"

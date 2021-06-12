@@ -1,0 +1,8 @@
+#!/bin/bash
+
+_suffix="$(head --lines=1 source/VERSION)"
+if [[ "$_suffix" == *" + "* ]]
+	then echo "\$version_suffix = '${_suffix##* + }';" >> "$_config"
+	else echo "\$version_suffix = '';" >> "$_config"
+fi
+echo "\$version_codename = '$(head --lines=0 source/VERSION | tail --lines=1)';" >> "$_config"
