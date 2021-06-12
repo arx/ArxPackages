@@ -20,6 +20,7 @@ mv "$_builddir" "build"
 
 e preprocess_all "$_config" "${BASH_SOURCE[0]%/*}/common"
 e preprocess_all "$_config" "${pkgsrcdir}"
+e preprocess_all "$_config" "${pkgsrcdir}/lang" "lang"
 
 WINEDEBUG=-all e wine "${BASH_SOURCE[0]%/*}/nsis/makensis.exe" \
 	/V4 /INPUTCHARSET UTF8 /OUTPUTCHARSET UTF8 -- "${project}.nsi"

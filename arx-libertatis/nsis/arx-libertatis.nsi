@@ -58,16 +58,15 @@ ManifestLongPathAware True
 !define Icon "source\data\icons\arx-libertatis.ico"
 
 Name          "Arx Libertatis"
-Caption       "Arx Libertatis <?= $version ?> Setup"
+Caption       "Arx Libertatis <?= $version ?> $(ARX_TITLE_SUFFIX)"
 OutFile       "<?= $outfile ?>"
-Icon          "${Icon}"
-UninstallIcon "${Icon}"
 InstallDir    "$PROGRAMFILES\Arx Libertatis"
 BrandingText  " "
 
 ;------------------------------------------------------------------------------
 ;Variables
 
+Var DevelopmentSnapshotWarning
 Var StartMenuFolder
 Var ArxFatalisInstallDir
 Var ArxFatalisLanguage
@@ -111,7 +110,22 @@ VIFileVersion "${Version}"
 ;------------------------------------------------------------------------------
 ;Pages
 
+<? if($is_snapshot): ?>
+!define MUI_PAGE_CUSTOMFUNCTION_SHOW ShowDevelopmentSnapshotWarning
+Function ShowDevelopmentSnapshotWarning
+	
+	;Welcome text
+	${NSD_CreateLabel} 120u 130u 195u 60u "$(ARX_SNAPSHOT_WARNING) https://arx.vg/bug"
+	Pop $DevelopmentSnapshotWarning
+	SetCtlColors $DevelopmentSnapshotWarning "885500" "FFFFFF"
+	CreateFont $0 "$(^Font)" "$(^FontSize)" "700"
+	SendMessage $DevelopmentSnapshotWarning ${WM_SETFONT} $0 1
+	
+FunctionEnd
+<? endif; ?>
 !insertmacro MUI_PAGE_WELCOME
+!undef MUI_PAGE_CUSTOMFUNCTION_SHOW
+
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MULTIUSER_PAGE_INSTALLMODE
 !insertmacro MUI_PAGE_DIRECTORY
@@ -144,18 +158,23 @@ VIFileVersion "${Version}"
 ;------------------------------------------------------------------------------
 ;Languages
 
-!insertmacro MUI_LANGUAGE "English"
-!insertmacro MUI_LANGUAGE "French"
-!insertmacro MUI_LANGUAGE "German"
-!insertmacro MUI_LANGUAGE "Spanish"
-!insertmacro MUI_LANGUAGE "TradChinese"
-!insertmacro MUI_LANGUAGE "Japanese"
-;!insertmacro MUI_LANGUAGE "Korean"
-!insertmacro MUI_LANGUAGE "Italian"
-!insertmacro MUI_LANGUAGE "Russian"
-;!insertmacro MUI_LANGUAGE "Portuguese"
-;!insertmacro MUI_LANGUAGE "Polish"
-;!insertmacro MUI_LANGUAGE "Turkish"
+!macro AddLanguage Language
+	!insertmacro MUI_LANGUAGE "${Language}"
+	!insertmacro LANGFILE_INCLUDE_WITHDEFAULT "lang\${Language}.nsh" "lang\English.nsh"
+!macroend
+
+!insertmacro AddLanguage "English"
+!insertmacro AddLanguage "French"
+!insertmacro AddLanguage "German"
+!insertmacro AddLanguage "Spanish"
+!insertmacro AddLanguage "TradChinese"
+!insertmacro AddLanguage "Japanese"
+;!insertmacro AddLanguage "Korean"
+!insertmacro AddLanguage "Italian"
+!insertmacro AddLanguage "Russian"
+;!insertmacro AddLanguage "Portuguese"
+;!insertmacro AddLanguage "Polish"
+;!insertmacro AddLanguage "Turkish"
 
 ;Reserve Files
 
