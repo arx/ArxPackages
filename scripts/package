@@ -21,6 +21,9 @@ run source build
 runall build
 runall test
 
+# Build installers and other packages
+runall package
+
 # Send build jobs for Linux packages to the repective build servers
 runall prepare
 runall dispatch

@@ -69,6 +69,7 @@ declare -A archives=(
 	['linux-debug-build']='-linux-debug.tar.xz'
 	['windows-debug-build']='-windows-debug.tar.xz'
 	['freebsd-debug-build']='-freebsd-debug.tar.xz'
+	['nsis-package']='-windows.exe'
 	['deb-prepare']='-source.deb'
 )
 

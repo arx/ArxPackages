@@ -95,16 +95,19 @@ preprocess() {
 preprocess_all() {
 	local config="$1"
 	local input="$(realpath -m "$2")"
-	local output="$(realpath -m "$3")"
-	e mkdir "$output"
+	local output="$(realpath -m "${3:-$PWD}")"
+	[ -d "$output" ] || e mkdir "$output"
 	pushd "$input"
 		while IFS= read -r -d '' path ; do
 			[ "$path" = '.' ] && continue
 			path="${path#./}"
+			local mime="$(file --brief --mime-type "$path")"
 			if [ -L "$path" ] ; then
 				e ln -s "$(readlink "$path")" "${output}/${path}"
 			elif [ -d "$path" ] ; then
-				e mkdir "${output}/${path}"
+				[ -d "${output}/${path}" ] || e mkdir "${output}/${path}"
+			elif [[ "$mime" == "image/"* ]] || [[ "$mime" == "application/"* ]] ; then
+				e ln -s "$(realpath -m "$path")" "${output}/${path}"
 			else
 				preprocess "$config" "$path" "${output}/${path}"
 				[ -f "${output}/${path}" ] && [ -x "$path" ] && e chmod +x "${output}/${path}"
@@ -184,7 +187,7 @@ get_output() {
 		local stage="${5:-"${stage:-build}"}"
 	fi
 	local name="${project}-${version}${archives["${pkgtype}-${stage}"]}"
-	if [ ! "$stage" = 'build' ] ; then
+	if [ ! "$stage" = 'build' ] && [ ! "$stage" = 'package' ] ; then
 		local outdir="${builddir}/done"
 	elif [ ! $flat_files_tree = 0 ] ; then
 		local outdir="${outdir}"
