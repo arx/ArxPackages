@@ -138,7 +138,6 @@ VIFileVersion "${Version}"
 !define MUI_PAGE_CUSTOMFUNCTION_LEAVE       DetectArx
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
-!define MUI_FINISHPAGE_NOAUTOCLOSE
 
 !define MUI_PAGE_CUSTOMFUNCTION_SHOW PageWelcomeFinishOnShow
 !define MUI_FINISHPAGE_RUN "$INSTDIR\arx.exe"
