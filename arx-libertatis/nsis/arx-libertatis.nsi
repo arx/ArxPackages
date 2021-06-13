@@ -55,6 +55,7 @@ ManifestLongPathAware True
 !include "UninstallLog.nsh"
 
 !include "ArxFatalisData.nsh"
+!include "WelcomeFinishPage.nsh"
 
 ;------------------------------------------------------------------------------
 ;General
@@ -111,11 +112,15 @@ VIFileVersion "${Version}"
 !define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
 
 ;------------------------------------------------------------------------------
+;Reserve Files
+
+!insertmacro MUI_RESERVEFILE_LANGDLL
+!insertmacro WELCOME_FINISH_PAGE_RESERVE
+
+;------------------------------------------------------------------------------
 ;Pages
 
-!define MUI_PAGE_CUSTOMFUNCTION_SHOW PageWelcomeFinishOnShow
-!insertmacro MUI_PAGE_WELCOME
-!undef MUI_PAGE_CUSTOMFUNCTION_SHOW
+!insertmacro WELCOME_PAGE
 
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MULTIUSER_PAGE_INSTALLMODE
@@ -139,9 +144,7 @@ VIFileVersion "${Version}"
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
 
-!define MUI_PAGE_CUSTOMFUNCTION_SHOW PageWelcomeFinishOnShow
-!define MUI_FINISHPAGE_RUN "$INSTDIR\arx.exe"
-!insertmacro MUI_PAGE_FINISH
+!insertmacro FINISH_PAGE
 
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
@@ -166,12 +169,6 @@ VIFileVersion "${Version}"
 ;!insertmacro AddLanguage "Portuguese"
 ;!insertmacro AddLanguage "Polish"
 ;!insertmacro AddLanguage "Turkish"
-
-;Reserve Files
-
-!insertmacro MUI_RESERVEFILE_LANGDLL
-
-ReserveFile data\Side_2x.bmp
 
 ;------------------------------------------------------------------------------
 Section "Arx Libertatis"
@@ -255,7 +252,7 @@ Section "Arx Libertatis"
 	WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "DisplayIcon" "$\"$INSTDIR\arx.exe$\""
 	WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "UninstallString" "$\"$INSTDIR\uninstall.exe$\""
 	WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "QuietUninstallString" "$\"$INSTDIR\uninstall.exe$\" /S"
-	WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "URLInfoAbout" "https://arx-libertatis.org/"
+	WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "URLInfoAbout" "<?= $project_url ?>"
 	WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "DisplayVersion" "<?= $version ?>"
 	WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "NoModify" 1
 	WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "NoRepair" 1
@@ -298,7 +295,7 @@ Function .onInit
 	
 	!insertmacro MUI_LANGDLL_DISPLAY
 	
-	File /oname=$PLUGINSDIR\Side_2x.bmp data\Side_2x.bmp
+	!insertmacro WELCOME_FINISH_PAGE_INIT
 	
 	; Check for >= Windows XP SP2
 	${IfNot} ${AtLeastWinVista}
@@ -317,98 +314,7 @@ Function .onInit
 	
 FunctionEnd
 
-Function PageWelcomeFinishOnShow
-	
-	; Use a higner resolution image on HiDPI screens
-	; Ideally we'd always use the higher-resolution image but NSIS only does nearest-neighbor scaling
-	System::Call USER32::GetDpiForSystem()i.r0
-	${If} $0 U<= 0
-		System::Call USER32::GetDC(i0)i.r1
-		System::Call GDI32::GetDeviceCaps(ir1,i88)i.r0
-		System::Call USER32::ReleaseDC(i0,ir1)
-	${EndIf}
-	${If} $0 U<= 0
-		StrCpy $0 96
-	${Endif}
-	IntOp $1 $0 / 15
-	${If} $0 > 96
-		${NSD_FreeImage} $mui.WelcomePage.Image.Bitmap
-		${NSD_SetStretchedBitmap} $mui.WelcomePage.Image "$PLUGINSDIR\Side_2x.bmp" $mui.WelcomePage.Image.Bitmap
-		${NSD_FreeImage} $mui.FinishPage.Image.Bitmap
-		${NSD_SetStretchedBitmap} $mui.FinishPage.Image "$PLUGINSDIR\Side_2x.bmp" $mui.FinishPage.Image.Bitmap
-	${Endif}
-	
-	CreateFont $0 "$(^Font)" "$(^FontSize)" "700"
-	
-	<? if($is_snapshot): ?>
-	
-	; Snapshot version number
-	${NSD_CreateLabel} $1 100u 110u 10u "<?= $version ?>"
-	Pop $R0
-	${NSD_AddStyle} $R0 ${SS_CENTER}
-	SetCtlColors $R0 "774400" transparent
-	SendMessage $R0 ${WM_SETFONT} $0 1
-	${NSD_OnClick} $R0 OnClickProjectWebsite
-	
-	; Version suffix
-	<? if($version_suffix != ''): ?>
-	${NSD_CreateLabel} $1 115u 110u 10u "<?= $version_suffix ?>"
-	Pop $R0
-	${NSD_AddStyle} $R0 ${SS_CENTER}
-	SetCtlColors $R0 "774400" transparent
-	SendMessage $R0 ${WM_SETFONT} $0 1
-	${NSD_OnClick} $R0 OnClickProjectWebsite
-	<? endif; ?>
-	
-	; Snapshot warning text
-	${NSD_CreateLabel} 120u 130u 195u 60u "$(ARX_SNAPSHOT_WARNING) https://arx.vg/bug"
-	Pop $R0
-	SetCtlColors $R0 "885500" "FFFFFF"
-	SendMessage $R0 ${WM_SETFONT} $0 1
-	
-	<? else: ?>
-	
-	; Large version number
-	${NSD_CreateLabel} $1 90u 110u 30u "<?= $version ?>"
-	Pop $R0
-	${NSD_AddStyle} $R0 ${SS_CENTER}
-	SetCtlColors $R0 "774400" transparent
-	CreateFont $2 "Arial Black" "24" "500"
-	SendMessage $R0 ${WM_SETFONT} $2 1
-	${NSD_OnClick} $R0 OnClickProjectWebsite
-	
-	; Version codename
-	<? if($version_codename != ''): ?>
-	${NSD_CreateLabel} $1 115u 110u 10u '"<?= $version_codename ?>"'
-	Pop $R0
-	${NSD_AddStyle} $R0 ${SS_CENTER}
-	SetCtlColors $R0 "774400" transparent
-	SendMessage $R0 ${WM_SETFONT} $0 1
-	${NSD_OnClick} $R0 OnClickProjectWebsite
-	<? endif; ?>
-	
-	<? endif; ?>
-	
-	; Website URL
-	${NSD_CreateLabel} $1 170u 110u 10u "<?= $project_url ?>"
-	Pop $R0
-	${NSD_AddStyle} $R0 ${SS_CENTER}
-	SetCtlColors $R0 "774400" transparent
-	SendMessage $R0 ${WM_SETFONT} $0 1
-	${NSD_OnClick} $R0 OnClickProjectWebsite
-	
-	; Move side image a bit and put it behind everything else
-	System::Call 'USER32::SetWindowPos(i $mui.WelcomePage.Image, i1, i $1, i0, i0, i0, i1)'
-	System::Call 'USER32::SetWindowPos(i $mui.FinishPage.Image, i1, i $1, i0, i0, i0, i1)'
-	
-	${NSD_OnClick} $mui.WelcomePage.Image OnClickProjectWebsite
-	${NSD_OnClick} $mui.FinishPage.Image OnClickProjectWebsite
-	
-FunctionEnd
-
-Function OnClickProjectWebsite
-	ExecShell "open" "<?= $project_url ?>" SW_SHOWNORMAL
-FunctionEnd
+!insertmacro WELCOME_FINISH_PAGE_FUNCTIONS
 
 
 ;------------------------------------------------------------------------------
