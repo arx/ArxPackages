@@ -171,6 +171,8 @@ VIFileVersion "${Version}"
 
 !insertmacro MUI_RESERVEFILE_LANGDLL
 
+ReserveFile data\Side_2x.bmp
+
 ;------------------------------------------------------------------------------
 Section "Arx Libertatis"
 	
