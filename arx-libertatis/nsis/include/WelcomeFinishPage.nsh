@@ -1,7 +1,26 @@
+;------------------------------------------------------------------------------
+; Copyright 2011-2021 Arx Libertatis Team (see the AUTHORS file)
+;
+; This file is part of Arx Libertatis.
+;
+; Arx Libertatis is free software: you can redistribute it and/or modify
+; it under the terms of the GNU General Public License as published by
+; the Free Software Foundation, either version 3 of the License, or
+; (at your option) any later version.
+;
+; Arx Libertatis is distributed in the hope that it will be useful,
+; but WITHOUT ANY WARRANTY; without even the implied warranty of
+; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+; GNU General Public License for more details.
+;
+; You should have received a copy of the GNU General Public License
+; along with Arx Libertatis.  If not, see <http://www.gnu.org/licenses/>.
+;------------------------------------------------------------------------------
 
 !include "MUI2.nsh"
 !include "nsDialogs.nsh"
 !include "LogicLib.nsh"
+!include "ArxFatalisData.nsh"
 
 !macro WELCOME_PAGE
 !ifndef MUI_WELCOMEFINISHPAGE_BITMAP
@@ -16,7 +35,8 @@
 !define MUI_WELCOMEFINISHPAGE_BITMAP "data\Side.bmp"
 !endif
 !define MUI_PAGE_CUSTOMFUNCTION_SHOW PageFinishOnShow
-!define MUI_FINISHPAGE_RUN "$INSTDIR\arx.exe" ; TODO run via launcher if installed there
+!define MUI_FINISHPAGE_RUN
+!define MUI_FINISHPAGE_RUN_FUNCTION PageFinishOnRun
 !insertmacro MUI_PAGE_FINISH
 !macroend
 
@@ -162,6 +182,16 @@ FunctionEnd
 Function PageFinishOnShow
 	
 	${PageWelcomeFinishOnShow} $mui.FinishPage.Image $mui.FinishPage.Image.Bitmap
+	
+	${If} $ArxFatalisLocation == ""
+		${NSD_Uncheck} $mui.FinishPage.Run
+	${EndIf}
+	
+FunctionEnd
+
+Function PageFinishOnRun
+	
+	${LaunchArxFatalis} "$INSTDIR"
 	
 FunctionEnd
 
