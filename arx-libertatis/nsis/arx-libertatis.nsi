@@ -43,12 +43,15 @@ ManifestLongPathAware True
 !define INSTALLERMUTEXNAME "ArxLibertatisSetup"
 
 !define ARX_BUG_URL "https://arx.vg/bug"
+!define ARX_DATA_URL "https://arx.vg/data"
+!define ARX_PATCH_URL "https://arx.vg/ArxFatalis_1.21_MULTILANG.exe"
 
 !addincludedir include
 
 !include "LogicLib.nsh"
 !include "MUI2.nsh"
 !include "MultiUser.nsh"
+!include "Sections.nsh"
 !include "Winver.nsh"
 !include "nsDialogs.nsh"
 !include "x64.nsh"
@@ -57,6 +60,7 @@ ManifestLongPathAware True
 !include "UninstallLog.nsh"
 
 !include "ArxFatalisData.nsh"
+!include "ArxFatalisLocationPage.nsh"
 !include "WelcomeFinishPage.nsh"
 
 ;------------------------------------------------------------------------------
@@ -74,8 +78,6 @@ BrandingText  " "
 ;Variables
 
 Var StartMenuFolder
-Var ArxFatalisInstallDir
-Var ArxFatalisLanguage
 
 ;------------------------------------------------------------------------------
 ;Version Info
@@ -121,6 +123,7 @@ VIFileVersion "${Version}"
 ;Pages
 
 !insertmacro WELCOME_PAGE
+!insertmacro ARX_FATALIS_LOCATION_PAGE
 
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MULTIUSER_PAGE_INSTALLMODE
@@ -134,14 +137,6 @@ VIFileVersion "${Version}"
 
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
 
-!define MUI_DIRECTORYPAGE_VARIABLE          $ArxFatalisInstallDir
-!define MUI_DIRECTORYPAGE_TEXT_DESTINATION  "Arx Fatalis Location"
-!define MUI_DIRECTORYPAGE_TEXT_TOP          "In order to play Arx Libertatis, you need to have the original data from Arx Fatalis. You can also play using the demo data. Please specify the location of the original Arx Fatalis installation where *.pak files can be found. Those files (along with a few others) will be copied to your Arx Libertatis install directory. If you don't have the Arx Fatalis data yet, leave this field empty. You can always copy the data files later."
-!define MUI_PAGE_HEADER_TEXT                "Specify Data Location"
-!define MUI_PAGE_HEADER_SUBTEXT             "Please specify the location of the original Arx Fatalis data"
-!define MUI_DIRECTORYPAGE_VERIFYONLEAVE
-!define MUI_PAGE_CUSTOMFUNCTION_LEAVE       DetectArx
-!insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
 
 !insertmacro FINISH_PAGE
@@ -171,19 +166,35 @@ VIFileVersion "${Version}"
 ;!insertmacro AddLanguage "Turkish"
 
 ;------------------------------------------------------------------------------
-Section "Arx Libertatis"
+;Sections
+
+Section - Main
+	SectionIn RO
 	
 	SetDetailsPrint listonly
 	
 	InitPluginsDir
-	SectionIn RO
+	
+	SetDetailsPrint both
+	DetailPrint "$(ARX_INSTALL_STATUS)"
+	SetDetailsPrint listonly
 	
 	; Set output path to the installation directory.
 	SetOutPath "$INSTDIR"
 	
-	SetDetailsPrint both
-	DetailPrint "Installing Arx Libertatis binaries..."
-	SetDetailsPrint listonly
+	; First, store whatever we need to clean things up on error
+	${WriteUninstaller} "$INSTDIR\uninstall.exe"
+	WriteRegStr SHCTX "Software\ArxLibertatis" "InstallLocation" "$INSTDIR"
+	WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "DisplayName" "Arx Libertatis"
+	WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "DisplayIcon" "$\"$INSTDIR\arx.exe$\""
+	WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "UninstallString" "$\"$INSTDIR\uninstall.exe$\""
+	WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "QuietUninstallString" "$\"$INSTDIR\uninstall.exe$\" /S"
+	WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "URLInfoAbout" "<?= $project_url ?>"
+	WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "DisplayVersion" "<?= $version ?>"
+	WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "NoModify" 1
+	WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "NoRepair" 1
+	
+	; Extract Arx Libertatis binaries
 	<?
 	$dir_iterator = new RecursiveDirectoryIterator("$outdir/build");
 	$iterator = new RecursiveIteratorIterator($dir_iterator, RecursiveIteratorIterator::SELF_FIRST);
@@ -204,73 +215,27 @@ Section "Arx Libertatis"
 	endforeach;
 	?>
 	
-	;----------------------------------------------------------------------------
-	; Arx Fatalis data copy
-	;----------------------------------------------------------------------------
-	${If} $ArxFatalisInstallDir != ""
-		SetDetailsPrint both
-		DetailPrint "Copying Arx Fatalis data files..."
-		SetDetailsPrint listonly
-		${CopyArxDataFiles} $ArxFatalisInstallDir $ArxFatalisLanguage
-	${EndIf}
-	
-	;----------------------------------------------------------------------------
-	; VC++ 2010 Redistributable
-	;----------------------------------------------------------------------------
-	;SetDetailsPrint both
-	;DetailPrint "Installing VC++ 2010 Redistributable..."
-	;SetDetailsPrint listonly
-	;File /oname=$PLUGINSDIR\vcredist_${ARCH}.exe vcredist\vcredist_${ARCH}.exe
-	;ExecWait '"$PLUGINSDIR\vcredist_${ARCH}.exe" /q /norestart' $1
-	;${If} $1 == 0
-	;	; Success!
-	;${ElseIf} $1 == 3010
-	;	; Success, but reboot required
-	;	SetRebootFlag true
-	;${ElseIf} $1 == 5100
-	;	; Later version already installed
-	;${Else}
-	;	; Failed!
-	;	MessageBox MB_OK|MB_ICONSTOP "Visual C++ 2010 Redistributable installation failed with error $1!"
-	;	Abort
-	;${EndIf}
-
-	;----------------------------------------------------------------------------
-	; Create uninstaller
-	;----------------------------------------------------------------------------
-	${WriteUninstaller} "$INSTDIR\uninstall.exe"
-
-	;----------------------------------------------------------------------------
-	; Registry fun
-	;----------------------------------------------------------------------------
-	; Store installation folder
-	WriteRegStr SHCTX "Software\ArxLibertatis" "InstallLocation" $INSTDIR
-	WriteRegStr SHCTX "Software\ArxLibertatis" "DataDir" $INSTDIR
-
-	; Add uninstall information
-	WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "DisplayName" "Arx Libertatis" 
-	WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "DisplayIcon" "$\"$INSTDIR\arx.exe$\""
-	WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "UninstallString" "$\"$INSTDIR\uninstall.exe$\""
-	WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "QuietUninstallString" "$\"$INSTDIR\uninstall.exe$\" /S"
-	WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "URLInfoAbout" "<?= $project_url ?>"
-	WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "DisplayVersion" "<?= $version ?>"
-	WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "NoModify" 1
-	WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "NoRepair" 1
-	
-	${If} $ArxFatalisInstallDir != ""
-		; If an error occured in the data copy, display a message
-		Call ShowDataErrorMessageBox
-	${EndIf}
-
-	IfRebootFlag 0 noreboot
-	MessageBox MB_YESNO|MB_ICONQUESTION "A reboot is required to finish the installation. Do you wish to reboot now?" IDNO noreboot
-		Reboot
-
-noreboot:
-
 SectionEnd
 
-Section -StartMenu
+;------------------------------------------------------------------------------
+
+Section /o "$(ARX_COPY_DATA)" CopyData
+	
+	${If} $ArxFatalisLocation != $INSTDIR
+		
+		DetailPrint ""
+		SetDetailsPrint both
+		DetailPrint "$(ARX_COPY_DATA_STATUS)"
+		SetDetailsPrint listonly
+		
+		${CopyArxFatalisData} "$ArxFatalisLocation" "$INSTDIR"
+		StrCpy $ArxFatalisLocation "$INSTDIR"
+		
+	${EndIf}
+	
+SectionEnd
+
+Section - StartMenu
 	!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
 		${CreateDirectory} "$SMPROGRAMS\$StartMenuFolder"
 		${CreateShortCut} "$SMPROGRAMS\$StartMenuFolder\Play Arx Libertatis.lnk" "$INSTDIR\arx.exe"
@@ -278,12 +243,90 @@ Section -StartMenu
 	!insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
 
-Section "Create a desktop icon" Desktop
+Section "$(ARX_CREATE_DESKTOP_ICON)" Desktop
 	${CreateShortCut} "$DESKTOP\Arx Libertatis.lnk" "$INSTDIR\arx.exe"
 SectionEnd
 
-Section "Create a Quick Launch icon" QuickLaunch
+Section "$(ARX_CREATE_QUICKLAUNCH_ICON)" QuickLaunch
 	${CreateShortCut} "$QUICKLAUNCH\Arx Libertatis.lnk" "$INSTDIR\arx.exe"
+SectionEnd
+
+Section - VerifyData
+	SectionIn RO
+	
+	${If} $ArxFatalisLocation != ""
+		
+		Push $0
+		Push $1
+		Push $2
+		Push $3
+		
+		DetailPrint ""
+		SetDetailsPrint both
+		DetailPrint "$(ARX_VERIFY_DATA_STATUS)"
+		SetDetailsPrint listonly
+		
+		${VerifyArxFatalisData} "$ArxFatalisLocation" $0
+		
+		${If} $0 == ""
+			
+			DetailPrint "$(Data successfully verified.)"
+			
+		${Else}
+			
+			${If} $0 == "nodata"
+				StrCpy $1 "$(ARX_FATALIS_LOCATION_EMPTY)"
+			${ElseIf} $0 == "mixed"
+				StrCpy $1 "$(ARX_VERIFY_DATA_MIXED)"
+			${Else}
+				StrCpy $1 "$(ARX_VERIFY_DATA_FAILED)"
+			${EndIf}
+			DetailPrint ""
+			DetailPrint "$1"
+			
+			${GetArxFatalisLocationInfo} "$ArxFatalisLocation" $2 $3
+			${If} $3 == "steam"
+				StrCpy $1 "$1$\n$\n$(ARX_VERIFY_DAYA_PATCH_STEAM)$\n$(ARX_VERIFY_DATA_REINSTALL)"
+				DetailPrint "$(ARX_VERIFY_DAYA_PATCH_STEAM)"
+				DetailPrint "$(ARX_VERIFY_DATA_REINSTALL)"
+			${ElseIf} $3 == "bethesda"
+				StrCpy $1 "$1$\n$\n$(ARX_VERIFY_DAYA_PATCH_BETHESDA)$\n$(ARX_VERIFY_DATA_REINSTALL)"
+				DetailPrint "$(ARX_VERIFY_DAYA_PATCH_BETHESDA)"
+				DetailPrint "$(ARX_VERIFY_DATA_REINSTALL)"
+			${ElseIf} $3 == "windows"
+				StrCpy $1 "$1$\n$\n$(ARX_VERIFY_DAYA_PATCH_WINDOWS)$\n$(ARX_VERIFY_DATA_REINSTALL)"
+				DetailPrint "$(ARX_VERIFY_DAYA_PATCH_WINDOWS)"
+				DetailPrint "$(ARX_VERIFY_DATA_REINSTALL)"
+			${ElseIf} $0 == "patchable"
+				StrCpy $1 "$1$\n$\n$(ARX_VERIFY_DATA_PATCH)$\n$(ARX_VERIFY_DATA_REINSTALL)"
+				DetailPrint "$(ARX_VERIFY_DATA_PATCH)"
+				DetailPrint "$(ARX_VERIFY_DATA_REINSTALL)"
+			${EndIf}
+			
+			DetailPrint "$(ARX_VERIFY_DATA_REPORT)"
+			DetailPrint "${ARX_BUG_URL}"
+			DetailPrint "$(ARX_COPY_DETAILS)"
+			DetailPrint ""
+			
+			MessageBox MB_OK|MB_ICONEXCLAMATION "$1$\n$\n$(ARX_VERIFY_DATA_REPORT)$\n${ARX_BUG_URL}"
+			SetAutoClose false
+			SetDetailsView show
+			
+			StrCpy $ArxFatalisLocation ""
+			
+		${EndIf}
+		
+		Pop $3
+		Pop $2
+		Pop $1
+		Pop $0
+		
+	${EndIf}
+	
+	WriteRegStr SHCTX "Software\ArxLibertatis" "DataDir" "$ArxFatalisLocation"
+	
+	SetDetailsPrint both
+	
 SectionEnd
 
 ;------------------------------------------------------------------------------
@@ -295,8 +338,6 @@ Function .onInit
 	
 	!insertmacro MUI_LANGDLL_DISPLAY
 	
-	!insertmacro WELCOME_FINISH_PAGE_INIT
-	
 	; Check for >= Windows XP SP2
 	${IfNot} ${AtLeastWinVista}
 		${IfNot} ${IsWinXP}
@@ -307,15 +348,17 @@ Function .onInit
 	
 	SetRegView 64
 	
+	Call InitArxFatalisData
+	
 	!insertmacro MULTIUSER_INIT
 	
-	Call FindArxInstall
-	StrCpy $ArxFatalisInstallDir $0
+	!insertmacro WELCOME_FINISH_PAGE_INIT
+	!insertmacro ARX_FATALIS_LOCATION_PAGE_INIT
 	
 FunctionEnd
 
 !insertmacro WELCOME_FINISH_PAGE_FUNCTIONS
-
+!insertmacro ARX_FATALIS_LOCATION_PAGE_FUNCTIONS
 
 ;------------------------------------------------------------------------------
 ;Uninstaller Section
@@ -349,71 +392,5 @@ Function un.onInit
 	
 	!insertmacro MULTIUSER_UNINIT
 	!insertmacro MUI_UNGETLANGUAGE
-	
-FunctionEnd
-
-
-;------------------------------------------------------------------------------
-Function DetectArx
-	; If no source data directory was specified, don't bother with the validation
-	${If} $ArxFatalisInstallDir == ""
-		goto end_success
-	${EndIf}
-	
-	${DetectArxLanguage} $ArxFatalisInstallDir
-	StrCpy $ArxFatalisLanguage $0
-	
-	${Switch} $ArxFatalisLanguage
-		${Case} "demo"
-			MessageBox MB_YESNO|MB_ICONEXCLAMATION "Arx Fatalis (Demo) found, continue ?" IDNO end_abort
-			${Break}
-		
-		${Case} "de"
-			MessageBox MB_YESNO|MB_ICONEXCLAMATION "Arx Fatalis (German) found, continue ?" IDNO end_abort
-			${Break}
-		
-		${Case} "en"
-			MessageBox MB_YESNO|MB_ICONEXCLAMATION "Arx Fatalis (English) found, continue ?" IDNO end_abort
-			${Break}
-		
-		${Case} "es"
-			MessageBox MB_YESNO|MB_ICONEXCLAMATION "Arx Fatalis (Spanish) found, continue ?" IDNO end_abort
-			${Break}
-		
-		${Case} "fr"
-			MessageBox MB_YESNO|MB_ICONEXCLAMATION "Arx Fatalis (French) found, continue ?" IDNO end_abort
-			${Break}
-		
-		${Case} "it"
-			MessageBox MB_YESNO|MB_ICONEXCLAMATION "Arx Fatalis (Italian) found, continue ?" IDNO end_abort
-			${Break}
-		
-		${Case} "ru"
-			MessageBox MB_YESNO|MB_ICONEXCLAMATION "Arx Fatalis (Russian) found, continue ?" IDNO end_abort
-			${Break}
-		
-		${Case} "not_found"
-			StrCpy $ArxFatalisLanguage "en"
-			StrCpy $1 "No speech.pak file found in this directory. Do you still want to continue and use this source directory ?"
-			MessageBox MB_YESNO|MB_ICONSTOP '$1' IDNO end_abort
-			${Break}
-		
-		${Case} "unknown"
-			StrCpy $ArxFatalisLanguage "en"
-			StrCpy $1 "Arx Fatalis files were found but the version is unknown to this installer. Make sure you have applied the 1.21 patch on your original Arx Fatalis install before running this installer. Do you want to continue anyway ?"
-			MessageBox MB_YESNO|MB_ICONSTOP '$1' IDNO end_abort
-			${Break}
-		
-		${Default}
-			MessageBox MB_OK|MB_ICONSTOP 'INTERNAL INSTALLER ERROR. Detected language is \"$ArxFatalisLanguage\" Please select another directory.'
-			goto end_abort
-	${EndSwitch}
-	
-	goto end_success
-	
-end_abort:
-	Abort
-	
-end_success:
 	
 FunctionEnd
