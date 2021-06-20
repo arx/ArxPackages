@@ -4,117 +4,165 @@
 !include "LogicLib.nsh"
 
 !macro WELCOME_PAGE
-!define MUI_PAGE_CUSTOMFUNCTION_SHOW PageWelcomeFinishOnShow
+!ifndef MUI_WELCOMEFINISHPAGE_BITMAP
+!define MUI_WELCOMEFINISHPAGE_BITMAP "data\Side.bmp"
+!endif
+!define MUI_PAGE_CUSTOMFUNCTION_SHOW PageWelcomeOnShow
 !insertmacro MUI_PAGE_WELCOME
 !macroend
 
 !macro FINISH_PAGE
-!define MUI_PAGE_CUSTOMFUNCTION_SHOW PageWelcomeFinishOnShow
-!define MUI_FINISHPAGE_RUN "$INSTDIR\arx.exe"
+!ifndef MUI_WELCOMEFINISHPAGE_BITMAP
+!define MUI_WELCOMEFINISHPAGE_BITMAP "data\Side.bmp"
+!endif
+!define MUI_PAGE_CUSTOMFUNCTION_SHOW PageFinishOnShow
+!define MUI_FINISHPAGE_RUN "$INSTDIR\arx.exe" ; TODO run via launcher if installed there
 !insertmacro MUI_PAGE_FINISH
 !macroend
 
 !macro WELCOME_FINISH_PAGE_RESERVE
-ReserveFile data\Side_2x.bmp
+	ReserveFile data\Side_2x.bmp
 !macroend
 
 !macro WELCOME_FINISH_PAGE_INIT
-File /oname=$PLUGINSDIR\Side_2x.bmp data\Side_2x.bmp
+	File /oname=$PLUGINSDIR\Side_2x.bmp data\Side_2x.bmp
 !macroend
-
-!macro WELCOME_FINISH_PAGE_FUNCTIONS
 
 Function PageWelcomeFinishOnShow
 	
+	Exch $0 ; $mui.WelcomePage.Image.Bitmap / $mui.FinishPage.Image.Bitmap
+	Exch
+	Exch $1 ; $mui.WelcomePage.Image / $mui.FinishPage.Image
+	Push $2
+	Push $3
+	Push $4
+	
 	; Use a higner resolution image on HiDPI screens
 	; Ideally we'd always use the higher-resolution image but NSIS only does nearest-neighbor scaling
-	System::Call USER32::GetDpiForSystem()i.r0
-	${If} $0 U<= 0
-		System::Call USER32::GetDC(i0)i.r1
-		System::Call GDI32::GetDeviceCaps(ir1,i88)i.r0
-		System::Call USER32::ReleaseDC(i0,ir1)
+	Push $0
+	SysCompImg::GetSysDpi
+	StrCpy $2 $0
+	Pop $0
+	${If} $2 U<= 0
+		StrCpy $2 96
 	${EndIf}
-	${If} $0 U<= 0
-		StrCpy $0 96
-	${Endif}
-	IntOp $1 $0 / 15
-	${If} $0 > 96
-		${NSD_FreeImage} $mui.WelcomePage.Image.Bitmap
-		${NSD_SetStretchedBitmap} $mui.WelcomePage.Image "$PLUGINSDIR\Side_2x.bmp" $mui.WelcomePage.Image.Bitmap
-		${NSD_FreeImage} $mui.FinishPage.Image.Bitmap
-		${NSD_SetStretchedBitmap} $mui.FinishPage.Image "$PLUGINSDIR\Side_2x.bmp" $mui.FinishPage.Image.Bitmap
-	${Endif}
+	${If} $2 > 96
+		${NSD_FreeImage} $0
+		${NSD_SetStretchedBitmap} $1 "$PLUGINSDIR\Side_2x.bmp" $0
+	${EndIf}
+	IntOp $2 $2 / 15
 	
-	CreateFont $0 "$(^Font)" "$(^FontSize)" "700"
+	CreateFont $3 "$(^Font)" "$(^FontSize)" "700"
+	
+	; Website URL
+	${NSD_CreateLabel} $2 170u 110u 10u "<?= $project_url ?>"
+	Pop $4
+	${NSD_AddStyle} $4 ${SS_CENTER}
+	SetCtlColors $4 "774400" transparent
+	SendMessage $4 ${WM_SETFONT} $3 1
+	${NSD_OnClick} $4 OnClickProjectWebsite
 	
 	<? if($is_snapshot): ?>
 	
 	; Snapshot version number
-	${NSD_CreateLabel} $1 100u 110u 10u "<?= $version ?>"
-	Pop $R0
-	${NSD_AddStyle} $R0 ${SS_CENTER}
-	SetCtlColors $R0 "774400" transparent
-	SendMessage $R0 ${WM_SETFONT} $0 1
-	${NSD_OnClick} $R0 OnClickProjectWebsite
+	${NSD_CreateLabel} $2 100u 110u 10u "<?= $version ?>"
+	Pop $4
+	${NSD_AddStyle} $4 ${SS_CENTER}
+	SetCtlColors $4 "774400" transparent
+	SendMessage $4 ${WM_SETFONT} $3 1
+	${NSD_OnClick} $4 OnClickProjectWebsite
+	
+	; Version type
+	<? if($is_release_candidate): ?>
+	${NSD_CreateLabel} $2 115u 110u 10u "($(ARX_RELEASE_CANDIDATE))"
+	<? else: ?>
+	${NSD_CreateLabel} $2 115u 110u 10u "($(ARX_DEVELOPMENT_SNAPSHOT))"
+	<? endif; ?>
+	Pop $4
+	${NSD_AddStyle} $4 ${SS_CENTER}
+	SetCtlColors $4 "774400" transparent
+	SendMessage $4 ${WM_SETFONT} $3 1
+	${NSD_OnClick} $4 OnClickProjectWebsite
 	
 	; Version suffix
 	<? if($version_suffix != ''): ?>
-	${NSD_CreateLabel} $1 115u 110u 10u "<?= $version_suffix ?>"
-	Pop $R0
-	${NSD_AddStyle} $R0 ${SS_CENTER}
-	SetCtlColors $R0 "774400" transparent
-	SendMessage $R0 ${WM_SETFONT} $0 1
-	${NSD_OnClick} $R0 OnClickProjectWebsite
+	${NSD_CreateLabel} $2 130u 110u 10u "<?= $version_suffix ?>"
+	Pop $4
+	${NSD_AddStyle} $4 ${SS_CENTER}
+	SetCtlColors $4 "774400" transparent
+	SendMessage $4 ${WM_SETFONT} $3 1
+	${NSD_OnClick} $4 OnClickProjectWebsite
 	<? endif; ?>
 	
 	; Snapshot warning text
-	${NSD_CreateLabel} 120u 130u 195u 60u "$(ARX_SNAPSHOT_WARNING) https://arx.vg/bug"
-	Pop $R0
-	SetCtlColors $R0 "885500" "FFFFFF"
-	SendMessage $R0 ${WM_SETFONT} $0 1
+	${NSD_CreateLabel} 120u 130u 195u 60u "$(ARX_SNAPSHOT_WARNING) ${ARX_BUG_URL}"
+	Pop $4
+	SetCtlColors $4 "885500" "FFFFFF"
+	SendMessage $4 ${WM_SETFONT} $3 1
 	
 	<? else: ?>
 	
-	; Large version number
-	${NSD_CreateLabel} $1 90u 110u 30u "<?= $version ?>"
-	Pop $R0
-	${NSD_AddStyle} $R0 ${SS_CENTER}
-	SetCtlColors $R0 "774400" transparent
-	CreateFont $2 "Arial Black" "24" "500"
-	SendMessage $R0 ${WM_SETFONT} $2 1
-	${NSD_OnClick} $R0 OnClickProjectWebsite
-	
 	; Version codename
 	<? if($version_codename != ''): ?>
-	${NSD_CreateLabel} $1 115u 110u 10u '"<?= $version_codename ?>"'
-	Pop $R0
-	${NSD_AddStyle} $R0 ${SS_CENTER}
-	SetCtlColors $R0 "774400" transparent
-	SendMessage $R0 ${WM_SETFONT} $0 1
-	${NSD_OnClick} $R0 OnClickProjectWebsite
+	${NSD_CreateLabel} $2 115u 110u 10u '"<?= $version_codename ?>"'
+	Pop $4
+	${NSD_AddStyle} $4 ${SS_CENTER}
+	SetCtlColors $4 "774400" transparent
+	SendMessage $4 ${WM_SETFONT} $3 1
+	${NSD_OnClick} $4 OnClickProjectWebsite
 	<? endif; ?>
 	
-	<? endif; ?>
+	CreateFont $3 "Arial Black" "24" "500"
 	
-	; Website URL
-	${NSD_CreateLabel} $1 170u 110u 10u "<?= $project_url ?>"
-	Pop $R0
-	${NSD_AddStyle} $R0 ${SS_CENTER}
-	SetCtlColors $R0 "774400" transparent
-	SendMessage $R0 ${WM_SETFONT} $0 1
-	${NSD_OnClick} $R0 OnClickProjectWebsite
+	; Large version number
+	${NSD_CreateLabel} $2 90u 110u 30u "<?= $version ?>"
+	Pop $4
+	${NSD_AddStyle} $4 ${SS_CENTER}
+	SetCtlColors $4 "774400" transparent
+	SendMessage $4 ${WM_SETFONT} $3 1
+	${NSD_OnClick} $4 OnClickProjectWebsite
+	
+	<? endif; ?>
 	
 	; Move side image a bit and put it behind everything else
-	System::Call 'USER32::SetWindowPos(i $mui.WelcomePage.Image, i1, i $1, i0, i0, i0, i1)'
-	System::Call 'USER32::SetWindowPos(i $mui.FinishPage.Image, i1, i $1, i0, i0, i0, i1)'
+	System::Call 'USER32::SetWindowPos(ir1, i1, ir2, i0, i0, i0, i1)'
+	${NSD_OnClick} $1 OnClickProjectWebsite
 	
-	${NSD_OnClick} $mui.WelcomePage.Image OnClickProjectWebsite
-	${NSD_OnClick} $mui.FinishPage.Image OnClickProjectWebsite
+	Pop $4
+	Pop $3
+	Pop $2
+	Pop $1
+	Exch $0
 	
 FunctionEnd
 
+!macro PageWelcomeFinishOnShow Image Bitmap
+	Push "${Image}"
+	Push "${Bitmap}"
+	Call PageWelcomeFinishOnShow
+	Pop ${Bitmap}
+!macroend
+
+!define PageWelcomeFinishOnShow '!insertmacro PageWelcomeFinishOnShow'
+
 Function OnClickProjectWebsite
+	
 	ExecShell "open" "<?= $project_url ?>" SW_SHOWNORMAL
+	
+FunctionEnd
+
+!macro WELCOME_FINISH_PAGE_FUNCTIONS
+
+Function PageWelcomeOnShow
+	
+	${PageWelcomeFinishOnShow} $mui.WelcomePage.Image $mui.WelcomePage.Image.Bitmap
+	
+FunctionEnd
+
+Function PageFinishOnShow
+	
+	${PageWelcomeFinishOnShow} $mui.FinishPage.Image $mui.FinishPage.Image.Bitmap
+	
 FunctionEnd
 
 !macroend

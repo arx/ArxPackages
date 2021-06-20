@@ -42,13 +42,15 @@ ManifestLongPathAware True
 
 !define INSTALLERMUTEXNAME "ArxLibertatisSetup"
 
+!define ARX_BUG_URL "https://arx.vg/bug"
+
 !addincludedir include
 
+!include "LogicLib.nsh"
+!include "MUI2.nsh"
 !include "MultiUser.nsh"
 !include "Winver.nsh"
-!include "MUI2.nsh"
 !include "nsDialogs.nsh"
-!include "LogicLib.nsh"
 !include "x64.nsh"
 
 !include "SingleInstanceMutex.nsh"
@@ -96,8 +98,6 @@ VIFileVersion "${Version}"
 
 !define MUI_ICON "${Icon}"
 !define MUI_UNICON "${Icon}"
-!define MUI_WELCOMEFINISHPAGE_BITMAP "data\Side.bmp"
-!define MUI_UNWELCOMEFINISHPAGE_BITMAP "data\Side.bmp"
 !define MUI_ABORTWARNING
 !define MUI_COMPONENTSPAGE_NODESC 
 
