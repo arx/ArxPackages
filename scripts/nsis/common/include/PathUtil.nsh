@@ -96,7 +96,7 @@ Function GetDirectory
 		${EndIf}
 	${Loop}
 	
-	StrCpy $0 "$0" $2
+	StrCpy $0 "$0" $1
 	${If} $0 != ""
 		StrCpy $0 "$0\"
 	${EndIf}
