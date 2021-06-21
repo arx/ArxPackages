@@ -270,7 +270,7 @@ Section - VerifyData
 		
 		${If} $0 == ""
 			
-			DetailPrint "$(Data successfully verified.)"
+			DetailPrint "$(ARX_VERIFY_DATA_SUCCESS)"
 			
 		${Else}
 			
