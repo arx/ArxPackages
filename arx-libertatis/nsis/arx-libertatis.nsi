@@ -51,6 +51,7 @@ ManifestLongPathAware True
 !include "LogicLib.nsh"
 !include "MUI2.nsh"
 !include "MultiUser.nsh"
+!include "NSISList.nsh"
 !include "Sections.nsh"
 !include "Winver.nsh"
 !include "nsDialogs.nsh"
@@ -359,6 +360,12 @@ FunctionEnd
 
 !insertmacro WELCOME_FINISH_PAGE_FUNCTIONS
 !insertmacro ARX_FATALIS_LOCATION_PAGE_FUNCTIONS
+
+Function .onGUIEnd
+	
+	${List.Unload}
+	
+FunctionEnd
 
 ;------------------------------------------------------------------------------
 ;Uninstaller Section
