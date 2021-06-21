@@ -20,45 +20,26 @@
 !include "LogicLib.nsh"
 !include "MUI2.nsh"
 
-!include "ProgressBar.nsh"
-
-!macro INSTFILES_PAGE
-!define MUI_PAGE_CUSTOMFUNCTION_PRE PageInstFilesOnPre
-!define MUI_PAGE_CUSTOMFUNCTION_SHOW PageInstFilesOnShow
-!insertmacro MUI_PAGE_INSTFILES
+!macro DIRECTORY_PAGE
+!define MUI_PAGE_CUSTOMFUNCTION_PRE PageDirectoryOnPre
+!insertmacro MUI_PAGE_DIRECTORY
 !macroend
 
-!macro INSTFILES_PAGE_FUNCTIONS
+!macro DIRECTORY_PAGE_FUNCTIONS
 
-Function PageInstFilesOnPre
+Function PageDirectoryOnPre
 	
-	${If} ${SectionIsSelected} ${PatchInstall}
-		StrCpy $INSTDIR "$ArxFatalisLocation"
+	${IfNot} ${SectionIsSelected} ${SeparateInstall}
+		Abort
 	${EndIf}
 	
 FunctionEnd
 
-Function PageInstFilesOnShow
+Function .onVerifyInstDir
 	
-	Push $0
-	
-	${ProgressBarReplace} $mui.InstFilesPage.ProgressBar
-	
-	SectionGetSize ${Main} $0
-	${ProgressBarAddToTotal} "$0" ${MAIN_SECTION_COUNT}
-	
-	SectionGetSize ${CopyData} $0
-	${If} ${SectionIsSelected} ${CopyData}
-	${AndIf} $ArxFatalisLocation != $INSTDIR
-		${ProgressBarAddToTotal} "$0" $ArxFatalisFileCount
+	${If} $INSTDIR == $ArxFatalisLocation
+		Abort
 	${EndIf}
-	
-	; VerifyData checks as much bytes as CopyData copies
-	${If} $ArxFatalisLocation != ""
-		${ProgressBarAddToTotal} "$0" $ArxFatalisFileCount
-	${EndIf}
-	
-	Pop $0
 	
 FunctionEnd
 

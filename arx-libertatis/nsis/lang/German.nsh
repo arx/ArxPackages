@@ -30,6 +30,10 @@ ${LangFileString} ARX_FATALIS_LOCATION_WINDOWS "Microsoft Store"
 ${LangFileString} ARX_FATALIS_LOCATION_UNPATCHED "1.21 patch fehlt!"
 ${LangFileString} ARX_FATALIS_LOCATION_UNPATCHED_CONTINUE "Es wird dringend empfohlen Arx Fatalis auf Version 1.21 zu patchen vor der Installation von $(^Name)!$\nSie können den Patch hier finden:$\n${ARX_PATCH_URL}$\nMit ungepatchten Arx Fatalis Daten fortfahren?"
 
+${LangFileString} ARX_PATCH_INSTALL "Bestehende Arx Fatalis Installation patchen"
+
+${LangFileString} ARX_SEPARATE_INSTALL "Separate Arx Libertatis Installation erstellen"
+
 ${LangFileString} ARX_INSTALL_STATUS "Arx Libertatis wird installiert..."
 
 ${LangFileString} ARX_COPY_DATA "Arx Fatalis Daten kopieren"

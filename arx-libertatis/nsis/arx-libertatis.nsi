@@ -65,6 +65,8 @@ ManifestLongPathAware True
 
 !include "WelcomeFinishPage.nsh"
 !include "ArxFatalisLocationPage.nsh"
+!include "ComponentsPage.nsh"
+!include "DirectoryPage.nsh"
 !include "InstFilesPage.nsh"
 
 ;------------------------------------------------------------------------------
@@ -128,10 +130,11 @@ VIFileVersion "${Version}"
 
 !insertmacro WELCOME_PAGE
 !insertmacro ARX_FATALIS_LOCATION_PAGE
+!insertmacro COMPONENTS_PAGE
 
-!insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MULTIUSER_PAGE_INSTALLMODE
-!insertmacro MUI_PAGE_DIRECTORY
+
+!insertmacro DIRECTORY_PAGE
 
 ;Start Menu Folder Page Configuration
 !define MUI_STARTMENUPAGE_REGISTRY_ROOT "SHCTX" 
@@ -240,6 +243,12 @@ SectionEnd
 
 ;------------------------------------------------------------------------------
 
+SectionGroup "$(ARX_PATCH_INSTALL)" PatchInstall
+
+SectionGroupEnd
+
+SectionGroup "$(ARX_SEPARATE_INSTALL)" SeparateInstall
+
 Section /o "$(ARX_COPY_DATA)" CopyData
 	
 	${If} $ArxFatalisLocation != $INSTDIR
@@ -278,6 +287,8 @@ SectionEnd
 Section "$(ARX_CREATE_QUICKLAUNCH_ICON)" QuickLaunch
 	${CreateShortCut} "$QUICKLAUNCH\Arx Libertatis.lnk" "$INSTDIR\arx.exe"
 SectionEnd
+
+SectionGroupEnd
 
 Section - VerifyData
 	SectionIn RO
@@ -388,11 +399,14 @@ Function .onInit
 	
 	!insertmacro WELCOME_FINISH_PAGE_INIT
 	!insertmacro ARX_FATALIS_LOCATION_PAGE_INIT
+	!insertmacro COMPONENTS_PAGE_INIT
 	
 FunctionEnd
 
 !insertmacro WELCOME_FINISH_PAGE_FUNCTIONS
 !insertmacro ARX_FATALIS_LOCATION_PAGE_FUNCTIONS
+!insertmacro COMPONENTS_PAGE_FUNCTIONS
+!insertmacro DIRECTORY_PAGE_FUNCTIONS
 !insertmacro INSTFILES_PAGE_FUNCTIONS
 
 Function .onGUIEnd
