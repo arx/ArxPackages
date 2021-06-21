@@ -92,6 +92,7 @@ Function GetDirectory
 		IntOp $1 $1 - 1
 		StrCpy $2 "$0" 1 $1
 		${If} $2 == "\"
+		${OrIf} $2 == "/"
 			${Break}
 		${EndIf}
 	${Loop}
