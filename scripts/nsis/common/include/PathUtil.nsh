@@ -129,6 +129,7 @@ Function GetFileSize
 	${Else}
 		FileSeek $1 0 END $0
 		FileClose $1
+		IntOp $0 $0 + 1023
 		IntOp $0 $0 / 1024
 	${EndIf}
 	
