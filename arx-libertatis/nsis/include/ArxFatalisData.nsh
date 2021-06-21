@@ -188,19 +188,19 @@ Function InitArxFatalisData
 	${Add} "graph\obj3d\textures\[wood]_light_door.jpg"       "00d0b018e995e7d013d6e52e92126901" "patched" "patchonly"
 	
 	; 1.22 patch files (not included in demo versions)
-	${Add} "localisation/presence.ini"          "d1a4401d08502318371c47f80b175e13" "patched" "optional"
-	${Add} "localisation/snd_armor.ini"         "4fcc39ad0f26c98d0faae69a4b95c094" "patched" "optional"
-	${Add} "localisation/snd_material.ini"      "ff8a52f0579d8bfa04c8028f8e8f12ef" "patched" "optional"
-	${Add} "localisation/snd_other.ini"         "ffe2077e85d226300bebd3d0021618cf" "patched" "optional"
-	${Add} "localisation/snd_step.ini"          "9943481df910c6a0b94390015ce0c8c7" "patched" "optional"
-	${Add} "localisation/snd_weapon.ini"        "0d42bedce8f4116ad6126e66394b9dec" "patched" "optional"
-	${Add} "localisation/ucredits_chinese.txt"  "36de88578c05954cf5e8ea42a5a6df2f" "patched" "optional"
-	${Add} "localisation/ucredits_deutsch.txt"  "ebd870da9bb68c024af84a18c4d5cf3e" "patched" "optional"
-	${Add} "localisation/ucredits_english.txt"  "eba2044744c9a1539d154b9c4c033469" "patched" "optional"
-	${Add} "localisation/ucredits_francais.txt" "f98b60af3d7e81bc24e945a2debd6cb6" "patched" "optional"
-	${Add} "localisation/ucredits_italiano.txt" "36de88578c05954cf5e8ea42a5a6df2f" "patched" "optional"
-	${Add} "localisation/ucredits_russian.txt"  "36de88578c05954cf5e8ea42a5a6df2f" "patched" "optional"
-	${Add} "localisation/utext_francais.ini"    "b10b041ff8eec01e3c28c5bc637ff15a" "patched" "optional"
+	${Add} "localisation\presence.ini"          "d1a4401d08502318371c47f80b175e13" "patched" "optional"
+	${Add} "localisation\snd_armor.ini"         "4fcc39ad0f26c98d0faae69a4b95c094" "patched" "optional"
+	${Add} "localisation\snd_material.ini"      "ff8a52f0579d8bfa04c8028f8e8f12ef" "patched" "optional"
+	${Add} "localisation\snd_other.ini"         "ffe2077e85d226300bebd3d0021618cf" "patched" "optional"
+	${Add} "localisation\snd_step.ini"          "9943481df910c6a0b94390015ce0c8c7" "patched" "optional"
+	${Add} "localisation\snd_weapon.ini"        "0d42bedce8f4116ad6126e66394b9dec" "patched" "optional"
+	${Add} "localisation\ucredits_chinese.txt"  "36de88578c05954cf5e8ea42a5a6df2f" "patched" "optional"
+	${Add} "localisation\ucredits_deutsch.txt"  "ebd870da9bb68c024af84a18c4d5cf3e" "patched" "optional"
+	${Add} "localisation\ucredits_english.txt"  "eba2044744c9a1539d154b9c4c033469" "patched" "optional"
+	${Add} "localisation\ucredits_francais.txt" "f98b60af3d7e81bc24e945a2debd6cb6" "patched" "optional"
+	${Add} "localisation\ucredits_italiano.txt" "36de88578c05954cf5e8ea42a5a6df2f" "patched" "optional"
+	${Add} "localisation\ucredits_russian.txt"  "36de88578c05954cf5e8ea42a5a6df2f" "patched" "optional"
+	${Add} "localisation\utext_francais.ini"    "b10b041ff8eec01e3c28c5bc637ff15a" "patched" "optional"
 	
 	; Optional files (included in 1.21 patch, but we don't care about them)
 	${Add} "misc\logo.avi" "63ed31a4eb3d226c23e58cfaa974d484" "all" "optional" ; Retail
