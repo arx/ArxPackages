@@ -34,6 +34,7 @@ ${LangFileString} ARX_INSTALL_STATUS "Arx Libertatis wird installiert..."
 
 ${LangFileString} ARX_COPY_DATA "Arx Fatalis Daten kopieren"
 ${LangFileString} ARX_COPY_DATA_STATUS "Arx Fatalis Daten werden kopiert..."
+${LangFileString} ARX_COPY_DATA_DIR "Kopierquelle:"
 ${LangFileString} ARX_COPY_DATA_FILE "Kopiere"
 
 ${LangFileString} ARX_CREATE_DESKTOP_ICON "Desktop-Verknüpfung erstellen"

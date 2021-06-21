@@ -34,6 +34,7 @@ ${LangFileString} ARX_INSTALL_STATUS "Installing Arx Libertatis..."
 
 ${LangFileString} ARX_COPY_DATA "Copy Arx Fatalis data"
 ${LangFileString} ARX_COPY_DATA_STATUS "Copying Arx Fatalis data..."
+${LangFileString} ARX_COPY_DATA_DIR "Source location:"
 ${LangFileString} ARX_COPY_DATA_FILE "Copying"
 
 ${LangFileString} ARX_CREATE_DESKTOP_ICON "Create a desktop icon"

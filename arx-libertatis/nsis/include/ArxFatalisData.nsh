@@ -708,6 +708,8 @@ Function CopyArxFatalisData
 	Push $5
 	Push $6
 	
+	DetailPrint "$(ARX_COPY_DATA_DIR) $0"
+	
 	${List.Count} $3 ArxFatalisFiles
 	StrCpy $2 0
 	${DoWhile} $2 < $3
