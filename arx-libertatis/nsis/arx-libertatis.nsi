@@ -1,5 +1,5 @@
 ;------------------------------------------------------------------------------
-; Copyright 2011-2012 Arx Libertatis Team (see the AUTHORS file)
+; Copyright 2011-2021 Arx Libertatis Team (see the AUTHORS file)
 ;
 ; This file is part of Arx Libertatis.
 ;
@@ -57,12 +57,15 @@ ManifestLongPathAware True
 !include "nsDialogs.nsh"
 !include "x64.nsh"
 
+!include "ProgressBar.nsh"
 !include "SingleInstanceMutex.nsh"
 !include "UninstallLog.nsh"
 
 !include "ArxFatalisData.nsh"
-!include "ArxFatalisLocationPage.nsh"
+
 !include "WelcomeFinishPage.nsh"
+!include "ArxFatalisLocationPage.nsh"
+!include "InstFilesPage.nsh"
 
 ;------------------------------------------------------------------------------
 ;General
@@ -138,8 +141,7 @@ VIFileVersion "${Version}"
 
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
 
-!insertmacro MUI_PAGE_INSTFILES
-
+!insertmacro INSTFILES_PAGE
 !insertmacro FINISH_PAGE
 
 !insertmacro MUI_UNPAGE_CONFIRM
@@ -172,9 +174,23 @@ VIFileVersion "${Version}"
 Section - Main
 	SectionIn RO
 	
-	SetDetailsPrint listonly
+	<?
+	$count = 0;
+	$dir_iterator = new RecursiveDirectoryIterator("$outdir/build");
+	$iterator = new RecursiveIteratorIterator($dir_iterator, RecursiveIteratorIterator::SELF_FIRST);
+	foreach($iterator as $file):
+		if($file->getType() != 'dir'):
+			$count++;
+		endif;
+	endforeach;
+	?>
+	!define MAIN_SECTION_COUNT <?= $count ?> 
+	Push $0
+	SectionGetSize ${Main} $0
+	${ProgressBarBeginSection} "$0" ${MAIN_SECTION_COUNT}
+	Pop $0
 	
-	InitPluginsDir
+	SetDetailsPrint listonly
 	
 	SetDetailsPrint both
 	DetailPrint "$(ARX_INSTALL_STATUS)"
@@ -194,6 +210,7 @@ Section - Main
 	WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "DisplayVersion" "<?= $version ?>"
 	WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "NoModify" 1
 	WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "NoRepair" 1
+	${ProgressBarFile} "$INSTDIR\uninstall.exe"
 	
 	; Extract Arx Libertatis binaries
 	<?
@@ -211,10 +228,13 @@ Section - Main
 		else:
 	?>
 	${File} "build" "<?= $filename ?>"
+	${ProgressBarUpdate} <?= ceil(filesize( $file->getPathname() ) / 1024) ?> 
 	<?
 		endif;
 	endforeach;
 	?>
+	
+	${ProgressBarEndSection}
 	
 SectionEnd
 
@@ -224,6 +244,11 @@ Section /o "$(ARX_COPY_DATA)" CopyData
 	
 	${If} $ArxFatalisLocation != $INSTDIR
 		
+		Push $0
+		SectionGetSize ${CopyData} $0
+		${ProgressBarBeginSection} "$0" $ArxFatalisFileCount
+		Pop $0
+		
 		DetailPrint ""
 		SetDetailsPrint both
 		DetailPrint "$(ARX_COPY_DATA_STATUS)"
@@ -231,6 +256,8 @@ Section /o "$(ARX_COPY_DATA)" CopyData
 		
 		${CopyArxFatalisData} "$ArxFatalisLocation" "$INSTDIR"
 		StrCpy $ArxFatalisLocation "$INSTDIR"
+		
+		${ProgressBarEndSection}
 		
 	${EndIf}
 	
@@ -261,6 +288,9 @@ Section - VerifyData
 		Push $1
 		Push $2
 		Push $3
+		
+		SectionGetSize ${CopyData} $0
+		${ProgressBarBeginSection} "$0" $ArxFatalisFileCount
 		
 		DetailPrint ""
 		SetDetailsPrint both
@@ -307,7 +337,6 @@ Section - VerifyData
 			DetailPrint "$(ARX_VERIFY_DATA_REPORT)"
 			DetailPrint "${ARX_BUG_URL}"
 			DetailPrint "$(ARX_COPY_DETAILS)"
-			DetailPrint ""
 			
 			MessageBox MB_OK|MB_ICONEXCLAMATION "$1$\n$\n$(ARX_VERIFY_DATA_REPORT)$\n${ARX_BUG_URL}"
 			SetAutoClose false
@@ -316,6 +345,10 @@ Section - VerifyData
 			StrCpy $ArxFatalisLocation ""
 			
 		${EndIf}
+		
+		DetailPrint ""
+		
+		${ProgressBarEndSection}
 		
 		Pop $3
 		Pop $2
@@ -360,6 +393,7 @@ FunctionEnd
 
 !insertmacro WELCOME_FINISH_PAGE_FUNCTIONS
 !insertmacro ARX_FATALIS_LOCATION_PAGE_FUNCTIONS
+!insertmacro INSTFILES_PAGE_FUNCTIONS
 
 Function .onGUIEnd
 	

@@ -23,7 +23,9 @@
 !include "LogicLib.nsh"
 !include "NSISList.nsh"
 !include "WinCore.nsh"
+
 !include "PathUtil.nsh"
+!include "ProgressBar.nsh"
 
 !define DetectArxLanguage 	"!insertmacro DetectArxLanguage"
 
@@ -656,8 +658,10 @@ Function GetArxFatalisDataSize
 	Push $3
 	Push $4
 	Push $5
+	Push $6
 	
 	StrCpy $5 0
+	StrCpy $6 0
 	
 	${List.Count} $2 ArxFatalisFiles
 	StrCpy $1 0
@@ -666,31 +670,41 @@ Function GetArxFatalisDataSize
 		
 		${GetFileSize} "$0\$3" $4
 		IntOp $5 $5 + $4
+		${If} $4 > 0
+			IntOp $6 $6 + 1
+		${EndIf}
 		
 		${GetPakFileDefault} "$3" $4
 		${If} $4 != ""
 			${GetFileSize} "$0\$4" $4
 			IntOp $5 $5 + $4
+			${If} $4 > 0
+				IntOp $6 $6 + 1
+			${EndIf}
 		${EndIf}
 		
 		IntOp $1 $1 + 1
 	${Loop}
 	
 	StrCpy $0 $5
+	StrCpy $1 $6
 	
+	Pop $6
 	Pop $5
 	Pop $4
 	Pop $3
 	Pop $2
-	Pop $1
+	Exch $1
+	Exch
 	Exch $0
 	
 FunctionEnd
 
-!macro GetArxFatalisDataSize Path Result
+!macro GetArxFatalisDataSize Path SizeResult CountResult
 	Push "${Path}"
 	Call GetArxFatalisDataSize
-	Pop ${Result}
+	Pop ${SizeResult}
+	Pop ${CountResult}
 !macroend
 
 ; ${GetArxFatalisDataSize} Path Result
@@ -735,12 +749,14 @@ Function CopyArxFatalisData
 			
 			DetailPrint "$(ARX_COPY_DATA_FILE) $4"
 			${CopyFiles} "$0\$4" "$1\$5" "$1\$4"
+			${ProgressBarFile} "$0\$4"
 			
 			${If} $6 != ""
 			${AndIf} ${FileExists} "$0\$6"
 				
 				DetailPrint "$(ARX_COPY_DATA_FILE) $6"
 				${CopyFiles} "$0\$6" "$1\$5" "$1\$6"
+				${ProgressBarFile} "$0\$6"
 				
 			${EndIf}
 			
@@ -754,6 +770,7 @@ Function CopyArxFatalisData
 			
 			DetailPrint "$(ARX_COPY_DATA_FILE) $6"
 			${CopyFiles} "$0\$6" "$1\$5" "$1\$6"
+			${ProgressBarFile} "$0\$6"
 			
 		${EndIf}
 		
@@ -814,6 +831,8 @@ FunctionEnd
 		DetailPrint "  $(ARX_VERIFY_DATA_VALID_RETAIL) $6"
 		StrCpy $R3 1
 	${EndIf}
+	
+	${ProgressBarFile} "$0\${Path}"
 	
 !macroend
 

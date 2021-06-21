@@ -33,6 +33,7 @@ Var IconError
 Var ArxFatalisLocationLabel
 Var ArxFatalisLocationNext
 Var ArxFatalisLocation
+Var ArxFatalisFileCount
 Var ArxFatalisType
 
 !macro ARX_FATALIS_LOCATION_PAGE
@@ -282,7 +283,7 @@ Function PageArxFatalisLocationOnLeave
 	
 	Push $0
 	${If} $ArxFatalisLocation != ""
-		${GetArxFatalisDataSize} "$ArxFatalisLocation" $0
+		${GetArxFatalisDataSize} "$ArxFatalisLocation" $0 $ArxFatalisFileCount
 	${Else}
 		StrCpy $0 0
 	${EndIf}

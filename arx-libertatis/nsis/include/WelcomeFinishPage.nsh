@@ -45,6 +45,7 @@
 !macroend
 
 !macro WELCOME_FINISH_PAGE_INIT
+	InitPluginsDir
 	File /oname=$PLUGINSDIR\Side_2x.bmp data\Side_2x.bmp
 !macroend
 
