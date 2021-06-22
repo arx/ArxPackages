@@ -320,6 +320,7 @@ Section - VerifyData
 			${EndIf}
 			DetailPrint ""
 			DetailPrint "$1"
+			DetailPrint ""
 			
 			${GetArxFatalisLocationInfo} "$ArxFatalisLocation" $2 $3
 			${If} $3 == "steam"
@@ -335,11 +336,13 @@ Section - VerifyData
 				DetailPrint "$(ARX_VERIFY_DAYA_PATCH_WINDOWS)"
 				DetailPrint "$(ARX_VERIFY_DATA_REINSTALL)"
 			${ElseIf} $0 == "patchable"
-				StrCpy $1 "$1$\n$\n$(ARX_VERIFY_DATA_PATCH)$\n$(ARX_VERIFY_DATA_REINSTALL)"
+				StrCpy $1 "$1$\n$\n$(ARX_VERIFY_DATA_PATCH)$\n${ARX_PATCH_URL}$\n$(ARX_VERIFY_DATA_REINSTALL)"
 				DetailPrint "$(ARX_VERIFY_DATA_PATCH)"
+				DetailPrint "${ARX_PATCH_URL}"
 				DetailPrint "$(ARX_VERIFY_DATA_REINSTALL)"
 			${EndIf}
 			
+			DetailPrint ""
 			DetailPrint "$(ARX_VERIFY_DATA_REPORT)"
 			DetailPrint "${ARX_BUG_URL}"
 			DetailPrint "$(ARX_COPY_DETAILS)"
