@@ -41,6 +41,10 @@ Var SecQuickLaunch
 	StrCpy $SecCopyData 0
 	StrCpy $SecDesktop ${SF_SELECTED}
 	StrCpy $SecQuickLaunch 0
+	${If} ${AtLeastWin7}
+		; Quick Launch toolbar was removed in Windows 7 so don't bother asking users for it
+		SectionSetText ${QuickLaunch} "" ; Remove text to hide the section
+	${EndIf}
 	!insertmacro SectionUngroup ${PatchInstall}
 	!insertmacro SectionUngroup ${SeparateInstall}
 !macroend

@@ -53,7 +53,7 @@ ManifestLongPathAware True
 !include "MultiUser.nsh"
 !include "NSISList.nsh"
 !include "Sections.nsh"
-!include "Winver.nsh"
+!include "WinVer.nsh"
 !include "nsDialogs.nsh"
 !include "x64.nsh"
 
