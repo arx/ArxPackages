@@ -20,20 +20,40 @@
 !include "LogicLib.nsh"
 !include "MUI2.nsh"
 
+!include "NextInstallButton.nsh"
 !include "PathUtil.nsh"
 
 !macro DIRECTORY_PAGE
 !define MUI_PAGE_CUSTOMFUNCTION_PRE PageDirectoryOnPre
+!define MUI_PAGE_CUSTOMFUNCTION_SHOW PageDirectoryOnShow
 !insertmacro MUI_PAGE_DIRECTORY
 !macroend
 
 !macro DIRECTORY_PAGE_FUNCTIONS
 
+Function PageDirectoryIsInstall
+	
+	${If} ${SectionIsSelected} ${PatchInstall}
+		Call PageStartMenuIsInstall
+	${Else}
+		Push 0
+	${EndIf}
+	
+FunctionEnd
+
 Function PageDirectoryOnPre
 	
-	${IfNot} ${SectionIsSelected} ${SeparateInstall}
+	${If} ${SectionIsSelected} ${PatchInstall}
+		StrCpy $INSTDIR "$ArxFatalisLocation"
 		Abort
 	${EndIf}
+	
+FunctionEnd
+
+Function PageDirectoryOnShow
+	
+	Call PageStartMenuIsInstall
+	Call SetNextButtonToInstall
 	
 FunctionEnd
 

@@ -23,20 +23,11 @@
 !include "ProgressBar.nsh"
 
 !macro INSTFILES_PAGE
-!define MUI_PAGE_CUSTOMFUNCTION_PRE PageInstFilesOnPre
 !define MUI_PAGE_CUSTOMFUNCTION_SHOW PageInstFilesOnShow
 !insertmacro MUI_PAGE_INSTFILES
 !macroend
 
 !macro INSTFILES_PAGE_FUNCTIONS
-
-Function PageInstFilesOnPre
-	
-	${If} ${SectionIsSelected} ${PatchInstall}
-		StrCpy $INSTDIR "$ArxFatalisLocation"
-	${EndIf}
-	
-FunctionEnd
 
 Function PageInstFilesOnShow
 	

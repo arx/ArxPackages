@@ -19,60 +19,33 @@
 
 !include "LogicLib.nsh"
 !include "MUI2.nsh"
-!include "MultiUser.nsh"
 
-!include "NextInstallButton.nsh"
-
-!include "ArxFatalisData.nsh"
-
-!macro INSTALLMODE_PAGE
-!define MUI_PAGE_CUSTOMFUNCTION_PRE PageInstallModeOnPre
-!define MUI_PAGE_CUSTOMFUNCTION_SHOW PageInstallModeOnShow
-!insertmacro MULTIUSER_PAGE_INSTALLMODE
+!macro STARTMENU_PAGE
+!define MUI_STARTMENUPAGE_REGISTRY_ROOT "SHCTX"
+!define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\ArxLibertatis"
+!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
+!define MUI_STARTMENUPAGE_DEFAULTFOLDER "Arx Libertatis"
+!define MUI_PAGE_CUSTOMFUNCTION_PRE PageStartMenuOnPre
+!insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
 !macroend
 
-!macro INSTALLMODE_PAGE_FUNCTIONS
+!macro STARTMENU_PAGE_FUNCTIONS
 
-Function PageInstallModeIsInstall
+Function PageStartMenuIsInstall
 	
 	${If} ${SectionIsSelected} ${PatchInstall}
-		Push $0
-		Push $1
-		${GetArxFatalisLocationInfo} "$ArxFatalisLocation" $0 $1
-		${If} $0 == ${MU_SYSTEM}
-		${OrIf} $0 == ${MU_USER}
-			Call PageDirectoryIsInstall
-			Pop $0
-		${Else}
-			StrCpy $0 0
-		${EndIf}
-		Pop $1
-		Exch $0
+		Push 1
+	${Else}
+		Push 0
 	${EndIf}
 	
 FunctionEnd
 
-Function PageInstallModeOnPre
+Function PageStartMenuOnPre
 	
 	${If} ${SectionIsSelected} ${PatchInstall}
-		Push $0
-		Push $1
-		${GetArxFatalisLocationInfo} "$ArxFatalisLocation" $0 $1
-		${If} $0 == ${MU_SYSTEM}
-			Call MultiUser.InstallMode.AllUsers
-			Abort
-		${ElseIf} $0 == ${MU_USER}
-			Call MultiUser.InstallMode.CurrentUser
-			Abort
-		${EndIf}
+		Abort
 	${EndIf}
-	
-FunctionEnd
-
-Function PageInstallModeOnShow
-	
-	Call PageDirectoryIsInstall
-	Call SetNextButtonToInstall
 	
 FunctionEnd
 

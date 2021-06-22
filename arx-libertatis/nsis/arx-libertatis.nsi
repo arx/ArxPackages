@@ -70,6 +70,7 @@ ManifestLongPathAware True
 !include "ComponentsPage.nsh"
 !include "InstallModePage.nsh"
 !include "DirectoryPage.nsh"
+!include "StartMenuPage.nsh"
 !include "InstFilesPage.nsh"
 
 ;------------------------------------------------------------------------------
@@ -135,15 +136,7 @@ VIFileVersion "${Version}"
 !insertmacro COMPONENTS_PAGE
 !insertmacro INSTALLMODE_PAGE
 !insertmacro DIRECTORY_PAGE
-
-;Start Menu Folder Page Configuration
-!define MUI_STARTMENUPAGE_REGISTRY_ROOT "SHCTX" 
-!define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\ArxLibertatis" 
-!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
-!define MUI_STARTMENUPAGE_DEFAULTFOLDER "Arx Libertatis"
-
-!insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
-
+!insertmacro STARTMENU_PAGE
 !insertmacro INSTFILES_PAGE
 !insertmacro FINISH_PAGE
 
@@ -434,6 +427,7 @@ FunctionEnd
 !insertmacro COMPONENTS_PAGE_FUNCTIONS
 !insertmacro INSTALLMODE_PAGE_FUNCTIONS
 !insertmacro DIRECTORY_PAGE_FUNCTIONS
+!insertmacro STARTMENU_PAGE_FUNCTIONS
 !insertmacro INSTFILES_PAGE_FUNCTIONS
 
 Function .onGUIEnd

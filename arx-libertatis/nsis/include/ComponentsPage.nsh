@@ -21,6 +21,8 @@
 !include "MUI2.nsh"
 !include "Sections.nsh"
 
+!include "NextInstallButton.nsh"
+
 Var SecPatchInstall
 Var SecSeparateInstall
 Var SecCopyData
@@ -120,6 +122,9 @@ Function PageComponentsOnShow
 	Call RestorePatchInstallState
 	Call RestoreSeparateInstallState
 	
+	Call PageInstallModeIsInstall
+	Call SetNextButtonToInstall
+	
 FunctionEnd
 
 Function RestorePatchInstallState
@@ -203,6 +208,9 @@ Function .onSelChange
 		${EndIf}
 		
 	${EndIf}
+	
+	Call PageInstallModeIsInstall
+	Call SetNextButtonToInstall
 	
 	Pop $1
 	Pop $0
