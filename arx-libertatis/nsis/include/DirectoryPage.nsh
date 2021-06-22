@@ -20,6 +20,8 @@
 !include "LogicLib.nsh"
 !include "MUI2.nsh"
 
+!include "PathUtil.nsh"
+
 !macro DIRECTORY_PAGE
 !define MUI_PAGE_CUSTOMFUNCTION_PRE PageDirectoryOnPre
 !insertmacro MUI_PAGE_DIRECTORY
@@ -37,9 +39,15 @@ FunctionEnd
 
 Function .onVerifyInstDir
 	
-	${If} $INSTDIR == $ArxFatalisLocation
+	Push $0
+	
+	${NormalizePath} "$INSTDIR" $0
+	${If} $0 == $ArxFatalisLocation
+		Pop $0
 		Abort
 	${EndIf}
+	
+	Pop $0
 	
 FunctionEnd
 
