@@ -9,7 +9,6 @@
 DESTDIR = $(CURDIR)/debian/tmp
 
 override_dh_auto_build:
-	ls # TODO remove
 	# select binary architecture
 ifeq ($(DEB_HOST_MULTIARCH),x86_64-linux-gnu)
 	mv bin/amd64/* bin/
