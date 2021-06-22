@@ -29,6 +29,7 @@ Var SecDesktop
 Var SecQuickLaunch
 
 !macro COMPONENTS_PAGE
+!define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_PAGE_CUSTOMFUNCTION_PRE PageComponentsOnPre
 !define MUI_PAGE_CUSTOMFUNCTION_SHOW PageComponentsOnShow
 !insertmacro MUI_PAGE_COMPONENTS
@@ -205,4 +206,3 @@ Function .onSelChange
 FunctionEnd
 
 !macroend
-

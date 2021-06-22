@@ -31,18 +31,24 @@ ${LangFileString} ARX_FATALIS_LOCATION_UNPATCHED "Missing 1.21 patch!"
 ${LangFileString} ARX_FATALIS_LOCATION_UNPATCHED_CONTINUE "It is strongly recommended to patch Arx Fatalis to version 1.21 before installing $(^Name)!$\nYou can get the patch here:$\n${ARX_PATCH_URL}$\nContinue with unpatched Arx Fatalis data?"
 
 ${LangFileString} ARX_PATCH_INSTALL "Patch existing Arx Fatalis install"
+${LangFileString} ARX_PATCH_INSTALL_DESC "Play using Arx Libertatis when you launch Arx Fatalis. (Recommended)"
 
 ${LangFileString} ARX_SEPARATE_INSTALL "Create a separate Arx Libertatis install"
+${LangFileString} ARX_SEPARATE_INSTALL_DESC "Only use Arx Libertatis when launched through its own shortcut. (Not Recommended)"
 
 ${LangFileString} ARX_INSTALL_STATUS "Installing Arx Libertatis..."
 
 ${LangFileString} ARX_COPY_DATA "Copy Arx Fatalis data"
+${LangFileString} ARX_COPY_DATA_DESC "Copy all .pak files so that Arx Libertatis will continue to work after you uninstall Arx Fatalis."
 ${LangFileString} ARX_COPY_DATA_STATUS "Copying Arx Fatalis data..."
 ${LangFileString} ARX_COPY_DATA_DIR "Source location:"
 ${LangFileString} ARX_COPY_DATA_FILE "Copying"
 
 ${LangFileString} ARX_CREATE_DESKTOP_ICON "Create a desktop icon"
+${LangFileString} ARX_CREATE_DESKTOP_ICON_DESC "Create a shortcut on your desktop to run Arx Libertatis."
+
 ${LangFileString} ARX_CREATE_QUICKLAUNCH_ICON "Create a Quick Launch icon"
+${LangFileString} ARX_CREATE_QUICKLAUNCH_ICON_DESC "Create a shortcut in your Quick Launch bar to run Arx Libertatis."
 
 ${LangFileString} ARX_VERIFY_DATA_STATUS "Verifying Arx Fatalis data..."
 ${LangFileString} ARX_VERIFY_DATA_DIR "Data location:"

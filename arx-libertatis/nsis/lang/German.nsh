@@ -31,18 +31,24 @@ ${LangFileString} ARX_FATALIS_LOCATION_UNPATCHED "1.21 patch fehlt!"
 ${LangFileString} ARX_FATALIS_LOCATION_UNPATCHED_CONTINUE "Es wird dringend empfohlen Arx Fatalis auf Version 1.21 zu patchen vor der Installation von $(^Name)!$\nSie können den Patch hier finden:$\n${ARX_PATCH_URL}$\nMit ungepatchten Arx Fatalis Daten fortfahren?"
 
 ${LangFileString} ARX_PATCH_INSTALL "Bestehende Arx Fatalis Installation patchen"
+${LangFileString} ARX_PATCH_INSTALL_DESC "Spiel mit Arx Libertatis wenn Arx Fatalis gestartet wird. (Empfohlen)"
 
 ${LangFileString} ARX_SEPARATE_INSTALL "Separate Arx Libertatis Installation erstellen"
+${LangFileString} ARX_SEPARATE_INSTALL_DESC "Benutze Arx Libertatis nur wenn es durch die eigene Verknüpfung gestartet wird. (Nicht Empfohlen)"
 
 ${LangFileString} ARX_INSTALL_STATUS "Arx Libertatis wird installiert..."
 
 ${LangFileString} ARX_COPY_DATA "Arx Fatalis Daten kopieren"
+${LangFileString} ARX_COPY_DATA_DESC "Kopiere alle .pak Dateien damit Arx Libertatis weiter funktioniert nachdem Sie Arx Fatalis deinstallieren."
 ${LangFileString} ARX_COPY_DATA_STATUS "Arx Fatalis Daten werden kopiert..."
 ${LangFileString} ARX_COPY_DATA_DIR "Kopierquelle:"
 ${LangFileString} ARX_COPY_DATA_FILE "Kopiere"
 
 ${LangFileString} ARX_CREATE_DESKTOP_ICON "Desktop-Verknüpfung erstellen"
+${LangFileString} ARX_CREATE_DESKTOP_ICON_DESC "Erstelle eine Verknüpfung auf Ihrem Desktop um Arx Libertatis zu starten."
+
 ${LangFileString} ARX_CREATE_QUICKLAUNCH_ICON "Schnellstart-Verknüpfung erstellen"
+${LangFileString} ARX_CREATE_QUICKLAUNCH_ICON_DESC "Erstelle eine Verknüpfung in Ihrer Schnellstart-Leiste um Arx Libertatis zu starten."
 
 ${LangFileString} ARX_VERIFY_DATA_STATUS "Arx Fatalis Daten werden überprüft..."
 ${LangFileString} ARX_VERIFY_DATA_DIR "Daten-Verzeichnis:"

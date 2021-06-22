@@ -107,7 +107,6 @@ VIFileVersion "${Version}"
 !define MUI_ICON "${Icon}"
 !define MUI_UNICON "${Icon}"
 !define MUI_ABORTWARNING
-!define MUI_COMPONENTSPAGE_NODESC 
 
 ;------------------------------------------------------------------------------
 ;Language Selection Dialog Settings
@@ -373,6 +372,14 @@ Section - VerifyData
 	SetDetailsPrint both
 	
 SectionEnd
+
+!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+!insertmacro MUI_DESCRIPTION_TEXT ${PatchInstall} "$(ARX_PATCH_INSTALL_DESC)"
+!insertmacro MUI_DESCRIPTION_TEXT ${SeparateInstall} "$(ARX_SEPARATE_INSTALL_DESC)"
+!insertmacro MUI_DESCRIPTION_TEXT ${CopyData} "$(ARX_COPY_DATA_DESC)"
+!insertmacro MUI_DESCRIPTION_TEXT ${Desktop} "$(ARX_CREATE_DESKTOP_ICON_DESC)"
+!insertmacro MUI_DESCRIPTION_TEXT ${QuickLaunch} "$(ARX_CREATE_QUICKLAUNCH_ICON_DESC)"
+!insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;------------------------------------------------------------------------------
 ;Installer Functions
