@@ -3,6 +3,12 @@
 
 ${LangFileString} SINGLE_INSTANCE "$(^Name) Setup läuft schon!"
 
+${LangFileString} ARX_WINDOWS_XP_SP2 "Arx Libertatis benötigt Windows XP Service Pack 2 or neuer."
+
+${LangFileString} ARX_WINDOWS_UCRT "Arx Libertatis benötigen die Windows Universal C Runtime (UCRT)."
+${LangFileString} ARX_WINDOWS_UCRT_XP "Für Windows XP erhalten Sie diese mit der Visual C++ Redistributable für Visual Studio 2015 or neuer:"
+${LangFileString} ARX_WINDOWS_UCRT_VISTA "Für Windows Vista oder neur hätten Sie diese als ein Windows Update erhalten sollen."
+
 ${LangFileString} ARX_TITLE_SUFFIX "Setup"
 
 ${LangFileString} ARX_DEVELOPMENT_SNAPSHOT "Entwicklungsversion"

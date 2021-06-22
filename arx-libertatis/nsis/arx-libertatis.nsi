@@ -45,6 +45,8 @@ ManifestLongPathAware True
 !define ARX_BUG_URL "https://arx.vg/bug"
 !define ARX_DATA_URL "https://arx.vg/data"
 !define ARX_PATCH_URL "https://arx.vg/ArxFatalis_1.21_MULTILANG.exe"
+!define VCREDIST32_URL "https://aka.ms/vs/16/release/vc_redist.x86.exe"
+!define VCREDIST64_URL "https://aka.ms/vs/16/release/vc_redist.x64.exe"
 
 !addincludedir include
 
@@ -394,8 +396,26 @@ Function .onInit
 	${IfNot} ${AtLeastWinVista}
 		${IfNot} ${IsWinXP}
 		${OrIfNot} ${AtLeastServicePack} 2
-			MessageBox MB_OK|MB_ICONEXCLAMATION "Arx Libertatis requires Windows XP Service Pack 2 or later."
+			MessageBox MB_OK|MB_ICONEXCLAMATION "$(ARX_WINDOWS_XP_SP2)"
 		${EndIf}
+	${EndIf}
+	
+	; Check if the UCRT is available
+	${IfNot} ${AtLeastWin10}
+		Push $0
+		System::Call 'KERNEL32::LoadLibrary(t"api-ms-win-crt-runtime-l1-1-0.dll")p.r0'
+		${If} $0 == 0
+			${If} ${AtLeastWinVista}
+				MessageBox MB_OK|MB_ICONEXCLAMATION "$(ARX_WINDOWS_UCRT)$\n$\n$(ARX_WINDOWS_UCRT_VISTA)"
+			${ElseIf} ${RunningX64}
+				MessageBox MB_OK|MB_ICONEXCLAMATION "$(ARX_WINDOWS_UCRT)$\n$\n$(ARX_WINDOWS_UCRT_XP)$\n${VCREDIST64_URL}"
+			${Else}
+				MessageBox MB_OK|MB_ICONEXCLAMATION "$(ARX_WINDOWS_UCRT)$\n$\n$(ARX_WINDOWS_UCRT_XP)$\n${VCREDIST32_URL}"
+			${EndIf}
+		${Else}
+			System::Call 'KERNEL32::FreeLibrary(pr0)i.n'
+		${EndIf}
+		Pop $0
 	${EndIf}
 	
 	SetRegView 64

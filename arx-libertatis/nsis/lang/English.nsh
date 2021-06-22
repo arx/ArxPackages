@@ -3,6 +3,12 @@
 
 ${LangFileString} SINGLE_INSTANCE "$(^Name) Setup is already running!"
 
+${LangFileString} ARX_WINDOWS_XP_SP2 "Arx Libertatis requires Windows XP Service Pack 2 or later."
+
+${LangFileString} ARX_WINDOWS_UCRT "Arx Libertatis requires the Windows Universal C Runtime (UCRT)."
+${LangFileString} ARX_WINDOWS_UCRT_XP "For Windows XP you can get it by installing the Visual C++ Redistributable for Visual Studio 2015 or later:"
+${LangFileString} ARX_WINDOWS_UCRT_VISTA "For Windows Vista or newer you should have gotten it as a Windows update."
+
 ${LangFileString} ARX_TITLE_SUFFIX "Setup"
 
 ${LangFileString} ARX_DEVELOPMENT_SNAPSHOT "Development Snapshot"
