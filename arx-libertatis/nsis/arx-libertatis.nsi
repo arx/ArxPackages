@@ -318,36 +318,43 @@ Section - VerifyData
 			${Else}
 				StrCpy $1 "$(ARX_VERIFY_DATA_FAILED)"
 			${EndIf}
-			DetailPrint ""
-			DetailPrint "$1"
-			DetailPrint ""
 			
 			${GetArxFatalisLocationInfo} "$ArxFatalisLocation" $2 $3
 			${If} $3 == "steam"
 				StrCpy $1 "$1$\n$\n$(ARX_VERIFY_DAYA_PATCH_STEAM)$\n$(ARX_VERIFY_DATA_REINSTALL)"
-				DetailPrint "$(ARX_VERIFY_DAYA_PATCH_STEAM)"
-				DetailPrint "$(ARX_VERIFY_DATA_REINSTALL)"
 			${ElseIf} $3 == "bethesda"
 				StrCpy $1 "$1$\n$\n$(ARX_VERIFY_DAYA_PATCH_BETHESDA)$\n$(ARX_VERIFY_DATA_REINSTALL)"
-				DetailPrint "$(ARX_VERIFY_DAYA_PATCH_BETHESDA)"
-				DetailPrint "$(ARX_VERIFY_DATA_REINSTALL)"
 			${ElseIf} $3 == "windows"
 				StrCpy $1 "$1$\n$\n$(ARX_VERIFY_DAYA_PATCH_WINDOWS)$\n$(ARX_VERIFY_DATA_REINSTALL)"
-				DetailPrint "$(ARX_VERIFY_DAYA_PATCH_WINDOWS)"
-				DetailPrint "$(ARX_VERIFY_DATA_REINSTALL)"
 			${ElseIf} $0 == "patchable"
 				StrCpy $1 "$1$\n$\n$(ARX_VERIFY_DATA_PATCH)$\n${ARX_PATCH_URL}$\n$(ARX_VERIFY_DATA_REINSTALL)"
-				DetailPrint "$(ARX_VERIFY_DATA_PATCH)"
-				DetailPrint "${ARX_PATCH_URL}"
-				DetailPrint "$(ARX_VERIFY_DATA_REINSTALL)"
 			${EndIf}
 			
+			StrCpy $1 "$1$\n$\n$(ARX_VERIFY_DATA_REPORT)$\n${ARX_BUG_URL}"
+			
+			; DetailPrint does not support newlines so we need to split the message
 			DetailPrint ""
-			DetailPrint "$(ARX_VERIFY_DATA_REPORT)"
-			DetailPrint "${ARX_BUG_URL}"
+			StrCpy $0 0 ; Current slice begin
+			StrCpy $2 0 ; Current slice end
+			${Do}
+				StrCpy $3 "$1" 1 $2
+				${If} $3 == "$\n"
+					IntOp $2 $2 - $0
+					StrCpy $3 "$1" $2 $0
+					DetailPrint "$3"
+					IntOp $2 $2 + $0
+					IntOp $0 $2 + 1
+				${ElseIf} $3 == ""
+					IntOp $2 $2 - $0
+					StrCpy $3 "$1" $2 $0
+					DetailPrint "$3"
+					${Break}
+				${EndIf}
+				IntOp $2 $2 + 1
+			${Loop}
 			DetailPrint "$(ARX_COPY_DETAILS)"
 			
-			MessageBox MB_OK|MB_ICONEXCLAMATION "$1$\n$\n$(ARX_VERIFY_DATA_REPORT)$\n${ARX_BUG_URL}"
+			MessageBox MB_OK|MB_ICONEXCLAMATION "$1"
 			SetAutoClose false
 			SetDetailsView show
 			
