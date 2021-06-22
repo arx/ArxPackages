@@ -20,8 +20,10 @@
 !include "MUI2.nsh"
 !include "LogicLib.nsh"
 !include "x64.nsh"
+
 !include "LoadIcon.nsh"
 !include "PathUtil.nsh"
+
 !include "ArxFatalisData.nsh"
 
 Var ArxFatalisLocationInput

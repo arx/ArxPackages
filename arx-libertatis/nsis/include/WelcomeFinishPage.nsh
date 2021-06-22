@@ -20,6 +20,7 @@
 !include "MUI2.nsh"
 !include "nsDialogs.nsh"
 !include "LogicLib.nsh"
+
 !include "ArxFatalisData.nsh"
 
 !macro WELCOME_PAGE

@@ -32,12 +32,12 @@ ManifestLongPathAware True
 
 !define MULTIUSER_EXECUTIONLEVEL Highest
 !define MULTIUSER_MUI
+!define MULTIUSER_INSTALLMODE_COMMANDLINE
 !define MULTIUSER_INSTALLMODE_DEFAULT_REGISTRY_KEY "Software\ArxLibertatis"
 !define MULTIUSER_INSTALLMODE_DEFAULT_REGISTRY_VALUENAME "InstallLocation"
 !define MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_KEY "Software\ArxLibertatis"
 !define MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_VALUENAME "InstallLocation"
 !define MULTIUSER_INSTALLMODE_INSTDIR "Arx Libertatis"
-
 !define MULTIUSER_USE_PROGRAMFILES64
 
 !define INSTALLERMUTEXNAME "ArxLibertatisSetup"
@@ -68,6 +68,7 @@ ManifestLongPathAware True
 !include "WelcomeFinishPage.nsh"
 !include "ArxFatalisLocationPage.nsh"
 !include "ComponentsPage.nsh"
+!include "InstallModePage.nsh"
 !include "DirectoryPage.nsh"
 !include "InstFilesPage.nsh"
 
@@ -132,9 +133,7 @@ VIFileVersion "${Version}"
 !insertmacro WELCOME_PAGE
 !insertmacro ARX_FATALIS_LOCATION_PAGE
 !insertmacro COMPONENTS_PAGE
-
-!insertmacro MULTIUSER_PAGE_INSTALLMODE
-
+!insertmacro INSTALLMODE_PAGE
 !insertmacro DIRECTORY_PAGE
 
 ;Start Menu Folder Page Configuration
@@ -433,6 +432,7 @@ FunctionEnd
 !insertmacro WELCOME_FINISH_PAGE_FUNCTIONS
 !insertmacro ARX_FATALIS_LOCATION_PAGE_FUNCTIONS
 !insertmacro COMPONENTS_PAGE_FUNCTIONS
+!insertmacro INSTALLMODE_PAGE_FUNCTIONS
 !insertmacro DIRECTORY_PAGE_FUNCTIONS
 !insertmacro INSTFILES_PAGE_FUNCTIONS
 
