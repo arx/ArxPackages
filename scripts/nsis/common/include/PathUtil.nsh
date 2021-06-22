@@ -13,8 +13,8 @@ Function NormalizePath
 	
 	${If} $0 != ""
 		StrCpy $1 $0 1 -1
-		${IfNot} $1 == "\"
-			StrCpy $0 "$0\"
+		${If} $1 == "\"
+			StrCpy $0 "$0" -1
 		${EndIf}
 	${EndIf}
 	
