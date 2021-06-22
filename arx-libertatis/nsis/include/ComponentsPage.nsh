@@ -41,6 +41,7 @@ Var SecQuickLaunch
 	StrCpy $SecPatchInstall ${SF_SELECTED}
 	StrCpy $SecSeparateInstall 0
 	StrCpy $SecCopyData 0
+	StrCpy $SecStartMenu ${SF_SELECTED}
 	StrCpy $SecDesktop ${SF_SELECTED}
 	StrCpy $SecQuickLaunch 0
 	${If} ${AtLeastWin7}
