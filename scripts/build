@@ -45,6 +45,15 @@ for script in "$scriptdir/build.d/"* ; do
 	[ -f "$_scriptname" ] && . "$_scriptname"
 done
 
+# Update file list
+_manfiest="${projectdir}/manifest/files.${pkgtype}"
+if [ $is_test_version = 1 ] &&  -f "${_manfiest}" ] ; then
+	[ -d "${projectdir}/manifest" ] || e mkdir "${projectdir}/manifest"
+	_oldfiles="$(cat "${_manfiest}")"
+	_newfiles="$(cd "${_outdir}" && find . -type d -exec sh -c 'printf "%s/\n" "$0"' {} \; -or -print | sed 's:^./::')"
+	printf "%s\n%s\n" "$_oldfiles" "$_newfiles" | grep '.' | sort -u > "${_manfiest}"
+fi
+
 # Create the binary tarball
 echo "  ${white}:: creating archive${reset}" >&2
 make_archive "${_debug}" "${_debugdir}"
