@@ -130,9 +130,6 @@ Function GetDirectory
 	${Loop}
 	
 	StrCpy $0 "$0" $1
-	${If} $0 != ""
-		StrCpy $0 "$0\"
-	${EndIf}
 	
 	Pop $2
 	Pop $1
