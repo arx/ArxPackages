@@ -261,12 +261,12 @@ FunctionEnd
 	${EndIf}
 !macroend
 
+!define UninstallLogClean '!insertmacro UninstallLogClean'
+
 !macro UninstallLogClean LogFile
 	Push "${LogFile}"
 	Call UninstallLogClean
 !macroend
-
-!define UninstallLogClean '!insertmacro UninstallLogClean'
 
 Function UninstallLogClean
 	
@@ -319,6 +319,44 @@ Function UninstallLogClean
 	Pop $2
 	Pop $1
 	Pop $0
+	
+FunctionEnd
+
+
+!define UninstallLogGetSize '!insertmacro UninstallLogGetSize'
+
+!macro UninstallLogGetSize LogFile SizeResult
+	Push "${LogFile}"
+	Call UninstallLogGetSize
+	Pop ${SizeResult}
+!macroend
+
+Function UninstallLogGetSize
+	
+	Exch $0 ; LogFile
+	Push $1
+	Push $2
+	Push $3
+	
+	${GetFileSize} "$0" $0
+	
+	; Remove old files in reverse order
+	${List.Count} $1 UninstallLog
+	${DoWhile} $1 > 0
+		IntOp $1 $1 - 1
+		${List.Get} $2 UninstallLog $1
+		${Map.Get} $3 UninstallLogInfo "$2"
+		${If} $3 == "keep"
+			${GetFileSize} "$2" $3
+			DetailPrint "'$2' $3"
+			IntOp $0 $0 + $3
+		${EndIf}
+	${Loop}
+	
+	Pop $3
+	Pop $2
+	Pop $1
+	Exch $0 ; SizeResult
 	
 FunctionEnd
 
