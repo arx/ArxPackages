@@ -223,7 +223,7 @@ Section - Main
 	WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "DisplayVersion" "<?= $version ?>"
 	WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "NoModify" 1
 	WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "NoRepair" 1
-	${ProgressBarFile} "$INSTDIR\uninstall.exe"
+	${ProgressBarUpdate} 0
 	
 	; Backup old arx.exe
 	Push $0
@@ -344,6 +344,11 @@ Section - Cleanup
 	SetDetailsPrint listonly
 	
 	${UninstallLogClean} "$INSTDIR\${UninstallLog}"
+	
+	Push $0
+	${UninstallLogGetSize} "$INSTDIR\${UninstallLog}" $0
+	WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "EstimatedSize" $0
+	Pop $0
 	
 	${ProgressBarEndSection}
 	
