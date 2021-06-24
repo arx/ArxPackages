@@ -213,6 +213,8 @@ Section - Main
 	; First, store whatever we need to clean things up on error
 	${WriteUninstaller} "$INSTDIR\uninstall.exe"
 	WriteRegStr SHCTX "Software\ArxLibertatis" "InstallLocation" "$INSTDIR"
+	Call StoreInstallTypeInRegistry
+	WriteRegStr SHCTX "Software\ArxLibertatis" "DataDir" "$ArxFatalisLocation"
 	WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "DisplayName" "Arx Libertatis"
 	WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "DisplayIcon" "$\"$INSTDIR\arx.exe$\""
 	WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "UninstallString" "${UNINSTALL_CMDLINE}"
@@ -291,7 +293,9 @@ Section /o "$(ARX_COPY_DATA)" CopyData
 		SetDetailsPrint listonly
 		
 		${CopyArxFatalisData} "$ArxFatalisLocation" "$INSTDIR"
+		
 		StrCpy $ArxFatalisLocation "$INSTDIR"
+		WriteRegStr SHCTX "Software\ArxLibertatis" "DataDir" "$ArxFatalisLocation"
 		
 		${ProgressBarEndSection}
 		
@@ -418,8 +422,6 @@ Section - VerifyData
 			SetAutoClose false
 			SetDetailsView show
 			
-			StrCpy $ArxFatalisLocation ""
-			
 		${EndIf}
 		
 		DetailPrint ""
@@ -432,8 +434,6 @@ Section - VerifyData
 		Pop $0
 		
 	${EndIf}
-	
-	WriteRegStr SHCTX "Software\ArxLibertatis" "DataDir" "$ArxFatalisLocation"
 	
 	SetDetailsPrint both
 	
@@ -503,6 +503,18 @@ FunctionEnd
 !insertmacro DIRECTORY_PAGE_FUNCTIONS
 !insertmacro STARTMENU_PAGE_FUNCTIONS
 !insertmacro INSTFILES_PAGE_FUNCTIONS
+
+Function StoreInstallTypeInRegistry
+	
+	${If} ${SectionIsSelected} ${PatchInstall}
+		WriteRegStr SHCTX "Software\ArxLibertatis" "InstallType" "patch"
+	${ElseIf} ${SectionIsSelected} ${SeparateInstall}
+		WriteRegStr SHCTX "Software\ArxLibertatis" "InstallType" "separate"
+	${Else}
+		DeleteRegValue SHCTX "Software\ArxLibertatis" "InstallType"
+	${EndIf}
+	
+FunctionEnd
 
 Function .onGUIEnd
 	
