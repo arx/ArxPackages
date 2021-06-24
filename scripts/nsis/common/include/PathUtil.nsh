@@ -8,8 +8,38 @@ Function NormalizePath
 	
 	Exch $0 ; Path
 	Push $1
+	Push $2
+	Push $3
 	
-	GetFullPathName $0 "$0"
+	StrCpy $1 ""
+	StrLen $2 "$0"
+	${DoWhile} $2 > 0
+		
+		GetFullPathName $3 "$0"
+		${If} $3 != ""
+			${Break}
+		${EndIf}
+		
+		${Do}
+			IntOp $2 $2 - 1
+			StrCpy $3 "$0" 1 $2
+			${If} $3 == "\"
+			${OrIf} $2 == 0
+				StrCpy $1 "$0$1" ${NSIS_MAX_STRLEN} $2
+				StrCpy $0 "$0" $2
+				${Break}
+			${ElseIf} $3 == "/"
+				IntOp $3 $2 + 1
+				StrCpy $1 "$0$1" ${NSIS_MAX_STRLEN} $3
+				StrCpy $1 "\$1"
+				StrCpy $0 "$0" $2
+				${Break}
+			${EndIf}
+		${Loop}
+		
+	${Loop}
+	
+	StrCpy $0 "$3$1"
 	
 	${If} $0 != ""
 		StrCpy $1 $0 1 -1
@@ -18,6 +48,8 @@ Function NormalizePath
 		${EndIf}
 	${EndIf}
 	
+	Pop $3
+	Pop $2
 	Pop $1
 	Exch $0
 	
