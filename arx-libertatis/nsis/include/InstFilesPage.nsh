@@ -35,16 +35,24 @@ Function PageInstFilesOnShow
 	
 	${ProgressBarReplace} $mui.InstFilesPage.ProgressBar
 	
+	; Main
 	SectionGetSize ${Main} $0
 	${ProgressBarAddToTotal} "$0" ${MAIN_SECTION_COUNT}
 	
+	; CopyData
 	SectionGetSize ${CopyData} $0
 	${If} ${SectionIsSelected} ${CopyData}
-	${AndIf} $ArxFatalisLocation != $INSTDIR
-		${ProgressBarAddToTotal} "$0" $ArxFatalisFileCount
+		${If} $ArxFatalisLocation == $INSTDIR
+			${ProgressBarAddToTotal} 0 0
+		${Else}
+			${ProgressBarAddToTotal} "$0" $ArxFatalisFileCount
+		${EndIf}
 	${EndIf}
 	
-	; VerifyData checks as much bytes as CopyData copies
+	; Cleanup
+	${ProgressBarAddToTotal} 0 0
+	
+	; VerifyData - checks as much bytes as CopyData copies
 	${If} $ArxFatalisLocation != ""
 		${ProgressBarAddToTotal} "$0" $ArxFatalisFileCount
 	${EndIf}

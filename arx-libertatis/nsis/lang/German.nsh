@@ -44,6 +44,8 @@ ${LangFileString} ARX_SEPARATE_INSTALL_DESC "Benutze Arx Libertatis nur wenn es 
 
 ${LangFileString} ARX_INSTALL_STATUS "Arx Libertatis wird installiert..."
 
+${LangFileString} ARX_KEEP_DATA_STATUS "Kopierte Arx Fatalis Daten werden gesichert..."
+
 ${LangFileString} ARX_COPY_DATA "Arx Fatalis Daten kopieren"
 ${LangFileString} ARX_COPY_DATA_DESC "Kopiere alle .pak Dateien damit Arx Libertatis weiter funktioniert nachdem Sie Arx Fatalis deinstallieren."
 ${LangFileString} ARX_COPY_DATA_STATUS "Arx Fatalis Daten werden kopiert..."
@@ -55,6 +57,8 @@ ${LangFileString} ARX_CREATE_DESKTOP_ICON_DESC "Erstelle eine Verknüpfung auf I
 
 ${LangFileString} ARX_CREATE_QUICKLAUNCH_ICON "Schnellstart-Verknüpfung erstellen"
 ${LangFileString} ARX_CREATE_QUICKLAUNCH_ICON_DESC "Erstelle eine Verknüpfung in Ihrer Schnellstart-Leiste um Arx Libertatis zu starten."
+
+${LangFileString} ARX_CLEANUP_STATUS "Alte Dateien werden gelöscht..."
 
 ${LangFileString} ARX_VERIFY_DATA_STATUS "Arx Fatalis Daten werden überprüft..."
 ${LangFileString} ARX_VERIFY_DATA_DIR "Daten-Verzeichnis:"

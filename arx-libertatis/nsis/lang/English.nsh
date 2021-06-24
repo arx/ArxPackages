@@ -44,6 +44,8 @@ ${LangFileString} ARX_SEPARATE_INSTALL_DESC "Only use Arx Libertatis when launch
 
 ${LangFileString} ARX_INSTALL_STATUS "Installing Arx Libertatis..."
 
+${LangFileString} ARX_KEEP_DATA_STATUS "Saving copied Arx Fatalis data..."
+
 ${LangFileString} ARX_COPY_DATA "Copy Arx Fatalis data"
 ${LangFileString} ARX_COPY_DATA_DESC "Copy all .pak files so that Arx Libertatis will continue to work after you uninstall Arx Fatalis."
 ${LangFileString} ARX_COPY_DATA_STATUS "Copying Arx Fatalis data..."
@@ -55,6 +57,8 @@ ${LangFileString} ARX_CREATE_DESKTOP_ICON_DESC "Create a shortcut on your deskto
 
 ${LangFileString} ARX_CREATE_QUICKLAUNCH_ICON "Create a Quick Launch icon"
 ${LangFileString} ARX_CREATE_QUICKLAUNCH_ICON_DESC "Create a shortcut in your Quick Launch bar to run Arx Libertatis."
+
+${LangFileString} ARX_CLEANUP_STATUS "Removing old files..."
 
 ${LangFileString} ARX_VERIFY_DATA_STATUS "Verifying Arx Fatalis data..."
 ${LangFileString} ARX_VERIFY_DATA_DIR "Data location:"

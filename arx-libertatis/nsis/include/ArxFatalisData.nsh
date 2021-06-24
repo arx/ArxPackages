@@ -701,6 +701,51 @@ FunctionEnd
 ; Calculate the size of all Arx Fatalis data in Path and store the result in Result
 !define GetArxFatalisDataSize '!insertmacro GetArxFatalisDataSize'
 
+Function ArxFatalisDataProcess
+	
+	Exch $0 ; Path
+	Exch
+	Exch $1 ; Mode
+	Push $2
+	Push $3
+	Push $4
+	
+	${List.Count} $2 ArxFatalisFiles
+	${DoWhile} $2 > 0
+		IntOp $2 $2 - 1
+		${List.Get} $3 ArxFatalisFiles $2
+		${GetPakFileDefault} "$3" $4
+		${DoWhile} $3 != ""
+			${UninstallLogMark} "$1" "$0\$3"
+			${GetDirectory} "$3" $3
+		${Loop}
+		${If} $4 != ""
+			${UninstallLogMark} "$1" "$0\$4"
+		${EndIf}
+	${Loop}
+	
+	Pop $4
+	Pop $3
+	Pop $2
+	Pop $1
+	Pop $0
+	
+FunctionEnd
+
+!macro ArxFatalisDataProcess Mode Path
+	Push "${Mode}"
+	Push "${Path}"
+	Call ArxFatalisDataProcess
+!macroend
+
+; ${OrphanArxFatalisData} Path
+; Mark Arx Fatalis data as not owned by this installer
+!define OrphanArxFatalisData '!insertmacro ArxFatalisDataProcess "orphan"'
+
+; ${KeepArxFatalisData} Path
+; Mark Arx Fatalis data as owned by this installer and not to be cleaned
+!define KeepArxFatalisData '!insertmacro ArxFatalisDataProcess "keep"'
+
 Function CopyArxFatalisData
 	
 	Exch $0 ; Source

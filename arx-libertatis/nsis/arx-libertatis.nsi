@@ -180,6 +180,19 @@ Section - Main
 	SetOutPath "$INSTDIR"
 	
 	${UninstallLogRead} "$INSTDIR\${UninstallLog}"
+	
+	; Mark old files that used to be part of Arx Libertatis for removal
+<?
+	$removed = explode("\n", file_get_contents($outdir . "/files.removed"));
+	foreach($removed as $file):
+		if($file != ''):
+	?>
+	${UninstallLogAddOld} "$INSTDIR\<?= str_replace('/', '\\', rtrim($file, '/')) ?>"
+<?
+		endif;
+	endforeach;
+	?>
+	
 	${UninstallLogOpen} "$INSTDIR\${UninstallLog}"
 	
 	<?
@@ -242,7 +255,20 @@ SectionGroup "$(ARX_SEPARATE_INSTALL)" SeparateInstall
 
 Section /o "$(ARX_COPY_DATA)" CopyData
 	
-	${If} $ArxFatalisLocation != $INSTDIR
+	${If} $ArxFatalisLocation == $INSTDIR
+		
+		${ProgressBarBeginSection} 0 0
+		
+		DetailPrint ""
+		SetDetailsPrint both
+		DetailPrint "$(ARX_KEEP_DATA_STATUS)"
+		SetDetailsPrint listonly
+		
+		${KeepArxFatalisData} "$INSTDIR"
+		
+		${ProgressBarEndSection}
+		
+	${Else}
 		
 		Push $0
 		SectionGetSize ${CopyData} $0
@@ -280,6 +306,21 @@ Section "$(ARX_CREATE_QUICKLAUNCH_ICON)" QuickLaunch
 SectionEnd
 
 SectionGroupEnd
+
+Section - Cleanup
+	
+	${ProgressBarBeginSection} 0 0
+	
+	DetailPrint ""
+	SetDetailsPrint both
+	DetailPrint "$(ARX_CLEANUP_STATUS)"
+	SetDetailsPrint listonly
+	
+	${UninstallLogClean} "$INSTDIR\${UninstallLog}"
+	
+	${ProgressBarEndSection}
+	
+SectionEnd
 
 Section - VerifyData
 	SectionIn RO
@@ -452,9 +493,6 @@ FunctionEnd
 Section "Uninstall"
 	
 	${UninstallLogRemoveAll} "$INSTDIR\${UninstallLog}"
-	
-	; Was missing from uninstall.log for Arx Libertatis 1.1.2
-	Delete "$INSTDIR\OpenAL32.dll"
 	
 	RMDir "$INSTDIR"
 	
