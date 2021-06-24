@@ -223,6 +223,16 @@ Section - Main
 	WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "NoRepair" 1
 	${ProgressBarFile} "$INSTDIR\uninstall.exe"
 	
+	; Backup old arx.exe
+	Push $0
+	${Map.Get} $0 UninstallLogInfo "$INSTDIR\arx.exe"
+	${If} $0 != "old"
+	${AndIf} ${FileExists} "$INSTDIR\arx.exe"
+	${AndIfNot} ${FileExists} "$INSTDIR\arx.exe.bak"
+		Rename "$INSTDIR\arx.exe" "$INSTDIR\arx.exe.bak"
+	${EndIf}
+	Pop $0
+	
 	; Extract Arx Libertatis binaries
 <?
 	foreach($files as $file):
