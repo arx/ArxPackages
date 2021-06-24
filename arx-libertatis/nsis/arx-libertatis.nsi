@@ -174,15 +174,14 @@ Section - Main
 	
 	<?
 	$count = 0;
-	$dir_iterator = new RecursiveDirectoryIterator("$outdir/build");
-	$iterator = new RecursiveIteratorIterator($dir_iterator, RecursiveIteratorIterator::SELF_FIRST);
-	foreach($iterator as $file):
-		if($file->getType() != 'dir'):
+	$files = explode("\n", file_get_contents($outdir . "/files"));
+	foreach($files as $file) {
+		if($file != '' && substr($file, -1) != '/') {
 			$count++;
-		endif;
-	endforeach;
+		}
+	}
 	?>
-	!define MAIN_SECTION_COUNT <?= $count ?> 
+	!define MAIN_SECTION_COUNT "<?= $count ?>"
 	Push $0
 	SectionGetSize ${Main} $0
 	${ProgressBarBeginSection} "$0" ${MAIN_SECTION_COUNT}
@@ -211,23 +210,19 @@ Section - Main
 	${ProgressBarFile} "$INSTDIR\uninstall.exe"
 	
 	; Extract Arx Libertatis binaries
-	<?
-	$dir_iterator = new RecursiveDirectoryIterator("$outdir/build");
-	$iterator = new RecursiveIteratorIterator($dir_iterator, RecursiveIteratorIterator::SELF_FIRST);
-	foreach($iterator as $file):
-		if(str_ends_with($file->getPathname(), '/.') || str_ends_with($file->getPathname(), '/..')) {
+<?
+	foreach($files as $file):
+		if($file == '') {
 			continue;
 		}
-		$filename = str_replace('/', '\\', str_replace("$outdir/build/", '', $file->getPathname()));
-		if($file->getType() == 'dir'):
+		$filename = str_replace('/', '\\', rtrim($file, '/'));
+		if(substr($file, -1) == '/'):
 	?>
 	${CreateDirectory} "$OUTDIR\<?= $filename ?>"
-	<?
-		else:
-	?>
+<? else: ?>
 	${File} "build" "<?= $filename ?>"
-	${ProgressBarUpdate} <?= ceil(filesize( $file->getPathname() ) / 1024) ?> 
-	<?
+	${ProgressBarUpdate} "<?= ceil(filesize( $outdir . "/build/" . $file ) / 1024) ?>"
+<?
 		endif;
 	endforeach;
 	?>

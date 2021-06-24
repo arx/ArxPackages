@@ -12,6 +12,13 @@ get_output _build _builddir "$version" 'windows'
 e extract "$_build"
 mv "$_builddir" "build"
 
+_filelist="${PWD}/files"
+pushd "build"
+	find . -type d -exec sh -c 'printf "%s/\n" "$0"' {} \; -or -print | sed 's:^./::' | grep '.' | sort -u > "${_filelist}"
+popd
+_manfiest="${projectdir}/manifest/files.windows"
+[ -f "${_manfiest}" ] && diff --ignore-case --new-line-format="" --unchanged-line-format="" "${_manfiest}" "${_filelist}" > "files.removed" || true
+
 _config="${PWD}/config.php"
 echo "<? \$version = '$version';" > "$_config"
 echo "\$is_snapshot = '$is_snapshot';" >> "$_config"
