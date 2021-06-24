@@ -75,3 +75,5 @@ ${LangFileString} ARX_VERIFY_DATA_PATCH "Bitte den 1.21 patch installieren: $(AR
 ${LangFileString} ARX_VERIFY_DATA_REINSTALL "Danach Starte  $(^Name) Setup erneut!"
 ${LangFileString} ARX_VERIFY_DATA_REPORT "Wenn Sie denken dass deine Arx Fatalis gültig sind, dann bitte einen Fehlerbericht mit allen Ausgaben melden:"
 ${LangFileString} ARX_COPY_DETAILS "Hier kann nach einem Richsclick '$(^CopyDetails)' ausgewählt werden."
+
+${LangFileString} UNINSTALL_LOG "${UninstallLog} konnte nicht geöffnet werden!"

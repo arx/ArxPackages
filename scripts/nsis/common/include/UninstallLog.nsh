@@ -1,155 +1,370 @@
 ;; From http://nsis.sourceforge.net/Uninstall_only_installed_files
 
+!ifndef UNINSTALL_LOG_INCLUDED
+!define UNINSTALL_LOG_INCLUDED
+
+!include "LogicLib.nsh"
+!include "NSISList.nsh"
+
+!include "PathUtil.nsh"
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Global options
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Set the name of the uninstall log
-	!define UninstLog "uninstall.log"
-	Var UninstLog
+!define UninstallLog "uninstall.log"
+Var UninstallLog
 
-;Uninstall log file missing.
-	LangString UninstLogMissing ${LANG_ENGLISH} "${UninstLog} not found!$\r$\nUninstallation cannot proceed!"
+!define UninstallLogInit 'Call UninstallLogInit'
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Wrapper macros to log each file operation
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;AddItem macro
-	!macro AddItem Path
-		FileWrite $UninstLog "${Path}$\r$\n"
-	!macroend
-
-;File macro
-	!macro File FilePath FileName
-		IfFileExists "$OUTDIR\${FileName}" +2
-		FileWrite $UninstLog "$OUTDIR\${FileName}$\r$\n"
-		File "/oname=${FileName}" "${FilePath}\${FileName}"
-	!macroend
-
-;CreateShortcut macro
-	!macro CreateShortcut FilePath FilePointer
-		FileWrite $UninstLog "${FilePath}$\r$\n"
-		CreateShortcut "${FilePath}" "${FilePointer}"
-	!macroend
-
-;Copy files macro
-	!macro CopyFiles SourcePath DestPath DestUninstall
-		IfFileExists "${DestPath}" +2
-		FileWrite $UninstLog "${DestUninstall}$\r$\n"
-		CopyFiles /SILENT "${SourcePath}" "${DestPath}"
-	!macroend
-
-;Rename macro
-	!macro Rename SourcePath DestPath
-		IfFileExists "${DestPath}" +2
-		FileWrite $UninstLog "${DestPath}$\r$\n"
-		Rename "${SourcePath}" "${DestPath}"
-	!macroend
-
-;CreateDirectory macro
-	!macro CreateDirectory Path
-		CreateDirectory "${Path}"
-		FileWrite $UninstLog "${Path}$\r$\n"
-	!macroend
-
-;SetOutPath macro
-	!macro SetOutPath Path
-		SetOutPath "${Path}"
-		FileWrite $UninstLog "${Path}$\r$\n"
-	!macroend
-
-;WriteUninstaller macro
-	!macro WriteUninstaller Path
-		WriteUninstaller "${Path}"
-		FileWrite $UninstLog "${Path}$\r$\n"
-	!macroend
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Call this from the uninstall section
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-Function un.AutoUninstallFromLogFile
-	;Can't uninstall if uninstall log is missing!
-	IfFileExists "$INSTDIR\${UninstLog}" +3
-		MessageBox MB_OK|MB_ICONSTOP "$(UninstLogMissing)"
-		Abort
-
-	Push $R0
-	Push $R1
-	Push $R2
-	SetFileAttributes "$INSTDIR\${UninstLog}" NORMAL
-	FileOpen $UninstLog "$INSTDIR\${UninstLog}" r
-	StrCpy $R1 -1
-
-	GetLineCount:
-	ClearErrors
-	FileRead $UninstLog $R0
-	IntOp $R1 $R1 + 1
-	StrCpy $R0 $R0 -2
-	Push $R0
-	IfErrors 0 GetLineCount
-
-	Pop $R0
-
-	LoopRead:
-	StrCmp $R1 0 LoopDone
-	Pop $R0
-
-	IfFileExists "$R0\*.*" 0 +3
-		RMDir $R0  #is dir
-		Goto +3
-	IfFileExists $R0 0 +3
-		Delete $R0 #is file
-
-	IntOp $R1 $R1 - 1
-		Goto LoopRead
-LoopDone:
-	FileClose $UninstLog
-	Delete "$INSTDIR\${UninstLog}"
-	RMDir "$INSTDIR"
-	Pop $R2
-	Pop $R1
-	Pop $R0
+Function UninstallLogInit
+	
+	${List.Create} UninstallLog
+	${Map.Create} UninstallLogInfo
+	
 FunctionEnd
 
+; Add an old item that should be removed if not re-installed
+!define UninstallLogAddOld '!insertmacro UninstallLogAddOld'
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Defines for easier use of macros
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+!macro UninstallLogAddOld Item
+	Push "${Item}"
+	Call UninstallLogAddOld
+!macroend
 
-	;AddItem macro
-	!define AddItem "!insertmacro AddItem"
+Function UninstallLogAddOld
+	
+	Exch $0 ; Item
+	Push $1
+	
+	${If} ${FileExists} "$0"
+		${NormalizePath} "$0" "$0"
+		${Map.Get} $1 UninstallLogInfo "$0"
+		${If} $1 == __NULL
+			${List.Add} UninstallLog "$0"
+			${Map.Set} UninstallLogInfo "$0" "old"
+		${EndIf}
+	${EndIf}
+	
+	Pop $1
+	Pop $0
+	
+FunctionEnd
 
-	;File macro
-	!define File "!insertmacro File"
+; Add an old item that should be removed if not re-installed
+!define UninstallLogRead '!insertmacro UninstallLogRead'
 
-	;CreateShortcut macro
-	!define CreateShortcut "!insertmacro CreateShortcut"
+!macro UninstallLogRead LogFile
+	Push "${LogFile}"
+	Call UninstallLogRead
+!macroend
 
-	;Copy files macro
-	!define CopyFiles "!insertmacro CopyFiles"
+Function UninstallLogRead
+	
+	Exch $0 ; LogFile
+	Push $1
+	
+	${If} ${FileExists} "$0"
+		
+		${UninstallLogAddOld} "$0"
+		
+		ClearErrors
+		SetFileAttributes "$0" NORMAL
+		FileOpen $0 "$0" r
+		
+		${Do}
+			FileRead $0 $1
+			${If} ${Errors}
+				${Break}
+			${EndIf}
+			StrCpy $1 $1 -2
+			${If} $1 != ""
+				${UninstallLogAddOld} "$1"
+			${EndIf}
+		${Loop}
+		
+		FileClose $0
+		
+	${EndIf}
+	
+	Pop $1
+	Pop $0
+	
+FunctionEnd
 
-	;Rename macro
-	!define Rename "!insertmacro Rename"
+; Mark an item as old / orphan / keep
+!define UninstallLogMark '!insertmacro UninstallLogMark'
 
-	;CreateDirectory macro
-	!define CreateDirectory "!insertmacro CreateDirectory"
+Function UninstallLogMark
+	
+	Exch $0 ; Item
+	Exch
+	Exch $1 ; Mode
+	
+	${NormalizePath} "$0" "$0"
+	${Map.Set} UninstallLogInfo "$0" "$1"
+	
+	Pop $1
+	Pop $0
+	
+FunctionEnd
 
-	;SetOutPath macro
-	!define SetOutPath "!insertmacro SetOutPath"
+!macro UninstallLogMark Mode Item
+	Push "${Mode}"
+	Push "${Item}"
+	Call UninstallLogMark
+!macroend
 
-	;WriteUninstaller macro
-	!define WriteUninstaller "!insertmacro WriteUninstaller"
+; Mark an item as not part of the install so that it will be removed be neither cleanup nor uninstall
+!define UninstallLogOrphan '${UninstallLogMark} "orphan"'
 
-Section -openlogfile
-	CreateDirectory "$INSTDIR"
-	IfFileExists "$INSTDIR\${UninstLog}" +3
-		FileOpen $UninstLog "$INSTDIR\${UninstLog}" w
-	Goto +4
-	SetFileAttributes "$INSTDIR\${UninstLog}" NORMAL
-	FileOpen $UninstLog "$INSTDIR\${UninstLog}" a
-	FileSeek $UninstLog 0 END
-SectionEnd
+; Keep an item that should not be removed by cleanup
+!define UninstallLogKeep '${UninstallLogMark} "keep"'
+
+!define UninstallLogOpen '!insertmacro UninstallLogOpen'
+
+!macro UninstallLogOpen LogFile
+	Push "${LogFile}"
+	Call UninstallLogOpen
+!macroend
+
+Function UninstallLogOpen
+	
+	Exch $0 ; LogFile
+	
+	SetFileAttributes "$0" NORMAL
+	ClearErrors
+	FileOpen $UninstallLog "$0" a
+	FileSeek $UninstallLog 0 END
+	${If} ${Errors}
+		MessageBox MB_OK|MB_ICONSTOP "$(UNINSTALL_LOG)"
+		Abort
+	${EndIf}
+	
+	Pop $0
+	
+FunctionEnd
+
+; Add a new item that should be recorded in the uninstall log but not removed by cleanup
+!define UninstallLogAdd '!insertmacro UninstallLogAdd'
+
+!macro UninstallLogAdd Item
+	Push "${Item}"
+	Call UninstallLogAdd
+!macroend
+
+Function UninstallLogAdd
+	
+	Exch $0 ; Item
+	Push $1
+	
+	${NormalizePath} "$0" $0
+	${Map.Get} $1 UninstallLogInfo "$0"
+	${If} $1 == __NULL
+		${List.Add} UninstallLog "$0"
+		FileWrite $UninstallLog "$0$\r$\n"
+	${EndIf}
+	${Map.Set} UninstallLogInfo "$0" "keep"
+	
+	Pop $1
+	Pop $0
+	
+FunctionEnd
+
+!define File "!insertmacro File"
+
+!macro File FilePath FileName
+	${UninstallLogAdd} "$OUTDIR\${FileName}"
+	File "/oname=${FileName}" "${FilePath}\${FileName}"
+!macroend
+
+!define CreateShortcut "!insertmacro CreateShortcut"
+
+!macro CreateShortcut FilePath FilePointer
+	${UninstallLogAdd} "${FilePath}"
+	CreateShortcut "${FilePath}" "${FilePointer}"
+!macroend
+
+!define CopyFiles "!insertmacro CopyFiles"
+
+!macro CopyFiles SourcePath DestPath DestUninstall
+	${UninstallLogAdd} "${DestUninstall}"
+	CopyFiles /SILENT "${SourcePath}" "${DestPath}"
+!macroend
+
+!define Rename "!insertmacro Rename"
+
+!macro Rename SourcePath DestPath
+	${UninstallLogAdd} "${DestPath}"
+	Rename "${SourcePath}" "${DestPath}"
+!macroend
+
+!define CreateDirectory "!insertmacro CreateDirectory"
+
+!macro CreateDirectory Path
+	${UninstallLogAdd} "${Path}"
+	CreateDirectory "${Path}"
+!macroend
+
+!define CreateDirectoryRecursive "!insertmacro CreateDirectoryRecursive"
+
+!macro CreateDirectoryRecursive Parent Directory
+	Push "${Parent}"
+	Exch $0
+	Push "${Directory}"
+	Call CreateDirectoryRecursive
+	Pop $0
+!macroend
+
+Function CreateDirectoryRecursive
+	
+	Exch $1 ; Directory
+	Push $2
+	
+	${Map.Get} $2 UninstallLogInfo "$1"
+	${If} $1 != ""
+	${AndIf} $2 != "keep"
+		${GetDirectory} "$1" $2
+		Push "$2"
+		Call CreateDirectoryRecursive
+		${CreateDirectory} "$0$1"
+	${EndIf}
+	
+	Pop $2
+	Pop $1
+	
+FunctionEnd
+
+!define SetOutPath "!insertmacro SetOutPath"
+
+!macro SetOutPath Path
+	${UninstallLogAdd} "${Path}"
+	SetOutPath "${Path}"
+!macroend
+
+!define WriteUninstaller "!insertmacro WriteUninstaller"
+
+!macro WriteUninstaller Path
+	${UninstallLogAdd} "${Path}"
+	WriteUninstaller "${Path}"
+!macroend
+
+!macro UninstallLogRemove Item
+	${If} ${FileExists} "${Item}\*.*"
+		RMDir "${Item}"
+	${ElseIf} ${FileExists} "${Item}"
+		Delete "${Item}"
+	${EndIf}
+	${If} ${FileExists} "${Item}.bak"
+		Rename "${Item}.bak" "${Item}"
+	${EndIf}
+!macroend
+
+!macro UninstallLogClean LogFile
+	Push "${LogFile}"
+	Call UninstallLogClean
+!macroend
+
+!define UninstallLogClean '!insertmacro UninstallLogClean'
+
+Function UninstallLogClean
+	
+	Exch $0 ; LogFile
+	Push $1
+	Push $2
+	Push $3
+	Push $4
+	Push $5
+	
+	FileClose $UninstallLog
+	
+	${List.Sort} UninstallLog
+	
+	; Remove old files in reverse order
+	${List.Count} $1 UninstallLog
+	${DoWhile} $1 > 0
+		IntOp $1 $1 - 1
+		${List.Get} $2 UninstallLog $1
+		${If} $2 != $0
+			${Map.Get} $3 UninstallLogInfo "$2"
+			${If} $3 == "old"
+				!insertmacro UninstallLogRemove "$2"
+			${EndIf}
+		${EndIf}
+	${Loop}
+	
+	; Write new uninstall log with only files that are not old or orphaned
+	ClearErrors
+	FileOpen $1 "$0" w
+	${List.Count} $2 UninstallLog
+	StrCpy $3 0
+	${DoWhile} $3 < $2
+		${List.Get} $4 UninstallLog $3
+		${Map.Get} $5 UninstallLogInfo "$4"
+		${If} $5 == "keep"
+			FileWrite $1 "$4$\r$\n"
+		${EndIf}
+		IntOp $3 $3 + 1
+	${Loop}
+	FileClose $1
+	${If} ${Errors}
+		MessageBox MB_OK|MB_ICONSTOP "$(UNINSTALL_LOG)"
+	${EndIf}
+	SetFileAttributes "$0" READONLY
+	
+	Pop $5
+	Pop $4
+	Pop $3
+	Pop $2
+	Pop $1
+	Pop $0
+	
+FunctionEnd
+
+!define UninstallLogRemoveAll '!insertmacro UninstallLogRemoveAll'
+
+!macro UninstallLogRemoveAll LogFile
+	Push "${LogFile}"
+	Call un.UninstallLogRemoveAll
+!macroend
+
+Function un.UninstallLogRemoveAll
+	
+	Exch $0 ; LogFile
+	Push $1
+	Push $2
+	Push $3
+	
+	; Read log file and push all entries on the stack
+	SetFileAttributes "$0" NORMAL
+	ClearErrors
+	FileOpen $1 "$0" r
+	${If} ${Errors}
+		MessageBox MB_OK|MB_ICONSTOP "$(UNINSTALL_LOG)"
+	${EndIf}
+	StrCpy $2 0
+	ClearErrors
+	${Do}
+		FileRead $1 $3
+		${If} ${Errors}
+			${Break}
+		${EndIf}
+		StrCpy $3 "$3" -2
+		Push $3
+		IntOp $2 $2 + 1
+	${Loop}
+	FileClose $1
+	
+	; Remove files in reverse order
+	${DoWhile} $2 > 0
+		IntOp $2 $2 - 1
+		Pop $1
+		!insertmacro UninstallLogRemove "$1"
+	${Loop}
+	
+	Delete "$0"
+	
+FunctionEnd
+
+!endif ; UNINSTALL_LOG_INCLUDED

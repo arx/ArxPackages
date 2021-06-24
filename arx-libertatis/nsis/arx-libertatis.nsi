@@ -172,6 +172,16 @@ VIFileVersion "${Version}"
 Section - Main
 	SectionIn RO
 	
+	SetDetailsPrint both
+	DetailPrint "$(ARX_INSTALL_STATUS)"
+	SetDetailsPrint listonly
+	
+	; Set output path to the installation directory.
+	SetOutPath "$INSTDIR"
+	
+	${UninstallLogRead} "$INSTDIR\${UninstallLog}"
+	${UninstallLogOpen} "$INSTDIR\${UninstallLog}"
+	
 	<?
 	$count = 0;
 	$files = explode("\n", file_get_contents($outdir . "/files"));
@@ -186,15 +196,6 @@ Section - Main
 	SectionGetSize ${Main} $0
 	${ProgressBarBeginSection} "$0" ${MAIN_SECTION_COUNT}
 	Pop $0
-	
-	SetDetailsPrint listonly
-	
-	SetDetailsPrint both
-	DetailPrint "$(ARX_INSTALL_STATUS)"
-	SetDetailsPrint listonly
-	
-	; Set output path to the installation directory.
-	SetOutPath "$INSTDIR"
 	
 	; First, store whatever we need to clean things up on error
 	${WriteUninstaller} "$INSTDIR\uninstall.exe"
@@ -427,6 +428,8 @@ Function .onInit
 	!insertmacro ARX_FATALIS_LOCATION_PAGE_INIT
 	!insertmacro COMPONENTS_PAGE_INIT
 	
+	${UninstallLogInit}
+	
 FunctionEnd
 
 !insertmacro WELCOME_FINISH_PAGE_FUNCTIONS
@@ -448,14 +451,12 @@ FunctionEnd
 
 Section "Uninstall"
 	
-	; This will handle all files to uninstall
-	; Registry keys to remove are handled manually below
-	Call un.AutoUninstallFromLogFile
+	${UninstallLogRemoveAll} "$INSTDIR\${UninstallLog}"
 	
 	; Was missing from uninstall.log for Arx Libertatis 1.1.2
 	Delete "$INSTDIR\OpenAL32.dll"
 	
-	;RMDir "$INSTDIR"
+	RMDir "$INSTDIR"
 	
 	;!insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
 	
