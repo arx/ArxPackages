@@ -20,6 +20,8 @@
 !include "LogicLib.nsh"
 !include "MUI2.nsh"
 
+Var StartMenuFolder
+
 !macro STARTMENU_PAGE
 !define MUI_STARTMENUPAGE_REGISTRY_ROOT "SHCTX"
 !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\ArxLibertatis"

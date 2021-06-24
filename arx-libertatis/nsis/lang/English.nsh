@@ -52,6 +52,8 @@ ${LangFileString} ARX_COPY_DATA_STATUS "Copying Arx Fatalis data..."
 ${LangFileString} ARX_COPY_DATA_DIR "Source location:"
 ${LangFileString} ARX_COPY_DATA_FILE "Copying"
 
+${LangFileString} ARX_CREATE_SHORTCUT_STATUS "Creating Arx Libertatis shortcuts..."
+
 ${LangFileString} ARX_CREATE_DESKTOP_ICON "Create a desktop icon"
 ${LangFileString} ARX_CREATE_DESKTOP_ICON_DESC "Create a shortcut on your desktop to run Arx Libertatis."
 

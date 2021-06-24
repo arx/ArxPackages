@@ -52,6 +52,8 @@ ${LangFileString} ARX_COPY_DATA_STATUS "Arx Fatalis Daten werden kopiert..."
 ${LangFileString} ARX_COPY_DATA_DIR "Kopierquelle:"
 ${LangFileString} ARX_COPY_DATA_FILE "Kopiere"
 
+${LangFileString} ARX_CREATE_SHORTCUT_STATUS "Arx Libertatis Verknüpfungen werden erstellt..."
+
 ${LangFileString} ARX_CREATE_DESKTOP_ICON "Desktop-Verknüpfung erstellen"
 ${LangFileString} ARX_CREATE_DESKTOP_ICON_DESC "Erstelle eine Verknüpfung auf Ihrem Desktop um Arx Libertatis zu starten."
 

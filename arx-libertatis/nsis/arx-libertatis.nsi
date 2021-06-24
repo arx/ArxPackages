@@ -87,7 +87,7 @@ BrandingText  " "
 ;------------------------------------------------------------------------------
 ;Variables
 
-Var StartMenuFolder
+Var ShortcutSectionReached
 
 ;------------------------------------------------------------------------------
 ;Version Info
@@ -289,8 +289,19 @@ Section /o "$(ARX_COPY_DATA)" CopyData
 	
 SectionEnd
 
+Function ShortcutSectionReached
+	${If} $ShortcutSectionReached != 1
+		DetailPrint ""
+		SetDetailsPrint both
+		DetailPrint "$(ARX_CREATE_SHORTCUT_STATUS)"
+		SetDetailsPrint listonly
+		StrCpy $ShortcutSectionReached 1
+	${EndIf}
+FunctionEnd
+
 Section - StartMenu
 	!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+		Call ShortcutSectionReached
 		${CreateDirectory} "$SMPROGRAMS\$StartMenuFolder"
 		${CreateShortCut} "$SMPROGRAMS\$StartMenuFolder\Play Arx Libertatis.lnk" "$INSTDIR\arx.exe"
 		${CreateShortCut} "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
@@ -298,10 +309,12 @@ Section - StartMenu
 SectionEnd
 
 Section "$(ARX_CREATE_DESKTOP_ICON)" Desktop
+	Call ShortcutSectionReached
 	${CreateShortCut} "$DESKTOP\Arx Libertatis.lnk" "$INSTDIR\arx.exe"
 SectionEnd
 
 Section "$(ARX_CREATE_QUICKLAUNCH_ICON)" QuickLaunch
+	Call ShortcutSectionReached
 	${CreateShortCut} "$QUICKLAUNCH\Arx Libertatis.lnk" "$INSTDIR\arx.exe"
 SectionEnd
 
