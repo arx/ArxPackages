@@ -83,3 +83,4 @@ ${LangFileString} ARX_VERIFY_DATA_REPORT "If you believe your Arx Fatalis data i
 ${LangFileString} ARX_COPY_DETAILS "You can right click here and choose '$(^CopyDetails)'."
 
 ${LangFileString} UNINSTALL_LOG "Could not open ${UninstallLog}!"
+${LangFileString} UNINSTALL_NOT_EMPTY "Install directory is not empty! Delete anyway?"

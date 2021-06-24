@@ -531,7 +531,15 @@ Section "Uninstall"
 	
 	RMDir "$INSTDIR"
 	
-	;!insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
+	${If} ${FileExists} "$INSTDIR"
+		Push $0
+		ReadRegStr $0 SHCTX "Software\ArxLibertatis" "InstallType"
+		${If} $0 == "separate"
+		${AndIf} ${Cmd} `MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(UNINSTALL_NOT_EMPTY)$\n$\n$INSTDIR" IDYES`
+			RMDir /r "$INSTDIR"
+		${EndIf}
+		Pop $0
+	${EndIf}
 	
 	DeleteRegKey SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis"
 	DeleteRegKey SHCTX "Software\ArxLibertatis"
