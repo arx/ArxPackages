@@ -52,11 +52,28 @@ Function PageDirectoryOnPre
 	${ElseIf} ${SectionIsSelected} ${PatchInstall}
 		StrCpy $INSTDIR "$ArxFatalisLocation"
 		Abort
-	${ElseIf} $MultiUser.InstallMode == $ExistingInstallMode
-		${If} $ExistingInstallType == "patch"
-			StrCpy $INSTDIR "$PROGRAMFILES64\${MULTIUSER_INSTALLMODE_INSTDIR}"
-		${Else}
+	${EndIf}
+	
+	; Use existing install location if available
+	${If} $MultiUser.InstallMode == $ExistingInstallMode
+		${If} $ExistingInstallType == "separate"
 			StrCpy $INSTDIR "$ExistingInstallLocation"
+		${EndIf}
+	${Else}
+		Push $0
+		Push $1
+		ReadRegStr $0 SHCTX "Software\ArxLibertatis" "InstallType"
+		ReadRegStr $1 SHCTX "Software\ArxLibertatis" "InstallLocation"
+		${If} $0 == ""
+			${Map.Get} $0 ArxFatalisLocationInfo "$1"
+			${If} $0 == __NULL
+				StrCpy $0 "separate"
+			${EndIf}
+		${EndIf}
+		${If} $0 == "separate"
+		${AndIf} $1 != ""
+		${AndIf} ${FileExists} "$1\*.*"
+			${NormalizePath} "$1" $INSTDIR
 		${EndIf}
 	${EndIf}
 	

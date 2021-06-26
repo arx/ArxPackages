@@ -35,8 +35,6 @@ ManifestLongPathAware True
 !define MULTIUSER_INSTALLMODE_COMMANDLINE
 !define MULTIUSER_INSTALLMODE_DEFAULT_REGISTRY_KEY "Software\ArxLibertatis"
 !define MULTIUSER_INSTALLMODE_DEFAULT_REGISTRY_VALUENAME "InstallLocation"
-!define MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_KEY "Software\ArxLibertatis"
-!define MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_VALUENAME "InstallLocation"
 !define MULTIUSER_INSTALLMODE_INSTDIR "Arx Libertatis"
 !define MULTIUSER_USE_PROGRAMFILES64
 
@@ -559,25 +557,26 @@ Function .onInit
 	
 	${UninstallLogInit}
 	
-	${If} $MultiUser.InstDir != ""
-	${AndIf} ${FileExists} "$INSTDIR\*.*"
+	${If} $MultiUser.DefaultKeyValue != ""
+	${AndIf} ${FileExists} "$MultiUser.DefaultKeyValue\*.*"
 		
 		Push $0
 		Push $1
 		
 		StrCpy $ExistingInstallMode "$MultiUser.InstallMode"
-		${NormalizePath} "$INSTDIR" $INSTDIR
-		StrCpy $ExistingInstallLocation "$INSTDIR"
+		${NormalizePath} "$MultiUser.DefaultKeyValue" $ExistingInstallLocation
 		ReadRegStr $ExistingInstallType SHCTX "Software\ArxLibertatis" "InstallType"
 		ReadRegStr $ExistingArxFatalisLocation SHCTX "Software\ArxLibertatis" "DataDir"
 		${NormalizePath} "$ExistingArxFatalisLocation" $ExistingArxFatalisLocation
-		${Map.Get} $0 ArxFatalisLocationInfo "$INSTDIR"
+		${Map.Get} $0 ArxFatalisLocationInfo "$ExistingInstallLocation"
 		${If} $0 == __NULL
 			ReadRegStr $0 SHCTX "Software\ArxLibertatis" "Store"
 			${If} $0 != ""
-				${Map.Set} ArxFatalisLocationInfo "$2" "${MU_UNKNOWN}:$0"
+				${Map.Set} ArxFatalisLocationInfo "$ExistingInstallLocation" "${MU_UNKNOWN}:$0"
 			${EndIf}
 		${EndIf}
+		
+		StrCpy $INSTDIR "$ExistingInstallLocation"
 		
 		${UninstallLogRead} "$INSTDIR\${UninstallLog}"
 		Call AdoptOldFiles
@@ -805,6 +804,8 @@ Function un.onInit
 	
 	!insertmacro MULTIUSER_UNINIT
 	!insertmacro MUI_UNGETLANGUAGE
+	
+	StrCpy $INSTDIR "$MultiUser.DefaultKeyValue"
 	
 FunctionEnd
 
