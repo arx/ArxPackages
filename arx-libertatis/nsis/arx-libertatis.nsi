@@ -346,6 +346,8 @@ SectionEnd
 SectionGroupEnd
 
 Section - Cleanup
+
+	Push $0
 	
 	${ProgressBarBeginSection} 0 0
 	
@@ -356,10 +358,8 @@ Section - Cleanup
 	
 	${UninstallLogClean} "$INSTDIR\${UninstallLog}"
 	
-	Push $0
 	${UninstallLogGetSize} "$INSTDIR\${UninstallLog}" $0
 	WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "EstimatedSize" $0
-	Pop $0
 	
 	${If} $ExistingInstallLocation != ""
 	${AndIf} $INSTDIR != $ExistingInstallLocation
@@ -386,6 +386,8 @@ Section - Cleanup
 	${EndIf}
 	
 	${ProgressBarEndSection}
+	
+	Pop $0
 	
 SectionEnd
 
@@ -425,12 +427,15 @@ Section - VerifyData
 			
 			${GetArxFatalisStore} "$ArxFatalisLocation" $3
 			${If} $3 == "steam"
-				StrCpy $1 "$1$\n$\n$(ARX_VERIFY_DAYA_PATCH_STEAM)$\n$(ARX_VERIFY_DATA_REINSTALL)"
+				StrCpy $1 "$1$\n$\n$(ARX_VERIFY_DATA_PATCH_STEAM)$\n$(ARX_VERIFY_DATA_REINSTALL)"
 			${ElseIf} $3 == "bethesda"
-				StrCpy $1 "$1$\n$\n$(ARX_VERIFY_DAYA_PATCH_BETHESDA)$\n$(ARX_VERIFY_DATA_REINSTALL)"
+				StrCpy $1 "$1$\n$\n$(ARX_VERIFY_DATA_PATCH_BETHESDA)$\n$(ARX_VERIFY_DATA_REINSTALL)"
 			${ElseIf} $3 == "windows"
-				StrCpy $1 "$1$\n$\n$(ARX_VERIFY_DAYA_PATCH_WINDOWS)$\n$(ARX_VERIFY_DATA_REINSTALL)"
-			${ElseIf} $0 == "patchable"
+				StrCpy $1 "$1$\n$\n$(ARX_VERIFY_DATA_PATCH_WINDOWS)$\n$(ARX_VERIFY_DATA_REINSTALL)"
+			${ElseIf} $3 == "gog"
+			${OrIf} $0 != "patchable"
+				StrCpy $1 "$1$\n$\n$(ARX_VERIFY_DATA_PATCH_REINSTALL)$\n$(ARX_VERIFY_DATA_REINSTALL)"
+			${Else}
 				StrCpy $1 "$1$\n$\n$(ARX_VERIFY_DATA_PATCH)$\n${ARX_PATCH_URL}$\n$(ARX_VERIFY_DATA_REINSTALL)"
 			${EndIf}
 			
@@ -690,6 +695,20 @@ Function AdoptOldFiles
 	
 FunctionEnd
 
+!macro UninstallSuggestRepair Store Result
+	${If} "${Store}" == "steam"
+		StrCpy ${Result} "$(UNINSTALL_REPAIR)$\n$\n$(ARX_VERIFY_DATA_PATCH_STEAM)"
+	${ElseIf} "${Store}" == "bethesda"
+		StrCpy ${Result} "$(UNINSTALL_REPAIR)$\n$\n$(ARX_VERIFY_DATA_PATCH_BETHESDA)"
+	${ElseIf} "${Store}" == "windows"
+		StrCpy ${Result} "$(UNINSTALL_REPAIR)$\n$\n$(ARX_VERIFY_DATA_PATCH_WINDOWS)"
+	${ElseIf} "${Store}" == "gog"
+		StrCpy ${Result} "$(UNINSTALL_REPAIR)$\n$\n$(ARX_VERIFY_DATA_PATCH_REINSTALL)"
+	${Else}
+		StrCpy ${Result} "$(UNINSTALL_REPAIR)$\n$\n$(ARX_VERIFY_DATA_PATCH)$\n${ARX_PATCH_URL}"
+	${EndIf}
+!macroend
+
 !insertmacro WELCOME_FINISH_PAGE_FUNCTIONS
 !insertmacro ARX_FATALIS_LOCATION_PAGE_FUNCTIONS
 !insertmacro COMPONENTS_PAGE_FUNCTIONS
@@ -719,24 +738,34 @@ FunctionEnd
 ;------------------------------------------------------------------------------
 ;Uninstaller Section
 
+Var un.UninstallWarning
+
 Section "Uninstall"
+	
+	Push $0
 	
 	${UninstallLogRemoveAll} "$INSTDIR\${UninstallLog}"
 	
 	RMDir "$INSTDIR"
 	
+	ReadRegStr $0 SHCTX "Software\ArxLibertatis" "InstallType"
 	${If} ${FileExists} "$INSTDIR"
-		Push $0
-		ReadRegStr $0 SHCTX "Software\ArxLibertatis" "InstallType"
 		${If} $0 == "separate"
-		${AndIf} ${Cmd} `MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(UNINSTALL_NOT_EMPTY)$\n$\n$INSTDIR" IDYES`
+		${AndIf} ${Cmd} `MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(UNINSTALL_NOT_EMPTY)$\n$\n$INSTDIR" /SD IDNO IDYES`
 			RMDir /r "$INSTDIR"
 		${EndIf}
-		Pop $0
+	${EndIf}
+	
+	${If} $0 == "patch"
+		ReadRegStr $0 SHCTX "Software\ArxLibertatis" "Store"
+		!insertmacro UninstallSuggestRepair "$0" $un.UninstallWarning
+		SetAutoClose true
 	${EndIf}
 	
 	DeleteRegKey SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis"
 	DeleteRegKey SHCTX "Software\ArxLibertatis"
+	
+	Pop $0
 	
 SectionEnd
 
@@ -751,5 +780,13 @@ Function un.onInit
 	
 	!insertmacro MULTIUSER_UNINIT
 	!insertmacro MUI_UNGETLANGUAGE
+	
+FunctionEnd
+
+Function un.onUninstSuccess
+	
+	${If} $un.UninstallWarning != ""
+		MessageBox MB_OK|MB_ICONINFORMATION "$un.UninstallWarning"
+	${EndIf}
 	
 FunctionEnd

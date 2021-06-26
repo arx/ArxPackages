@@ -23,6 +23,8 @@
 
 !include "ArxFatalisData.nsh"
 
+Var WarningLabel
+
 !macro WELCOME_PAGE
 !ifndef MUI_WELCOMEFINISHPAGE_BITMAP
 !define MUI_WELCOMEFINISHPAGE_BITMAP "data\Side.bmp"
@@ -118,11 +120,17 @@ Function PageWelcomeFinishOnShow
 	
 	; Snapshot warning text
 	${NSD_CreateLabel} 120u 130u 195u 60u "$(ARX_SNAPSHOT_WARNING) ${ARX_BUG_URL}"
-	Pop $4
-	SetCtlColors $4 "885500" "FFFFFF"
-	SendMessage $4 ${WM_SETFONT} $3 1
+	Pop $WarningLabel
+	SetCtlColors $WarningLabel "885500" "FFFFFF"
+	SendMessage $WarningLabel ${WM_SETFONT} $3 1
 	
 	<? else: ?>
+	
+	; Empty warning text
+	${NSD_CreateLabel} 120u 130u 195u 60u ""
+	Pop $WarningLabel
+	SetCtlColors $WarningLabel "885500" "FFFFFF"
+	SendMessage $WarningLabel ${WM_SETFONT} $3 1
 	
 	; Version codename
 	<? if($version_codename != ''): ?>
@@ -183,11 +191,23 @@ FunctionEnd
 
 Function PageFinishOnShow
 	
+	Push $0
+	
 	${PageWelcomeFinishOnShow} $mui.FinishPage.Image $mui.FinishPage.Image.Bitmap
 	
 	${If} $ArxFatalisLocation == ""
 		${NSD_Uncheck} $mui.FinishPage.Run
 	${EndIf}
+	
+	${If} $ExistingInstallType == "patch"
+		${If} $INSTDIR != $ExistingInstallLocation
+			${GetArxFatalisStore} "$ExistingInstallLocation" $0
+			!insertmacro UninstallSuggestRepair "$0" $0
+			${NSD_SetText} $WarningLabel "$0"
+		${EndIf}
+	${EndIf}
+	
+	Pop $0
 	
 FunctionEnd
 
