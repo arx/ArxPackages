@@ -5,16 +5,34 @@
 !include "LogicLib.nsh"
 !include "WinMessages.nsh"
 
+Function SetNextButtonText
+	
+	Exch $0 ; Text
+	Push $1
+	
+	GetDlgItem $1 $HWNDPARENT 1
+	SendMessage $1 ${WM_SETTEXT} 0 "STR:$0"
+	
+	Pop $1
+	Pop $0
+	
+FunctionEnd
+
+!macro SetNextButtonText Text
+	Push "${Text}"
+	Call SetNextButtonText
+!macroend
+
+!define SetNextButtonText '!insertmacro SetNextButtonText'
+
 Function SetNextButtonToInstall
 	
 	Exch $0
 	
 	${If} $0 == 0
-		GetDlgItem $0 $HWNDPARENT 1
-		SendMessage $0 ${WM_SETTEXT} 0 "STR:$(^NextBtn)"
+		${SetNextButtonText} "$(^NextBtn)"
 	${Else}
-		GetDlgItem $0 $HWNDPARENT 1
-		SendMessage $0 ${WM_SETTEXT} 0 "STR:$(^InstallBtn)"
+		${SetNextButtonText} "$(^InstallBtn)"
 	${EndIf}
 	
 	Pop $0
