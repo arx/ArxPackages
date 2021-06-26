@@ -197,18 +197,19 @@ Section - Main
 	
 	<?
 	$count = 0;
+	$size = 0;
 	$files = explode("\n", file_get_contents($outdir . "/files"));
 	foreach($files as $file) {
 		if($file != '' && substr($file, -1) != '/') {
 			$count++;
+			$size += ceil(filesize( $outdir . "/build/" . $file ) / 1024);
 		}
 	}
+	$count++; // uninstaller
 	?>
 	!define MAIN_SECTION_COUNT "<?= $count ?>"
-	Push $0
-	SectionGetSize ${Main} $0
-	${ProgressBarBeginSection} "$0" ${MAIN_SECTION_COUNT}
-	Pop $0
+	!define MAIN_SECTION_SIZE "<?= $size ?>"
+	${ProgressBarBeginSection} ${MAIN_SECTION_SIZE} ${MAIN_SECTION_COUNT}
 	
 	; First, store whatever we need to clean things up on error
 	${WriteUninstaller} "$INSTDIR\uninstall.exe"
@@ -319,17 +320,20 @@ Section - StartMenu
 		${CreateDirectory} "$SMPROGRAMS\$StartMenuFolder"
 		${CreateShortCut} "$SMPROGRAMS\$StartMenuFolder\Play Arx Libertatis.lnk" "$INSTDIR\arx.exe"
 		${CreateShortCut} "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
+		AddSize 2
 	!insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
 
 Section "$(ARX_CREATE_DESKTOP_ICON)" Desktop
 	Call ShortcutSectionReached
 	${CreateShortCut} "$DESKTOP\Arx Libertatis.lnk" "$INSTDIR\arx.exe"
+	AddSize 1
 SectionEnd
 
 Section "$(ARX_CREATE_QUICKLAUNCH_ICON)" QuickLaunch
 	Call ShortcutSectionReached
 	${CreateShortCut} "$QUICKLAUNCH\Arx Libertatis.lnk" "$INSTDIR\arx.exe"
+	AddSize 1
 SectionEnd
 
 SectionGroupEnd

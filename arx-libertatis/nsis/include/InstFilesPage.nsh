@@ -36,8 +36,7 @@ Function PageInstFilesOnShow
 	${ProgressBarReplace} $mui.InstFilesPage.ProgressBar
 	
 	; Main
-	SectionGetSize ${Main} $0
-	${ProgressBarAddToTotal} "$0" ${MAIN_SECTION_COUNT}
+	${ProgressBarAddToTotal} ${MAIN_SECTION_SIZE} ${MAIN_SECTION_COUNT}
 	
 	; CopyData
 	SectionGetSize ${CopyData} $0
