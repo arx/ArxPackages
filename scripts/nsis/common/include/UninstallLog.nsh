@@ -96,6 +96,12 @@ FunctionEnd
 ; Mark an item as old / orphan / keep
 !define UninstallLogMark '!insertmacro UninstallLogMark'
 
+!macro UninstallLogMark Mode Item
+	Push "${Mode}"
+	Push "${Item}"
+	Call UninstallLogMark
+!macroend
+
 Function UninstallLogMark
 	
 	Exch $0 ; Item
@@ -109,12 +115,6 @@ Function UninstallLogMark
 	Pop $0
 	
 FunctionEnd
-
-!macro UninstallLogMark Mode Item
-	Push "${Mode}"
-	Push "${Item}"
-	Call UninstallLogMark
-!macroend
 
 ; Mark an item as not part of the install so that it will be removed be neither cleanup nor uninstall
 !define UninstallLogOrphan '${UninstallLogMark} "orphan"'
@@ -261,6 +261,42 @@ FunctionEnd
 	${EndIf}
 !macroend
 
+!define UninstallLogRemoveOld '!insertmacro UninstallLogRemoveOld'
+
+!macro UninstallLogRemoveOld LogFile
+	Push "${LogFile}"
+	Call UninstallLogRemoveOld
+!macroend
+
+Function UninstallLogRemoveOld
+	
+	Exch $0 ; LogFile
+	Push $1
+	Push $2
+	Push $3
+	
+	${List.Sort} UninstallLog
+	
+	; Remove old files in reverse order
+	${List.Count} $1 UninstallLog
+	${DoWhile} $1 > 0
+		IntOp $1 $1 - 1
+		${List.Get} $2 UninstallLog $1
+		${If} $2 != $0
+			${Map.Get} $3 UninstallLogInfo "$2"
+			${If} $3 == "old"
+				!insertmacro UninstallLogRemove "$2"
+			${EndIf}
+		${EndIf}
+	${Loop}
+	
+	Pop $3
+	Pop $2
+	Pop $1
+	Pop $0
+	
+FunctionEnd
+
 !define UninstallLogClean '!insertmacro UninstallLogClean'
 
 !macro UninstallLogClean LogFile
@@ -279,20 +315,7 @@ Function UninstallLogClean
 	
 	FileClose $UninstallLog
 	
-	${List.Sort} UninstallLog
-	
-	; Remove old files in reverse order
-	${List.Count} $1 UninstallLog
-	${DoWhile} $1 > 0
-		IntOp $1 $1 - 1
-		${List.Get} $2 UninstallLog $1
-		${If} $2 != $0
-			${Map.Get} $3 UninstallLogInfo "$2"
-			${If} $3 == "old"
-				!insertmacro UninstallLogRemove "$2"
-			${EndIf}
-		${EndIf}
-	${Loop}
+	${UninstallLogRemoveOld} "$0"
 	
 	; Write new uninstall log with only files that are not old or orphaned
 	ClearErrors
@@ -402,6 +425,11 @@ Function un.UninstallLogRemoveAll
 	${Loop}
 	
 	Delete "$0"
+	
+	Pop $3
+	Pop $2
+	Pop $1
+	Pop $0
 	
 FunctionEnd
 
