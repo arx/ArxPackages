@@ -23,6 +23,7 @@
 !include "ProgressBar.nsh"
 
 !macro INSTFILES_PAGE
+!define MUI_PAGE_CUSTOMFUNCTION_PRE BeforeInstall
 !define MUI_PAGE_CUSTOMFUNCTION_SHOW PageInstFilesOnShow
 !insertmacro MUI_PAGE_INSTFILES
 !macroend

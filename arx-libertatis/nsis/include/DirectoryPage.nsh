@@ -33,7 +33,8 @@
 
 Function PageDirectoryIsInstall
 	
-	${If} ${SectionIsSelected} ${PatchInstall}
+	${If} $SelectedInstType == ${INSTTYPE_UPDATE_REPAIR}
+	${OrIf} ${SectionIsSelected} ${PatchInstall}
 		Call PageStartMenuIsInstall
 	${Else}
 		Push 0
@@ -43,9 +44,18 @@ FunctionEnd
 
 Function PageDirectoryOnPre
 	
-	${If} ${SectionIsSelected} ${PatchInstall}
+	${If} $SelectedInstType == ${INSTTYPE_UPDATE_REPAIR}
+		StrCpy $INSTDIR "$ExistingInstallLocation"
+		Abort
+	${ElseIf} ${SectionIsSelected} ${PatchInstall}
 		StrCpy $INSTDIR "$ArxFatalisLocation"
 		Abort
+	${ElseIf} $MultiUser.InstallMode == $ExistingInstallMode
+		${If} $ExistingInstallType == "patch"
+			StrCpy $INSTDIR "$PROGRAMFILES64\${MULTIUSER_INSTALLMODE_INSTDIR}"
+		${Else}
+			StrCpy $INSTDIR "$ExistingInstallLocation"
+		${EndIf}
 	${EndIf}
 	
 FunctionEnd

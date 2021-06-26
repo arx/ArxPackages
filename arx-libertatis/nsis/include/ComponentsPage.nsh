@@ -29,11 +29,13 @@ Var SecCopyData
 Var SecStartMenu
 Var SecDesktop
 Var SecQuickLaunch
+Var SelectedInstType
 
 !macro COMPONENTS_PAGE
 !define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_PAGE_CUSTOMFUNCTION_PRE PageComponentsOnPre
 !define MUI_PAGE_CUSTOMFUNCTION_SHOW PageComponentsOnShow
+!define MUI_PAGE_CUSTOMFUNCTION_LEAVE PageComponentsOnLeave
 !insertmacro MUI_PAGE_COMPONENTS
 !macroend
 
@@ -58,6 +60,7 @@ Var SecQuickLaunch
 !macroend
 
 !define /math SF_SELECTED_AND_RO ${SF_SELECTED} | ${SF_RO}
+!define /math SF_SELECTED_AND_RO_AND_GROUP ${SF_SELECTED_AND_RO} | ${SF_SECGRPEND}
 !define /math NOT_SF_SELECTED ${SF_SELECTED} ~
 !define /math NOT_SF_RO ${SF_RO} ~
 !define /math NOT_SF_SECGRP ${SF_SECGRP} ~
@@ -96,7 +99,8 @@ Var SecQuickLaunch
 
 Function PageComponentsOnPre
 	
-	${If} $ArxFatalisLocation == ""
+	${If} $ExistingArxFatalisLocation == ""
+	${AndIf} $ArxFatalisLocation == ""
 		!insertmacro RestoreSectionState ${PatchInstall} ${SF_RO}
 		!insertmacro RestoreSectionState ${SeparateInstall} ${SF_SELECTED_AND_RO}
 	${Else}
@@ -123,36 +127,75 @@ Function PageComponentsOnShow
 	Call RestorePatchInstallState
 	Call RestoreSeparateInstallState
 	
-	Call PageInstallModeIsInstall
+	${If} $ExistingInstallLocation != ""
+		
+		Push $0
+		SendMessage $mui.ComponentsPage.Text ${WM_SETTEXT} 0 "STR:$(ARX_EXISTING_INSTALL)$\n$ExistingInstallLocation"
+		CreateFont $0 "$(^Font)" "$(^FontSize)" "700"
+		SendMessage $mui.ComponentsPage.Text ${WM_SETFONT} $0 1
+		Pop $0
+		
+		${If} $ExistingArxFatalisLocation != ""
+		${AndIf} $ExistingInstallType == "separate"
+		${AndIf} $ExistingArxFatalisLocation == $ExistingInstallLocation
+		${AndIf} $ArxFatalisLocation == $ExistingArxFatalisLocation
+			SectionSetText ${CopyData} "$(ARX_KEEP_DATA)"
+		${Else}
+			SectionSetText ${CopyData} "$(ARX_COPY_DATA)"
+		${EndIf}
+		
+	${EndIf}
+	
+	Call UpdateInstType
+	
+	Call PageChangeArxFatalisLocationIsInstall
 	Call SetNextButtonToInstall
 	
 FunctionEnd
 
 Function RestorePatchInstallState
-	${If} $SecPatchInstall != 0
-	${AndIf} $ArxFatalisLocation != ""
+	StrCpy $0 $SecPatchInstall
+	${If} $ExistingArxFatalisLocation == ""
+	${AndIf} $ArxFatalisLocation == ""
+		StrCpy $0 0
+	${EndIf}
+	${If} $0 != 0
 		!insertmacro SetSectionFlag ${PatchInstall} ${SF_EXPAND}
 	${Else}
 		!insertmacro ClearSectionFlag ${PatchInstall} ${SF_EXPAND}
 	${EndIf}
+	Pop $0
 FunctionEnd
 
 Function SaveSeparateInstallState
-	${If} $SecSeparateInstall != 0
-	${OrIf} $ArxFatalisLocation == ""
-		${If} $ArxFatalisLocation != ""
+	Push $0
+	StrCpy $0 $SecSeparateInstall
+	${If} $ExistingArxFatalisLocation == ""
+	${AndIf} $ArxFatalisLocation == ""
+		StrCpy $0 ${SF_SELECTED}
+	${EndIf}
+	${If} $0 != 0
+		${If} $ExistingArxFatalisLocation != ""
+		${OrIf} $ArxFatalisLocation != ""
 			!insertmacro SaveSectionState ${CopyData} $SecCopyData
 		${EndIf}
 		!insertmacro SaveSectionState ${StartMenu} $SecStartMenu
 		!insertmacro SaveSectionState ${Desktop} $SecDesktop
 		!insertmacro SaveSectionState ${QuickLaunch} $SecQuickLaunch
 	${EndIf}
+	Pop $0
 FunctionEnd
 
 Function RestoreSeparateInstallState
-	${If} $SecSeparateInstall != 0
-	${OrIf} $ArxFatalisLocation == ""
-		${If} $ArxFatalisLocation != ""
+	Push $0
+	StrCpy $0 $SecSeparateInstall
+	${If} $ExistingArxFatalisLocation == ""
+	${AndIf} $ArxFatalisLocation == ""
+		StrCpy $0 ${SF_SELECTED}
+	${EndIf}
+	${If} $0 != 0
+		${If} $ExistingArxFatalisLocation != ""
+		${OrIf} $ArxFatalisLocation != ""
 			!insertmacro RestoreSectionState ${CopyData} $SecCopyData
 		${Else}
 			!insertmacro RestoreSectionState ${CopyData} ${SF_RO}
@@ -168,6 +211,7 @@ Function RestoreSeparateInstallState
 		!insertmacro RestoreSectionState ${Desktop} ${SF_RO}
 		!insertmacro RestoreSectionState ${QuickLaunch} ${SF_RO}
 	${EndIf}
+	Pop $0
 FunctionEnd
 
 Function .onSelChange
@@ -177,7 +221,8 @@ Function .onSelChange
 	
 	Call SaveSeparateInstallState
 	
-	${If} $ArxFatalisLocation != ""
+	${If} $ExistingArxFatalisLocation != ""
+	${OrIf} $ArxFatalisLocation != ""
 		
 		; PatchInstall and SeparateInstall are mutually exclusive
 		${If} $0 == ${PatchInstall}
@@ -210,11 +255,76 @@ Function .onSelChange
 		
 	${EndIf}
 	
-	Call PageInstallModeIsInstall
+	${If} $0 == -1
+		; Use user-selected insttype even if there is a lower one matching the selected sections
+		; in order to allow modifying install settings.
+		SendMessage $mui.ComponentsPage.InstTypes ${CB_GETCURSEL} 0 0 $SelectedInstType
+		SendMessage $mui.ComponentsPage.InstTypes ${CB_GETCOUNT} 0 0 $1
+		IntOp $1 $1 - 1
+		${If} $SelectedInstType == $1
+			StrCpy $SelectedInstType ${NSIS_MAX_INST_TYPES}
+		${EndIf}
+	${Else}
+		Call UpdateInstType
+	${EndIf}
+	
+	Call PageChangeArxFatalisLocationIsInstall
 	Call SetNextButtonToInstall
 	
 	Pop $1
 	Pop $0
+	
+FunctionEnd
+
+; GetCurInstType is a lying piece of shit
+Function UpdateInstType
+	
+	Push $0
+	Push $1
+	Push $2
+	Push $3
+	
+	StrCpy $0 0xFFFFFF ; install type mask
+	StrCpy $1 ${SECTION_MAX} ; section index
+	
+	${DoWhile} $1 >= 0
+		SectionGetFlags $1 $2
+		IntOp $2 $2 & ${SF_SELECTED_AND_RO_AND_GROUP}
+		SectionGetInstTypes $1 $3
+		${If} $2 == ${SF_SELECTED}
+			IntOp $0 $0 & $3
+		${ElseIf} $2 == 0
+			IntOp $3 $3 ~
+			IntOp $0 $0 & $3
+		${EndIf}
+		IntOp $1 $1 - 1
+	${Loop}
+	
+	StrCpy $SelectedInstType 0
+	${DoWhile} $SelectedInstType < ${NSIS_MAX_INST_TYPES}
+		IntOp $2 $0 >> $SelectedInstType
+		${If} $2 == 0
+			StrCpy $SelectedInstType ${NSIS_MAX_INST_TYPES}
+			${Break}
+		${EndIf}
+		IntOp $2 $2 & 1
+		${If} $2 != 0
+			${Break}
+		${EndIf}
+		IntOp $SelectedInstType $SelectedInstType + 1
+	${Loop}
+	
+	Pop $3
+	Pop $2
+	Pop $1
+	Pop $0
+	
+FunctionEnd
+
+Function PageComponentsOnLeave
+	
+	Call RestorePatchInstallState
+	Call RestoreSeparateInstallState
 	
 FunctionEnd
 

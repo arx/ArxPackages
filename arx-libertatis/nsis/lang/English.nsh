@@ -17,7 +17,11 @@ ${LangFileString} ARX_SNAPSHOT_WARNING "This build of $(^Name) is a development 
 
 ${LangFileString} ARX_FATALIS_LOCATION_PAGE_TITLE "Specify Arx Fatalis Location"
 ${LangFileString} ARX_FATALIS_LOCATION_PAGE_SUBTITLE "Specify the location of the Arx Fatalis data"
-${LangFileString} ARX_FATALIS_LOCATION_PAGE_DESCRIPTION "In order to play $(^Name), you need the original data from Arx Fatalis.$\nIf you do not have Arx Fatalis, see ${ARX_DATA_URL} for where to get it.$\nYou can also play using the demo data.$\n$\nPlease specify the directory of the Arx Fatalis installation where *.pak files can be found."
+${LangFileString} ARX_FATALIS_LOCATION_PAGE_DESCRIPTION "In order to play $(^Name), you need the original data from Arx Fatalis.$\nIf you do not have Arx Fatalis, see ${ARX_DATA_URL} for where to get it.$\nYou can also play using the demo data."
+${LangFileString} ARX_FATALIS_LOCATION_PAGE_DESCRIPTION_PATCH "Select the Arx Fatalis install you want to patch."
+${LangFileString} ARX_FATALIS_LOCATION_PAGE_DESCRIPTION_COPY "Select the Arx Fatalis install you want to copy data from."
+${LangFileString} ARX_FATALIS_LOCATION_PAGE_DESCRIPTION_PAK "Please specify the directory of the Arx Fatalis installation where *.pak files can be found."
+${LangFileString} ARX_FATALIS_LOCATION_KEEP "&Keep existing data in the $(^Name) install directory."
 ${LangFileString} ARX_FATALIS_LOCATION_LABEL "Arx Fatalis Location"
 ${LangFileString} ARX_FATALIS_LOCATION_BROWSE_TITLE "Select Arx Fatalis location:"
 ${LangFileString} ARX_FATALIS_LOCATION_WAIT "Identifying Arx Fatalis data..."
@@ -36,6 +40,11 @@ ${LangFileString} ARX_FATALIS_LOCATION_WINDOWS "Microsoft Store"
 ${LangFileString} ARX_FATALIS_LOCATION_UNPATCHED "Missing 1.21 patch!"
 ${LangFileString} ARX_FATALIS_LOCATION_UNPATCHED_CONTINUE "It is strongly recommended to patch Arx Fatalis to version 1.21 before installing $(^Name)!$\n$\nYou can get the patch here:$\n${ARX_PATCH_URL}$\n$\nContinue with unpatched Arx Fatalis data?"
 
+${LangFileString} ARX_MODIFY_INSTALL "Modify $(^Name) install"
+${LangFileString} ARX_REPAIR_INSTALL "Repair $(^Name) install"
+${LangFileString} ARX_UPDATE_INSTALL "Update $(^Name) to version <?= $version ?>"
+${LangFileString} ARX_EXISTING_INSTALL "Found existing $(^Name) install:"
+
 ${LangFileString} ARX_PATCH_INSTALL "Patch existing Arx Fatalis install"
 ${LangFileString} ARX_PATCH_INSTALL_DESC "Play using Arx Libertatis when you launch Arx Fatalis. (Recommended)"
 
@@ -44,6 +53,7 @@ ${LangFileString} ARX_SEPARATE_INSTALL_DESC "Only use Arx Libertatis when launch
 
 ${LangFileString} ARX_INSTALL_STATUS "Installing Arx Libertatis..."
 
+${LangFileString} ARX_KEEP_DATA "Keep copied Arx Fatalis data"
 ${LangFileString} ARX_KEEP_DATA_STATUS "Saving copied Arx Fatalis data..."
 
 ${LangFileString} ARX_COPY_DATA "Copy Arx Fatalis data"

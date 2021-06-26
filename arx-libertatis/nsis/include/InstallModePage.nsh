@@ -37,8 +37,13 @@ Function PageInstallModeIsInstall
 	
 	Push $0
 	
-	${If} ${SectionIsSelected} ${PatchInstall}
-		${GetArxFatalisInstallMode} "$ArxFatalisLocation" $0
+	${If} $SelectedInstType == ${INSTTYPE_UPDATE_REPAIR}
+	${OrIf} ${SectionIsSelected} ${PatchInstall}
+		${If} $SelectedInstType == ${INSTTYPE_UPDATE_REPAIR}
+			StrCpy $0 $ExistingInstallMode
+		${Else}
+			${GetArxFatalisInstallMode} "$ArxFatalisLocation" $0
+		${EndIf}
 		${If} $0 == "AllUsers"
 		${OrIf} $0 == "CurrentUser"
 			Call PageDirectoryIsInstall
@@ -56,9 +61,14 @@ FunctionEnd
 
 Function PageInstallModeOnPre
 	
-	${If} ${SectionIsSelected} ${PatchInstall}
+	${If} $SelectedInstType == ${INSTTYPE_UPDATE_REPAIR}
+	${OrIf} ${SectionIsSelected} ${PatchInstall}
 		Push $0
-		${GetArxFatalisInstallMode} "$ArxFatalisLocation" $0
+		${If} $SelectedInstType == ${INSTTYPE_UPDATE_REPAIR}
+			StrCpy $0 $ExistingInstallMode
+		${Else}
+			${GetArxFatalisInstallMode} "$ArxFatalisLocation" $0
+		${EndIf}
 		${If} $0 == "AllUsers"
 			Call MultiUser.InstallMode.AllUsers
 			Pop $0

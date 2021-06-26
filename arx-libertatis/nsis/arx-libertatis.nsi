@@ -59,6 +59,7 @@ ManifestLongPathAware True
 !include "nsDialogs.nsh"
 !include "x64.nsh"
 
+!include "PathUtil.nsh"
 !include "ProgressBar.nsh"
 !include "SingleInstanceMutex.nsh"
 !include "UninstallLog.nsh"
@@ -87,6 +88,11 @@ BrandingText  " "
 ;------------------------------------------------------------------------------
 ;Variables
 
+Var ExistingInstallMode
+Var ExistingInstallLocation
+Var ExistingInstallType
+Var ExistingInstallTypeUnclear
+Var ExistingArxFatalisLocation
 Var ShortcutSectionReached
 
 ;------------------------------------------------------------------------------
@@ -132,8 +138,9 @@ VIFileVersion "${Version}"
 ;Pages
 
 !insertmacro WELCOME_PAGE
-!insertmacro ARX_FATALIS_LOCATION_PAGE
+!insertmacro SET_ARX_FATALIS_LOCATION_PAGE
 !insertmacro COMPONENTS_PAGE
+!insertmacro CHANGE_ARX_FATALIS_LOCATION_PAGE
 !insertmacro INSTALLMODE_PAGE
 !insertmacro DIRECTORY_PAGE
 !insertmacro STARTMENU_PAGE
@@ -169,6 +176,10 @@ VIFileVersion "${Version}"
 
 !define UNINSTALL_CMDLINE "$\"$INSTDIR\uninstall.exe$\" /$MultiUser.InstallMode"
 
+!define INSTTYPE_UPDATE_REPAIR 0
+!define /math INSTTYPE_UPDATE_REPAIR_MASK 1 << ${INSTTYPE_UPDATE_REPAIR}
+InstType "/CUSTOMSTRING=$(ARX_MODIFY_INSTALL)"
+
 Section - Main
 	SectionIn RO
 	
@@ -178,20 +189,6 @@ Section - Main
 	
 	; Set output path to the installation directory.
 	SetOutPath "$INSTDIR"
-	
-	${UninstallLogRead} "$INSTDIR\${UninstallLog}"
-	
-	; Mark old files that used to be part of Arx Libertatis for removal
-<?
-	$removed = explode("\n", file_get_contents($outdir . "/files.removed"));
-	foreach($removed as $file):
-		if($file != ''):
-	?>
-	${UninstallLogAddOld} "$INSTDIR\<?= str_replace('/', '\\', rtrim($file, '/')) ?>"
-<?
-		endif;
-	endforeach;
-	?>
 	
 	${UninstallLogOpen} "$INSTDIR\${UninstallLog}"
 	
@@ -360,6 +357,30 @@ Section - Cleanup
 	WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "EstimatedSize" $0
 	Pop $0
 	
+	${If} $ExistingInstallLocation != ""
+	${AndIf} $INSTDIR != $ExistingInstallLocation
+		
+		RMDir "$ExistingInstallLocation"
+		
+		${If} $ExistingInstallType == "separate"
+		${AndIf} ${FileExists} "$ExistingInstallLocation"
+		${AndIf} ${Cmd} `MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(UNINSTALL_NOT_EMPTY)$\n$\n$ExistingInstallLocation" /SD IDNO IDYES`
+			RMDir /r "$ExistingInstallLocation"
+		${EndIf}
+		
+	${EndIf}
+	
+	; Clean up old registry keys
+	${If} $MultiUser.InstallMode != $ExistingInstallMode
+		${If} $ExistingInstallMode == "AllUsers"
+			DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis"
+			DeleteRegKey HKLM "Software\ArxLibertatis"
+		${ElseIf} $ExistingInstallMode == "CurrentUser"
+			DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis"
+			DeleteRegKey HKCU "Software\ArxLibertatis"
+		${EndIf}
+	${EndIf}
+	
 	${ProgressBarEndSection}
 	
 SectionEnd
@@ -454,6 +475,8 @@ Section - VerifyData
 	
 SectionEnd
 
+!define SECTION_MAX ${VerifyData}
+
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
 !insertmacro MUI_DESCRIPTION_TEXT ${PatchInstall} "$(ARX_PATCH_INSTALL_DESC)"
 !insertmacro MUI_DESCRIPTION_TEXT ${SeparateInstall} "$(ARX_SEPARATE_INSTALL_DESC)"
@@ -502,12 +525,157 @@ Function .onInit
 	Call InitArxFatalisData
 	
 	!insertmacro MULTIUSER_INIT
+	!insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
 	
 	!insertmacro WELCOME_FINISH_PAGE_INIT
 	!insertmacro ARX_FATALIS_LOCATION_PAGE_INIT
 	!insertmacro COMPONENTS_PAGE_INIT
 	
 	${UninstallLogInit}
+	
+	${If} $MultiUser.InstDir != ""
+	${AndIf} ${FileExists} "$INSTDIR\*.*"
+		
+		Push $0
+		Push $1
+		
+		StrCpy $ExistingInstallMode "$MultiUser.InstallMode"
+		${NormalizePath} "$INSTDIR" $INSTDIR
+		StrCpy $ExistingInstallLocation "$INSTDIR"
+		ReadRegStr $ExistingInstallType SHCTX "Software\ArxLibertatis" "InstallType"
+		ReadRegStr $ExistingArxFatalisLocation SHCTX "Software\ArxLibertatis" "DataDir"
+		${NormalizePath} "$ExistingArxFatalisLocation" $ExistingArxFatalisLocation
+		
+		${UninstallLogRead} "$INSTDIR\${UninstallLog}"
+		Call AdoptOldFiles
+		
+		; Guess install type since older installers did not support it
+		${If} $ExistingInstallType == ""
+			StrCpy $ExistingInstallType "separate"
+			${If} $ExistingInstallLocation == $ExistingArxFatalisLocation
+				${Map.Get} $0 ArxFatalisLocationInfo "$ExistingArxFatalisLocation"
+				${If} $0 != __NULL
+					; Was installed to a known Arx Fatalis location
+					; Assume that the user intended to patch the AF install and that the AF data is not really owned by us
+					StrCpy $ExistingInstallType "patch"
+					${OrphanArxFatalisData} "$ExistingArxFatalisLocation"
+				${Else}
+					; User will have to select install type
+					; We will orphan the AF data if they coose to patch and keep the AF location
+					StrCpy $ExistingInstallTypeUnclear 1
+				${EndIf}
+			${EndIf}
+		${EndIf}
+		
+		ReadRegStr $0 SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "DisplayVersion"
+		${If} $0 == "<?= $version ?>"
+			InstTypeSetText ${INSTTYPE_UPDATE_REPAIR} "$(ARX_REPAIR_INSTALL)"
+			InstTypeSetText -1 "Yo"
+		${Else}
+			InstTypeSetText ${INSTTYPE_UPDATE_REPAIR} "$(ARX_UPDATE_INSTALL)"
+		${EndIf}
+		
+		${If} $ExistingInstallType == "patch"
+		
+			StrCpy $SecPatchInstall ${SF_SELECTED}
+			StrCpy $SecSeparateInstall 0
+			SectionSetInstTypes ${PatchInstall} ${INSTTYPE_UPDATE_REPAIR_MASK}
+			
+		${Else}
+			
+			StrCpy $SecPatchInstall 0
+			StrCpy $SecSeparateInstall ${SF_SELECTED}
+			SectionSetInstTypes ${SeparateInstall} ${INSTTYPE_UPDATE_REPAIR_MASK}
+			
+			StrCpy $SecCopyData 0
+			${If} $ExistingArxFatalisLocation == $ExistingInstallLocation
+				${Map.Get} $0 UninstallLogInfo "$ExistingArxFatalisLocation\data.pak"
+				${If} $0 == "old"
+					StrCpy $SecCopyData ${SF_SELECTED}
+					SectionSetInstTypes ${CopyData} ${INSTTYPE_UPDATE_REPAIR_MASK}
+				${Else}
+					; Old installers always set DataDir even if no data was copied
+					StrCpy $ExistingArxFatalisLocation ""
+				${EndIf}
+			${EndIf}
+			
+			SectionSetInstTypes ${StartMenu} ${INSTTYPE_UPDATE_REPAIR_MASK}
+			
+			StrCpy $SecDesktop 0
+			${If} ${FileExists} "$DESKTOP\Arx Libertatis.lnk"
+				StrCpy $SecDesktop ${SF_SELECTED}
+				SectionSetInstTypes ${Desktop} ${INSTTYPE_UPDATE_REPAIR_MASK}
+			${EndIf}
+			
+			StrCpy $SecQuickLaunch 0
+			${If} ${FileExists} "$QUICKLAUNCH\Arx Libertatis.lnk"
+				StrCpy $SecQuickLaunch ${SF_SELECTED}
+				SectionSetInstTypes ${QuickLaunch} ${INSTTYPE_UPDATE_REPAIR_MASK}
+				SectionSetText ${QuickLaunch} "$(ARX_CREATE_QUICKLAUNCH_ICON)" ; Unhide section on Windows 7+
+			${EndIf}
+			
+		${EndIf}
+		
+		StrCpy $ArxFatalisLocation "$ExistingArxFatalisLocation"
+		Call UpdateArxFatalisLocationSize
+		
+		Pop $1
+		Pop $0
+		
+	${EndIf}
+	
+FunctionEnd
+
+Function BeforeInstall
+	
+	${NormalizePath} "$INSTDIR" $INSTDIR
+	
+	; Handle switching install modes
+	${If} $ExistingInstallMode != ""
+	${AndIf} $ExistingInstallMode != $MultiUser.InstallMode
+		Push $0
+		${If} $MultiUser.InstallMode == "AllUsers"
+			ReadRegStr $0 HKLM "Software\ArxLibertatis" "InstallLocation"
+		${ElseIf} $MultiUser.InstallMode == "CurrentUser"
+			ReadRegStr $0 HKCU "Software\ArxLibertatis" "InstallLocation"
+		${EndIf}
+		${NormalizePath} "$0" $0
+		${If} $0 != ""
+		${AndIf} $0 != $ExistingInstallLocation
+		${AndIf} $0 != $INSTDIR
+			${UninstallLogRead} "$0\${UninstallLog}"
+			${UninstallLogAddOld} "$0"
+		${EndIf}
+		Pop $0
+	${EndIf}
+	
+	; Handle switching install locations
+	${If} $INSTDIR != $ExistingInstallLocation
+		${UninstallLogRead} "$INSTDIR\${UninstallLog}"
+		Call AdoptOldFiles
+	${EndIf}
+	
+	${If} $ExistingInstallTypeUnclear == 1
+	${AndIfNot} ${SectionIsSelected} ${SeparateInstall}
+	${AndIf} $ArxFatalisLocation == $ExistingArxFatalisLocation
+		${OrphanArxFatalisData} "$ExistingArxFatalisLocation"
+	${EndIf}
+	
+FunctionEnd
+
+Function AdoptOldFiles
+	
+	; Mark old files that used to be part of Arx Libertatis for removal
+<?
+	$removed = explode("\n", file_get_contents($outdir . "/files.removed"));
+	foreach($removed as $file):
+		if($file != ''):
+	?>
+	${UninstallLogAddOld} "$INSTDIR\<?= str_replace('/', '\\', rtrim($file, '/')) ?>"
+<?
+		endif;
+	endforeach;
+	?>
 	
 FunctionEnd
 

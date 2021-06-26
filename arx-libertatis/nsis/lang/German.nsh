@@ -17,7 +17,11 @@ ${LangFileString} ARX_SNAPSHOT_WARNING "Diese Freigabe von $(^Name) ist eine Ent
 
 ${LangFileString} ARX_FATALIS_LOCATION_PAGE_TITLE "Arx Fatalis Verzeichnis angeben"
 ${LangFileString} ARX_FATALIS_LOCATION_PAGE_SUBTITLE "Geben Sie das Verzeichnis an, in dem die Arx Fatalis Daten liegen"
-${LangFileString} ARX_FATALIS_LOCATION_PAGE_DESCRIPTION "Um $(^Name) zu spielen benötigen Sie die Originaldaten von Arx Fatalis.$\nFalls Sie Arx Fatalis nicht haben, finden Sie auf ${ARX_DATA_URL} heraus wo Sie es erwerben können.$\nSie können auch mit den Demodaten spielen.$\n$\nBitte geben Sie das Verzeichnis der Arx Fatalis Installation an, in welchem *.pak Dateien zu finden sind."
+${LangFileString} ARX_FATALIS_LOCATION_PAGE_DESCRIPTION "Um $(^Name) zu spielen benötigen Sie die Originaldaten von Arx Fatalis.$\nFalls Sie Arx Fatalis nicht haben, finden Sie auf ${ARX_DATA_URL} heraus wo Sie es erwerben können.$\nSie können auch mit den Demodaten spielen."
+${LangFileString} ARX_FATALIS_LOCATION_PAGE_DESCRIPTION_PATCH "Wählen Sie die Arx Fatalis Installation die Sie patchen wollen."
+${LangFileString} ARX_FATALIS_LOCATION_PAGE_DESCRIPTION_COPY "Wählen Sie die Arx Fatalis Installation von der Sie Daten kopieren wollen."
+${LangFileString} ARX_FATALIS_LOCATION_PAGE_DESCRIPTION_PAK "Bitte geben Sie das Verzeichnis der Arx Fatalis Installation an, in welchem *.pak Dateien zu finden sind."
+${LangFileString} ARX_FATALIS_LOCATION_KEEP "&Bestehende Daten im $(^Name) Installationsverzeichnis beibehalten."
 ${LangFileString} ARX_FATALIS_LOCATION_LABEL "Arx Fatalis Verzeichnis"
 ${LangFileString} ARX_FATALIS_LOCATION_BROWSE_TITLE "Arx Fatalis Verzeichnis auswählen:"
 ${LangFileString} ARX_FATALIS_LOCATION_WAIT "Identifiziere Arx Fatalis Daten..."
@@ -36,6 +40,11 @@ ${LangFileString} ARX_FATALIS_LOCATION_WINDOWS "Microsoft Store"
 ${LangFileString} ARX_FATALIS_LOCATION_UNPATCHED "1.21 patch fehlt!"
 ${LangFileString} ARX_FATALIS_LOCATION_UNPATCHED_CONTINUE "Es wird dringend empfohlen Arx Fatalis auf Version 1.21 zu patchen vor der Installation von $(^Name)!$\n$\nSie können den Patch hier finden:$\n${ARX_PATCH_URL}$\n$\nMit ungepatchten Arx Fatalis Daten fortfahren?"
 
+${LangFileString} ARX_MODIFY_INSTALL "$(^Name) Installation anpassen"
+${LangFileString} ARX_REPAIR_INSTALL "$(^Name) Installation reparieren"
+${LangFileString} ARX_UPDATE_INSTALL "$(^Name) zu Version <?= $version ?> updaten"
+${LangFileString} ARX_EXISTING_INSTALL "Bestehende $(^Name) Installation gefunden:"
+
 ${LangFileString} ARX_PATCH_INSTALL "Bestehende Arx Fatalis Installation patchen"
 ${LangFileString} ARX_PATCH_INSTALL_DESC "Spiel mit Arx Libertatis wenn Arx Fatalis gestartet wird. (Empfohlen)"
 
@@ -44,6 +53,7 @@ ${LangFileString} ARX_SEPARATE_INSTALL_DESC "Benutze Arx Libertatis nur wenn es 
 
 ${LangFileString} ARX_INSTALL_STATUS "Arx Libertatis wird installiert..."
 
+${LangFileString} ARX_KEEP_DATA "Kopierte Arx Fatalis Daten beibehalten"
 ${LangFileString} ARX_KEEP_DATA_STATUS "Kopierte Arx Fatalis Daten werden gesichert..."
 
 ${LangFileString} ARX_COPY_DATA "Arx Fatalis Daten kopieren"

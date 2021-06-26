@@ -26,7 +26,9 @@
 
 !include "ArxFatalisData.nsh"
 
+Var ArxFatalisLocationKeep
 Var ArxFatalisLocationInput
+Var ArxFatalisLocationButton
 Var ArxFatalisLocationIcon
 Var IconQuestion
 Var IconInfo
@@ -38,9 +40,15 @@ Var ArxFatalisLocation
 Var ArxFatalisFileCount
 Var ArxFatalisType
 
-!macro ARX_FATALIS_LOCATION_PAGE
+!macro SET_ARX_FATALIS_LOCATION_PAGE
 PageEx custom
-	PageCallbacks PageArxFatalisLocationOnCreate PageArxFatalisLocationOnLeave
+	PageCallbacks PageSetArxFatalisLocationOnCreate PageSetArxFatalisLocationOnLeave
+PageExEnd
+!macroend
+
+!macro CHANGE_ARX_FATALIS_LOCATION_PAGE
+PageEx custom
+	PageCallbacks PageChangeArxFatalisLocationOnCreate PageChangeArxFatalisLocationOnLeave
 PageExEnd
 !macroend
 
@@ -61,9 +69,16 @@ Function PageArxFatalisLocationOnCreate
 	nsDialogs::Create 1018
 	Pop $0
 	
-	GetDlgItem $ArxFatalisLocationNext $HWNDPARENT 1
-	
-	${NSD_CreateLabel} 0u 0u 100% 60u "$(ARX_FATALIS_LOCATION_PAGE_DESCRIPTION)"
+	${If} $ExistingArxFatalisLocation != ""
+	${AndIf} ${SectionIsSelected} ${PatchInstall}
+		StrCpy $0 "$(ARX_FATALIS_LOCATION_PAGE_DESCRIPTION_PATCH)$\n$\n$(ARX_FATALIS_LOCATION_PAGE_DESCRIPTION_PAK)"
+	${ElseIf} $ExistingArxFatalisLocation != ""
+	${AndIf} ${SectionIsSelected} ${CopyData}
+		StrCpy $0 "$(ARX_FATALIS_LOCATION_PAGE_DESCRIPTION_COPY)$\n$\n$(ARX_FATALIS_LOCATION_PAGE_DESCRIPTION_PAK)"
+	${Else}
+		StrCpy $0 "$(ARX_FATALIS_LOCATION_PAGE_DESCRIPTION)$\n$\n$(ARX_FATALIS_LOCATION_PAGE_DESCRIPTION_PAK)"
+	${EndIf}
+	${NSD_CreateLabel} 0u 0u 100% 50u "$0"
 	Pop $0
 	
 	${NSD_CreateGroupBox} 0u 70u 100% 35u "$(ARX_FATALIS_LOCATION_LABEL)"
@@ -76,6 +91,15 @@ Function PageArxFatalisLocationOnCreate
 	${Else}
 		${NSD_CreateComboBox} 10u 85u 210u 12u ""
 		Pop $ArxFatalisLocationInput
+		${If} $ExistingArxFatalisLocation != ""
+			${If} $ExistingInstallType != "separate"
+			${OrIf} $ExistingArxFatalisLocation != $ExistingInstallLocation
+				${Map.Get} $2 ArxFatalisLocationInfo "$ExistingArxFatalisLocation"
+				${If} $2 == __NULL
+					${NSD_CB_AddString} $ArxFatalisLocationInput "$ExistingArxFatalisLocation"
+				${EndIf}
+			${EndIf}
+		${EndIf}
 		StrCpy $1 0
 		${DoWhile} $1 < $0
 			${List.Get} $2 ArxFatalisLocations $1
@@ -87,8 +111,8 @@ Function PageArxFatalisLocationOnCreate
 	${NSD_OnChange} $ArxFatalisLocationInput PageArxFatalisLocationOnChange
 	
 	${NSD_CreateBrowseButton} 228u 83u 60u 15u "$(^BrowseBtn)"
-	Pop $0
-	${NSD_OnClick} $0 PageArxFatalisLocationOnBrowse
+	Pop $ArxFatalisLocationButton
+	${NSD_OnClick} $ArxFatalisLocationButton PageArxFatalisLocationOnBrowse
 	
 	${NSD_CreateIcon} 0u 114u 5u 5u ""
 	Pop $ArxFatalisLocationIcon
@@ -101,14 +125,35 @@ Function PageArxFatalisLocationOnCreate
 	${NSD_CreateLabel} 6% 115u 94% 20u "$(ARX_FATALIS_LOCATION_WAIT)"
 	Pop $ArxFatalisLocationLabel
 	
+	GetDlgItem $ArxFatalisLocationNext $HWNDPARENT 1
+	
+	${If} $ExistingArxFatalisLocation != ""
+	${AndIf} ${SectionIsSelected} ${CopyData}
+	${AndIf} $ExistingInstallType == "separate"
+	${AndIf} $ExistingArxFatalisLocation == $ExistingInstallLocation
+		${NSD_CreateCheckbox} 0u 50u 100% 12u "$(ARX_FATALIS_LOCATION_KEEP)"
+		Pop $ArxFatalisLocationKeep
+		${If} $ArxFatalisLocation == $ExistingArxFatalisLocation
+			${NSD_Check} $ArxFatalisLocationKeep
+			EnableWindow $ArxFatalisLocationInput 0
+			EnableWindow $ArxFatalisLocationButton 0
+		${Else}
+			${NSD_Uncheck} $ArxFatalisLocationKeep
+		${EndIf}
+		${NSD_OnClick} $ArxFatalisLocationKeep PageArxFatalisLocationOnChange
+	${Else}
+		StrCpy $ArxFatalisLocationKeep 0
+	${EndIf}
+	
+	EnableWindow $ArxFatalisLocationNext 0
 	StrCpy $ArxFatalisLocation ""
 	${NSD_CreateTimer} PageArxFatalisLocationUpdate 1
-	
-	nsDialogs::Show
 	
 	Pop $2
 	Pop $1
 	Pop $0
+	
+	nsDialogs::Show
 	
 FunctionEnd
 
@@ -136,12 +181,39 @@ Function PageArxFatalisLocationUpdate
 	
 	${NSD_GetText} $ArxFatalisLocationInput $0
 	
+	${NormalizePath} "$0" $0
+	
+	${If} $ArxFatalisLocationKeep != 0
+		${NSD_GetState} $ArxFatalisLocationKeep $1
+		${If} $1 == ${BST_CHECKED}
+			EnableWindow $ArxFatalisLocationInput 0
+			EnableWindow $ArxFatalisLocationButton 0
+			${If} $0 != $ExistingArxFatalisLocation
+				StrCpy $0 $ExistingArxFatalisLocation
+				${NSD_SetText} $ArxFatalisLocationInput "$0"
+			${EndIf}
+		${Else}
+			EnableWindow $ArxFatalisLocationInput 1
+			EnableWindow $ArxFatalisLocationButton 1
+			${If} $0 == $ExistingArxFatalisLocation
+				${GetFirstArxFatalisInstallLocation} $0
+				${NSD_SetText} $ArxFatalisLocationInput "$0"
+			${EndIf}
+		${EndIf}
+	${EndIf}
+	
 	${If} $0 == ""
 		SendMessage $ArxFatalisLocationIcon ${STM_SETIMAGE} ${IMAGE_ICON} $IconWarning
 		${NSD_SetText} $ArxFatalisLocationLabel "$(ARX_FATALIS_LOCATION_EMPTY)"
 		StrCpy $ArxFatalisLocation ""
 		StrCpy $ArxFatalisType ""
 		EnableWindow $ArxFatalisLocationNext 1
+		${If} $ExistingArxFatalisLocation != ""
+			${If} ${SectionIsSelected} ${PatchInstall}
+			${OrIf} ${SectionIsSelected} ${CopyData}
+				EnableWindow $ArxFatalisLocationNext 0
+			${EndIf}
+		${EndIf}
 		Return
 	${EndIf}
 	
@@ -154,14 +226,15 @@ Function PageArxFatalisLocationUpdate
 		Return
 	${EndIf}
 	
-	${NormalizePath} "$0" $0
-	
 	${If} $0 == $ArxFatalisLocation
 		StrCpy $ArxFatalisLocation $0
 		Return
 	${EndIf}
 	
 	StrCpy $ArxFatalisLocation $0
+	${If} $ExistingArxFatalisLocation != ""
+		Call UpdateArxFatalisLocationSize
+	${EndIf}
 	
 	SendMessage $ArxFatalisLocationIcon ${STM_SETIMAGE} ${IMAGE_ICON} $IconQuestion
 	${NSD_SetText} $ArxFatalisLocationLabel "$(ARX_FATALIS_LOCATION_WAIT)"
@@ -270,13 +343,25 @@ Function PageArxFatalisLocationOnLeave
 	Call PageArxFatalisLocationUpdate
 	
 	${If} $ArxFatalisLocation == ""
-		MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(ARX_FATALIS_LOCATION_EMPTY_CONTINUE)" IDNO abort
+		${If} ${Cmd} `MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(ARX_FATALIS_LOCATION_EMPTY_CONTINUE)" /SD IDYES IDNO`
+			Abort
+		${EndIf}
 	${ElseIf} $ArxFatalisType == ""
 		Abort
 	${ElseIfNot} $ArxFatalisType == "patched"
 	${AndIfNot} $ArxFatalisType == "demo"
-		MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(ARX_FATALIS_LOCATION_UNPATCHED_CONTINUE)" IDNO abort
+		${If} ${Cmd} `MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(ARX_FATALIS_LOCATION_UNPATCHED_CONTINUE)" /SD IDYES IDNO`
+			Abort
+		${EndIf}
 	${EndIf}
+	
+	${If} $ExistingArxFatalisLocation == ""
+		Call UpdateArxFatalisLocationSize
+	${EndIf}
+	
+FunctionEnd
+
+Function UpdateArxFatalisLocationSize
 	
 	Push $0
 	${If} $ArxFatalisLocation != ""
@@ -287,10 +372,70 @@ Function PageArxFatalisLocationOnLeave
 	SectionSetSize ${CopyData} $0
 	Pop $0
 	
-	Return
+FunctionEnd
+
+Function PageSetArxFatalisLocationOnCreate
 	
-abort:
-	Abort
+	${If} $ExistingArxFatalisLocation != ""
+		Abort
+	${EndIf}
+	
+	Call PageArxFatalisLocationOnCreate
+	
+FunctionEnd
+
+Function PageSetArxFatalisLocationOnLeave
+	
+	Call PageArxFatalisLocationOnLeave
+	
+FunctionEnd
+
+Function PageChangeArxFatalisLocationIsInstall
+	
+	${If} $ExistingArxFatalisLocation == ""
+	${OrIf} $SelectedInstType == ${INSTTYPE_UPDATE_REPAIR}
+		Call PageInstallModeIsInstall
+	${Else}
+		Push 0
+	${EndIf}
+	
+FunctionEnd
+
+Function PageChangeArxFatalisLocationOnCreate
+	
+	${If} $ExistingArxFatalisLocation == ""
+		Abort
+	${ElseIf} $SelectedInstType == ${INSTTYPE_UPDATE_REPAIR}
+		${If} $ArxFatalisLocation != $ExistingArxFatalisLocation
+			StrCpy $ArxFatalisLocation $ExistingArxFatalisLocation
+			Call UpdateArxFatalisLocationSize
+		${EndIf}
+		Abort
+	${EndIf}
+	
+	${IfNot} ${SectionIsSelected} ${CopyData}
+	${AndIf} $ExistingInstallType == "separate"
+	${AndIf} $ArxFatalisLocation == $ExistingInstallLocation
+		${GetFirstArxFatalisInstallLocation} $ArxFatalisLocation
+	${EndIf}
+	
+	Call PageInstallModeIsInstall
+	Call SetNextButtonToInstall
+	
+	Call PageArxFatalisLocationOnCreate
+	
+FunctionEnd
+
+Function PageChangeArxFatalisLocationOnLeave
+	
+	Call PageArxFatalisLocationOnLeave
+	
+	${If} $ArxFatalisLocation == ""
+		${If} ${SectionIsSelected} ${PatchInstall}
+		${OrIf} ${SectionIsSelected} ${CopyData}
+			Abort
+		${EndIf}
+	${EndIf}
 	
 FunctionEnd
 
