@@ -3,9 +3,9 @@
 
 ${LangFileString} SINGLE_INSTANCE "$(^Name) Setup läuft schon!"
 
-${LangFileString} ARX_WINDOWS_XP_SP2 "Arx Libertatis benötigt Windows XP Service Pack 2 or neuer."
+${LangFileString} ARX_WINDOWS_XP_SP2 "$(^Name) benötigt Windows XP Service Pack 2 or neuer."
 
-${LangFileString} ARX_WINDOWS_UCRT "Arx Libertatis benötigen die Windows Universal C Runtime (UCRT)."
+${LangFileString} ARX_WINDOWS_UCRT "$(^Name) benötigen die Windows Universal C Runtime (UCRT)."
 ${LangFileString} ARX_WINDOWS_UCRT_XP "Für Windows XP erhalten Sie diese mit der Visual C++ Redistributable für Visual Studio 2015 or neuer:"
 ${LangFileString} ARX_WINDOWS_UCRT_VISTA "Für Windows Vista oder neur hätten Sie diese als ein Windows Update erhalten sollen."
 
@@ -46,30 +46,30 @@ ${LangFileString} ARX_UPDATE_INSTALL "$(^Name) zu Version <?= $version ?> update
 ${LangFileString} ARX_EXISTING_INSTALL "Bestehende $(^Name) Installation gefunden:"
 
 ${LangFileString} ARX_PATCH_INSTALL "Bestehende Arx Fatalis Installation patchen"
-${LangFileString} ARX_PATCH_INSTALL_DESC "Spiel mit Arx Libertatis wenn Arx Fatalis gestartet wird. (Empfohlen)"
+${LangFileString} ARX_PATCH_INSTALL_DESC "Spiel mit $(^Name) wenn Arx Fatalis gestartet wird. (Empfohlen)"
 
-${LangFileString} ARX_SEPARATE_INSTALL "Separate Arx Libertatis Installation erstellen"
-${LangFileString} ARX_SEPARATE_INSTALL_DESC "Benutze Arx Libertatis nur wenn es durch die eigene Verknüpfung gestartet wird. (Nicht Empfohlen)"
+${LangFileString} ARX_SEPARATE_INSTALL "Separate $(^Name) Installation erstellen"
+${LangFileString} ARX_SEPARATE_INSTALL_DESC "Benutze $(^Name) nur wenn es durch die eigene Verknüpfung gestartet wird. (Nicht Empfohlen)"
 
-${LangFileString} ARX_INSTALL_STATUS "Arx Libertatis wird installiert..."
+${LangFileString} ARX_INSTALL_STATUS "$(^Name) wird installiert..."
 
 ${LangFileString} ARX_KEEP_DATA "Kopierte Arx Fatalis Daten beibehalten"
 ${LangFileString} ARX_KEEP_DATA_STATUS "Kopierte Arx Fatalis Daten werden gesichert..."
 
 ${LangFileString} ARX_COPY_DATA "Arx Fatalis Daten kopieren"
-${LangFileString} ARX_COPY_DATA_DESC "Kopiere alle .pak Dateien damit Arx Libertatis weiter funktioniert nachdem Sie Arx Fatalis deinstallieren."
+${LangFileString} ARX_COPY_DATA_DESC "Kopiere alle .pak Dateien damit $(^Name) weiter funktioniert nachdem Sie Arx Fatalis deinstallieren."
 ${LangFileString} ARX_COPY_DATA_STATUS "Arx Fatalis Daten werden kopiert..."
 ${LangFileString} ARX_COPY_DATA_DIR "Kopierquelle:"
 ${LangFileString} ARX_COPY_DATA_FILE "Kopiere"
 ${LangFileString} ARX_COPY_DATA_FILE_ERROR "Arx Fatalis Datei konnte nicht kopiert werden:"
 
-${LangFileString} ARX_CREATE_SHORTCUT_STATUS "Arx Libertatis Verknüpfungen werden erstellt..."
+${LangFileString} ARX_CREATE_SHORTCUT_STATUS "$(^Name) Verknüpfungen werden erstellt..."
 
 ${LangFileString} ARX_CREATE_DESKTOP_ICON "Desktop-Verknüpfung erstellen"
-${LangFileString} ARX_CREATE_DESKTOP_ICON_DESC "Erstelle eine Verknüpfung auf Ihrem Desktop um Arx Libertatis zu starten."
+${LangFileString} ARX_CREATE_DESKTOP_ICON_DESC "Erstelle eine Verknüpfung auf Ihrem Desktop um $(^Name) zu starten."
 
 ${LangFileString} ARX_CREATE_QUICKLAUNCH_ICON "Schnellstart-Verknüpfung erstellen"
-${LangFileString} ARX_CREATE_QUICKLAUNCH_ICON_DESC "Erstelle eine Verknüpfung in Ihrer Schnellstart-Leiste um Arx Libertatis zu starten."
+${LangFileString} ARX_CREATE_QUICKLAUNCH_ICON_DESC "Erstelle eine Verknüpfung in Ihrer Schnellstart-Leiste um $(^Name) zu starten."
 
 ${LangFileString} ARX_CLEANUP_STATUS "Alte Dateien werden gelöscht..."
 
@@ -86,7 +86,7 @@ ${LangFileString} ARX_VERIFY_DATA_MIXED "Gemischte Demo- und Vollversion-Daten g
 ${LangFileString} ARX_VERIFY_DATA_FAILED "Probleme mit den Arx Fatalis Daten gefunden!"
 ${LangFileString} ARX_VERIFY_DATA_SUCCESS "Daten erfolgreich überprüft."
 ${LangFileString} ARX_VERIFY_DAYA_PATCH_STEAM "Rechtsclick Arx Fatalis in der Steam-Bibliothek, wähle 'Eigenschaften', gehe zu 'LOKALE DATEIEN' und click 'Spieldaten auf Fehler überprüfen'."
-${LangFileString} ARX_VERIFY_DAYA_PATCH_BETHESDA "Geh zu Arx Libertatis im Bethesda.net Launcher, click 'Spieloptionen' und wähle 'Scannen und reparieren'."
+${LangFileString} ARX_VERIFY_DAYA_PATCH_BETHESDA "Geh zu Arx Fatalis im Bethesda.net Launcher, click 'Spieloptionen' und wähle 'Scannen und reparieren'."
 ${LangFileString} ARX_VERIFY_DAYA_PATCH_WINDOWS "Geh zu Arx Fatalis (PC) in dem Windows 'Programme hinzufügen/entfernen' Dialog, wähle 'Erweiterte Optionen' und dort click 'Reparieren'."
 ${LangFileString} ARX_VERIFY_DATA_PATCH "Bitte den 1.21 patch installieren: $(ARX_PATCH_URL)"
 ${LangFileString} ARX_VERIFY_DATA_REINSTALL "Danach Starte  $(^Name) Setup erneut!"
