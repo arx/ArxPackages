@@ -157,6 +157,7 @@ Function PageComponentsOnShow
 FunctionEnd
 
 Function RestorePatchInstallState
+	Push $0
 	StrCpy $0 $SecPatchInstall
 	${If} $ExistingArxFatalisLocation == ""
 	${AndIf} $ArxFatalisLocation == ""
