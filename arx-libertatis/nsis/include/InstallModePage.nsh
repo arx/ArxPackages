@@ -38,8 +38,10 @@ Function PageInstallModeIsInstall
 	Push $0
 	
 	${If} $SelectedInstType == ${INSTTYPE_UPDATE_REPAIR}
+	${OrIf} $SelectedInstType == ${INSTTYPE_UNINSTALL}
 	${OrIf} ${SectionIsSelected} ${PatchInstall}
 		${If} $SelectedInstType == ${INSTTYPE_UPDATE_REPAIR}
+		${OrIf} $SelectedInstType == ${INSTTYPE_UNINSTALL}
 			StrCpy $0 $ExistingInstallMode
 		${Else}
 			${GetArxFatalisInstallMode} "$ArxFatalisLocation" $0
@@ -62,9 +64,11 @@ FunctionEnd
 Function PageInstallModeOnPre
 	
 	${If} $SelectedInstType == ${INSTTYPE_UPDATE_REPAIR}
+	${OrIf} $SelectedInstType == ${INSTTYPE_UNINSTALL}
 	${OrIf} ${SectionIsSelected} ${PatchInstall}
 		Push $0
 		${If} $SelectedInstType == ${INSTTYPE_UPDATE_REPAIR}
+		${OrIf} $SelectedInstType == ${INSTTYPE_UNINSTALL}
 			StrCpy $0 $ExistingInstallMode
 		${Else}
 			${GetArxFatalisInstallMode} "$ArxFatalisLocation" $0

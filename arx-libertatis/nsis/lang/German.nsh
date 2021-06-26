@@ -43,6 +43,7 @@ ${LangFileString} ARX_FATALIS_LOCATION_UNPATCHED_CONTINUE "Es wird dringend empf
 ${LangFileString} ARX_MODIFY_INSTALL "$(^Name) Installation anpassen"
 ${LangFileString} ARX_REPAIR_INSTALL "$(^Name) Installation reparieren"
 ${LangFileString} ARX_UPDATE_INSTALL "$(^Name) zu Version <?= $version ?> updaten"
+${LangFileString} ARX_UNINSTALL "$(^Name) deinstallieren"
 ${LangFileString} ARX_EXISTING_INSTALL "Bestehende $(^Name) Installation gefunden:"
 
 ${LangFileString} ARX_PATCH_INSTALL "Bestehende Arx Fatalis Installation patchen"

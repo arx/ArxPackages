@@ -158,6 +158,8 @@ VIFileVersion "${Version}"
 	!insertmacro LANGFILE_INCLUDE_WITHDEFAULT "lang\${Language}.nsh" "lang\English.nsh"
 !macroend
 
+!define MUI_UNFINISHPAGE
+
 !insertmacro AddLanguage "English"
 !insertmacro AddLanguage "French"
 !insertmacro AddLanguage "German"
@@ -171,6 +173,8 @@ VIFileVersion "${Version}"
 ;!insertmacro AddLanguage "Polish"
 ;!insertmacro AddLanguage "Turkish"
 
+!undef MUI_UNFINISHPAGE
+
 ;------------------------------------------------------------------------------
 ;Sections
 
@@ -178,6 +182,7 @@ VIFileVersion "${Version}"
 
 !define INSTTYPE_UPDATE_REPAIR 0
 !define /math INSTTYPE_UPDATE_REPAIR_MASK 1 << ${INSTTYPE_UPDATE_REPAIR}
+!define INSTTYPE_UNINSTALL 1
 InstType "/CUSTOMSTRING=$(ARX_MODIFY_INSTALL)"
 
 Section - Main
@@ -351,18 +356,29 @@ Section - Cleanup
 	
 	${ProgressBarBeginSection} 0 0
 	
-	DetailPrint ""
+	${If} ${SectionIsSelected} ${Main}
+		DetailPrint ""
+	${EndIf}
 	SetDetailsPrint both
 	DetailPrint "$(ARX_CLEANUP_STATUS)"
 	SetDetailsPrint listonly
 	
-	${UninstallLogClean} "$INSTDIR\${UninstallLog}"
-	
-	${UninstallLogGetSize} "$INSTDIR\${UninstallLog}" $0
-	WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "EstimatedSize" $0
+	${If} ${SectionIsSelected} ${Main}
+		
+		${UninstallLogClean} "$INSTDIR\${UninstallLog}"
+		
+		${UninstallLogGetSize} "$INSTDIR\${UninstallLog}" $0
+		WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "EstimatedSize" $0
+		
+	${Else}
+		
+		${UninstallLogRemoveOld} ""
+		
+	${EndIf}
 	
 	${If} $ExistingInstallLocation != ""
 	${AndIf} $INSTDIR != $ExistingInstallLocation
+	${OrIfNot} ${SectionIsSelected} ${Main}
 		
 		RMDir "$ExistingInstallLocation"
 		
@@ -376,6 +392,7 @@ Section - Cleanup
 	
 	; Clean up old registry keys
 	${If} $MultiUser.InstallMode != $ExistingInstallMode
+	${OrIfNot} ${SectionIsSelected} ${Main}
 		${If} $ExistingInstallMode == "AllUsers"
 			DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis"
 			DeleteRegKey HKLM "Software\ArxLibertatis"
@@ -591,6 +608,8 @@ Function .onInit
 			InstTypeSetText ${INSTTYPE_UPDATE_REPAIR} "$(ARX_UPDATE_INSTALL)"
 		${EndIf}
 		
+		InstTypeSetText ${INSTTYPE_UNINSTALL} "$(ARX_UNINSTALL)"
+		
 		${If} $ExistingInstallType == "patch"
 		
 			StrCpy $SecPatchInstall ${SF_SELECTED}
@@ -645,6 +664,12 @@ FunctionEnd
 Function BeforeInstall
 	
 	${NormalizePath} "$INSTDIR" $INSTDIR
+	
+	${IfNot} ${SectionIsSelected} ${PatchInstall}
+	${AndIfNot} ${SectionIsSelected} ${SeparateInstall}
+		!insertmacro UnselectSection ${Main}
+		!insertmacro UnselectSection ${VerifyData}
+	${EndIf}
 	
 	; Handle switching install modes
 	${If} $ExistingInstallMode != ""

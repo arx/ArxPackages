@@ -394,6 +394,7 @@ Function PageChangeArxFatalisLocationIsInstall
 	
 	${If} $ExistingArxFatalisLocation == ""
 	${OrIf} $SelectedInstType == ${INSTTYPE_UPDATE_REPAIR}
+	${OrIf} $SelectedInstType == ${INSTTYPE_UNINSTALL}
 		Call PageInstallModeIsInstall
 	${Else}
 		Push 0
@@ -406,6 +407,7 @@ Function PageChangeArxFatalisLocationOnCreate
 	${If} $ExistingArxFatalisLocation == ""
 		Abort
 	${ElseIf} $SelectedInstType == ${INSTTYPE_UPDATE_REPAIR}
+	${OrIf} $SelectedInstType == ${INSTTYPE_UNINSTALL}
 		${If} $ArxFatalisLocation != $ExistingArxFatalisLocation
 			StrCpy $ArxFatalisLocation $ExistingArxFatalisLocation
 			Call UpdateArxFatalisLocationSize

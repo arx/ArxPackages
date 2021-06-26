@@ -37,7 +37,11 @@ Function PageInstFilesOnShow
 	${ProgressBarReplace} $mui.InstFilesPage.ProgressBar
 	
 	; Main
-	${ProgressBarAddToTotal} ${MAIN_SECTION_SIZE} ${MAIN_SECTION_COUNT}
+	${If} ${SectionIsSelected} ${Main}
+		${ProgressBarAddToTotal} ${MAIN_SECTION_SIZE} ${MAIN_SECTION_COUNT}
+	${Else}
+		!insertmacro MUI_HEADER_TEXT "$(MUI_UNTEXT_UNINSTALLING_TITLE)" "$(MUI_UNTEXT_UNINSTALLING_SUBTITLE)"
+	${EndIf}
 	
 	; CopyData
 	SectionGetSize ${CopyData} $0
@@ -53,7 +57,8 @@ Function PageInstFilesOnShow
 	${ProgressBarAddToTotal} 0 0
 	
 	; VerifyData - checks as much bytes as CopyData copies
-	${If} $ArxFatalisLocation != ""
+	${If} ${SectionIsSelected} ${VerifyData}
+	${AndIf} $ArxFatalisLocation != ""
 		${ProgressBarAddToTotal} "$0" $ArxFatalisFileCount
 	${EndIf}
 	

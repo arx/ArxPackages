@@ -102,7 +102,11 @@ Function PageComponentsOnPre
 	${If} $ExistingArxFatalisLocation == ""
 	${AndIf} $ArxFatalisLocation == ""
 		!insertmacro RestoreSectionState ${PatchInstall} ${SF_RO}
-		!insertmacro RestoreSectionState ${SeparateInstall} ${SF_SELECTED_AND_RO}
+		${If} $ExistingInstallLocation == ""
+			!insertmacro RestoreSectionState ${SeparateInstall} ${SF_SELECTED_AND_RO}
+		${Else}
+			!insertmacro RestoreSectionState ${SeparateInstall} $SecSeparateInstall
+		${EndIf}
 	${Else}
 		!insertmacro RestoreSectionState ${PatchInstall} $SecPatchInstall
 		!insertmacro RestoreSectionState ${SeparateInstall} $SecSeparateInstall
@@ -148,8 +152,7 @@ Function PageComponentsOnShow
 	
 	Call UpdateInstType
 	
-	Call PageChangeArxFatalisLocationIsInstall
-	Call SetNextButtonToInstall
+	Call PageComponentsUpdateNextButton
 	
 FunctionEnd
 
@@ -228,13 +231,13 @@ Function .onSelChange
 		${If} $0 == ${PatchInstall}
 			${If} ${SectionIsSelected} ${PatchInstall}
 				!insertmacro UnselectSection ${SeparateInstall}
-			${Else}
+			${ElseIf} $ExistingInstallLocation == ""
 				!insertmacro SelectSection ${SeparateInstall}
 			${EndIf}
 		${Else}
 			${If} ${SectionIsSelected} ${SeparateInstall}
 				!insertmacro UnselectSection ${PatchInstall}
-			${Else}
+			${ElseIf} $ExistingInstallLocation == ""
 				!insertmacro SelectSection ${PatchInstall}
 			${EndIf}
 		${EndIf}
@@ -263,13 +266,24 @@ Function .onSelChange
 		IntOp $1 $1 - 1
 		${If} $SelectedInstType == $1
 			StrCpy $SelectedInstType ${NSIS_MAX_INST_TYPES}
+			${IfNot} ${SectionIsSelected} ${PatchInstall}
+			${AndIfNot} ${SectionIsSelected} ${SeparateInstall}
+				${If} $ExistingInstallType == "patch"
+					!insertmacro SelectSection ${PatchInstall}
+					StrCpy $SecPatchInstall ${SF_SELECTED}
+					Call RestorePatchInstallState
+				${Else}
+					!insertmacro SelectSection ${SeparateInstall}
+					StrCpy $SecSeparateInstall ${SF_SELECTED}
+					Call RestoreSeparateInstallState
+				${EndIf}
+			${EndIf}
 		${EndIf}
 	${Else}
 		Call UpdateInstType
 	${EndIf}
 	
-	Call PageChangeArxFatalisLocationIsInstall
-	Call SetNextButtonToInstall
+	Call PageComponentsUpdateNextButton
 	
 	Pop $1
 	Pop $0
@@ -317,6 +331,23 @@ Function UpdateInstType
 	Pop $3
 	Pop $2
 	Pop $1
+	Pop $0
+	
+FunctionEnd
+
+Function PageComponentsUpdateNextButton
+	
+	Push $0
+	
+	Call PageChangeArxFatalisLocationIsInstall
+	Pop $0
+	${If} $0 != 0
+	${AndIf} $SelectedInstType == ${INSTTYPE_UNINSTALL}
+		${SetNextButtonText} "$(^UninstallBtn)"
+	${Else}
+		${SetNextButtonToInstall} $0
+	${EndIf}
+	
 	Pop $0
 	
 FunctionEnd

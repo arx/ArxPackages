@@ -36,6 +36,7 @@ Var StartMenuFolder
 Function PageStartMenuIsInstall
 	
 	${If} $SelectedInstType == ${INSTTYPE_UPDATE_REPAIR}
+	${OrIf} $SelectedInstType == ${INSTTYPE_UNINSTALL}
 	${OrIfNot} ${SectionIsSelected} ${StartMenu}
 		Push 1
 	${Else}
@@ -47,6 +48,7 @@ FunctionEnd
 Function PageStartMenuOnPre
 	
 	${If} $SelectedInstType == ${INSTTYPE_UPDATE_REPAIR}
+	${OrIf} $SelectedInstType == ${INSTTYPE_UNINSTALL}
 	${OrIfNot} ${SectionIsSelected} ${StartMenu}
 		Abort
 	${EndIf}

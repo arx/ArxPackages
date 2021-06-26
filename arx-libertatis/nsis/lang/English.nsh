@@ -43,6 +43,7 @@ ${LangFileString} ARX_FATALIS_LOCATION_UNPATCHED_CONTINUE "It is strongly recomm
 ${LangFileString} ARX_MODIFY_INSTALL "Modify $(^Name) install"
 ${LangFileString} ARX_REPAIR_INSTALL "Repair $(^Name) install"
 ${LangFileString} ARX_UPDATE_INSTALL "Update $(^Name) to version <?= $version ?>"
+${LangFileString} ARX_UNINSTALL "Uninstall $(^Name)"
 ${LangFileString} ARX_EXISTING_INSTALL "Found existing $(^Name) install:"
 
 ${LangFileString} ARX_PATCH_INSTALL "Patch existing Arx Fatalis install"

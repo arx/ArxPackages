@@ -34,6 +34,7 @@
 Function PageDirectoryIsInstall
 	
 	${If} $SelectedInstType == ${INSTTYPE_UPDATE_REPAIR}
+	${OrIf} $SelectedInstType == ${INSTTYPE_UNINSTALL}
 	${OrIf} ${SectionIsSelected} ${PatchInstall}
 		Call PageStartMenuIsInstall
 	${Else}
@@ -45,6 +46,7 @@ FunctionEnd
 Function PageDirectoryOnPre
 	
 	${If} $SelectedInstType == ${INSTTYPE_UPDATE_REPAIR}
+	${OrIf} $SelectedInstType == ${INSTTYPE_UNINSTALL}
 		StrCpy $INSTDIR "$ExistingInstallLocation"
 		Abort
 	${ElseIf} ${SectionIsSelected} ${PatchInstall}

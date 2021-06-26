@@ -195,12 +195,19 @@ Function PageFinishOnShow
 	
 	${PageWelcomeFinishOnShow} $mui.FinishPage.Image $mui.FinishPage.Image.Bitmap
 	
-	${If} $ArxFatalisLocation == ""
+	${IfNot} ${SectionIsSelected} ${Main}
+		${NSD_SetText} $mui.FinishPage.Title "$(MUI_UNTEXT_FINISH_INFO_TITLE)"
+		${NSD_SetText} $mui.FinishPage.Text "$(MUI_UNTEXT_FINISH_INFO_TEXT)"
+		${NSD_Uncheck} $mui.FinishPage.Run
+		ShowWindow $mui.FinishPage.Run 0
+		${NSD_SetText} $WarningLabel ""
+	${ElseIf} $ArxFatalisLocation == ""
 		${NSD_Uncheck} $mui.FinishPage.Run
 	${EndIf}
 	
 	${If} $ExistingInstallType == "patch"
 		${If} $INSTDIR != $ExistingInstallLocation
+		${OrIfNot} ${SectionIsSelected} ${Main}
 			${GetArxFatalisStore} "$ExistingInstallLocation" $0
 			!insertmacro UninstallSuggestRepair "$0" $0
 			${NSD_SetText} $WarningLabel "$0"
