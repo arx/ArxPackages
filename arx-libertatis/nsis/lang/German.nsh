@@ -51,6 +51,7 @@ ${LangFileString} ARX_COPY_DATA_DESC "Kopiere alle .pak Dateien damit Arx Libert
 ${LangFileString} ARX_COPY_DATA_STATUS "Arx Fatalis Daten werden kopiert..."
 ${LangFileString} ARX_COPY_DATA_DIR "Kopierquelle:"
 ${LangFileString} ARX_COPY_DATA_FILE "Kopiere"
+${LangFileString} ARX_COPY_DATA_FILE_ERROR "Arx Fatalis Datei konnte nicht kopiert werden:"
 
 ${LangFileString} ARX_CREATE_SHORTCUT_STATUS "Arx Libertatis Verknüpfungen werden erstellt..."
 

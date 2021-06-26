@@ -51,6 +51,7 @@ ${LangFileString} ARX_COPY_DATA_DESC "Copy all .pak files so that Arx Libertatis
 ${LangFileString} ARX_COPY_DATA_STATUS "Copying Arx Fatalis data..."
 ${LangFileString} ARX_COPY_DATA_DIR "Source location:"
 ${LangFileString} ARX_COPY_DATA_FILE "Copying"
+${LangFileString} ARX_COPY_DATA_FILE_ERROR "Could not copy Arx Fatalis file:"
 
 ${LangFileString} ARX_CREATE_SHORTCUT_STATUS "Creating Arx Libertatis shortcuts..."
 

@@ -653,6 +653,7 @@ Function GetArxFatalisDataSize
 	Push $4
 	Push $5
 	
+	StrCpy $4 0
 	StrCpy $5 0
 	
 	${List.Count} $1 ArxFatalisFiles
@@ -746,6 +747,41 @@ FunctionEnd
 ; Mark Arx Fatalis data as owned by this installer and not to be cleaned
 !define KeepArxFatalisData '!insertmacro ArxFatalisDataProcess "keep"'
 
+!macro CopyArxFatalisDataFile Path
+	
+	DetailPrint "$(ARX_COPY_DATA_FILE) ${Path}"
+	
+	${UninstallLogAdd} "$1\${Path}"
+	
+	${Do}
+		
+		; Try to rename the file if we own the old location
+		${Map.Get} $7 UninstallLogInfo "$0\${Path}"
+		${If} $7 == "old"
+			ClearErrors
+			Rename "$0\${Path}" "$1\${Path}"
+			${IfNot} ${Errors}
+				${Break}
+			${EndIf}
+		${EndIf}
+		
+		; Otherwise, copy it
+		ClearErrors
+		CopyFiles /SILENT "$0\${Path}" "$1$5"
+		${IfNot} ${Errors}
+			${Break}
+		${EndIf}
+		
+		${If} ${Cmd} `MessageBox MB_ABORTRETRYIGNORE|MB_ICONEXCLAMATION "$(ARX_COPY_DATA_FILE_ERROR)$\n$\n${Path}" /SD IDIGNORE IDABORT abort IDIGNORE`
+			${Break}
+		${EndIf}
+		
+	${Loop}
+	
+	${ProgressBarFile} "$0\${Path}"
+	
+!macroend
+
 Function CopyArxFatalisData
 	
 	Exch $0 ; Source
@@ -756,6 +792,7 @@ Function CopyArxFatalisData
 	Push $4
 	Push $5
 	Push $6
+	Push $7
 	
 	DetailPrint "$(ARX_COPY_DATA_DIR) $0"
 	
@@ -776,36 +813,22 @@ Function CopyArxFatalisData
 		${EndIf}
 		
 		${If} ${FileExists} "$0\$4"
-			
 			${CreateDirectoryRecursive} "$1" "$5"
-			
-			DetailPrint "$(ARX_COPY_DATA_FILE) $4"
-			${CopyFiles} "$0\$4" "$1$5" "$1\$4"
-			${ProgressBarFile} "$0\$4"
-			
+			!insertmacro CopyArxFatalisDataFile "$4"
 			${If} $6 != ""
 			${AndIf} ${FileExists} "$0\$6"
-				
-				DetailPrint "$(ARX_COPY_DATA_FILE) $6"
-				${CopyFiles} "$0\$6" "$1$5" "$1\$6"
-				${ProgressBarFile} "$0\$6"
-				
+				!insertmacro CopyArxFatalisDataFile "$6"
 			${EndIf}
-			
 		${ElseIf} $6 != ""
 		${AndIf} ${FileExists} "$0\$6"
-			
 			${CreateDirectoryRecursive} "$1" "$5"
-			
-			DetailPrint "$(ARX_COPY_DATA_FILE) $6"
-			${CopyFiles} "$0\$6" "$1$5" "$1\$6"
-			${ProgressBarFile} "$0\$6"
-			
+			!insertmacro CopyArxFatalisDataFile "$6"
 		${EndIf}
 		
 		IntOp $2 $2 + 1
 	${Loop}
 	
+	Pop $7
 	Pop $6
 	Pop $5
 	Pop $4
@@ -813,6 +836,12 @@ Function CopyArxFatalisData
 	Pop $2
 	Pop $1
 	Pop $0
+	
+	Return
+	
+abort:
+	
+	Abort
 	
 FunctionEnd
 
