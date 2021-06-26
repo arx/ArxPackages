@@ -484,6 +484,18 @@ Function FindArxFatalisData
 	
 FunctionEnd
 
+!macro GetFirstArxFatalisInstallLocation Result
+	${List.Count} ${Result} ArxFatalisLocations
+	${If} ${Result} == 0
+		StrCpy ${Result} ""
+	${Else}
+		${List.Get} ${Result} ArxFatalisLocations 0
+	${EndIf}
+!macroend
+
+; ${GetFirstArxFatalisInstallLocation} Result
+!define GetFirstArxFatalisInstallLocation '!insertmacro GetFirstArxFatalisInstallLocation'
+
 Function GetArxFatalisLocationInfo
 	
 	Exch $0 ; Path

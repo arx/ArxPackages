@@ -45,12 +45,7 @@ PageExEnd
 !macroend
 
 !macro ARX_FATALIS_LOCATION_PAGE_INIT
-	Push $0
-	${List.Count} $0 ArxFatalisLocations
-	${IfNot} $0 == 0
-		${List.Get} $ArxFatalisLocation ArxFatalisLocations 0
-	${EndIf}
-	Pop $0
+	${GetFirstArxFatalisInstallLocation} $ArxFatalisLocation
 !macroend
 
 !macro ARX_FATALIS_LOCATION_PAGE_FUNCTIONS
