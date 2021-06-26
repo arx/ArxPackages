@@ -778,30 +778,48 @@ FunctionEnd
 
 !macro CopyArxFatalisDataFile Path
 	
-	DetailPrint "$(ARX_COPY_DATA_FILE) ${Path}"
-	
 	${UninstallLogAdd} "$1\${Path}"
 	
 	${Do}
 		
-		; Try to rename the file if we own the old location
-		${Map.Get} $7 UninstallLogInfo "$0\${Path}"
-		${If} $7 == "old"
+		; CopyFiles does not report all errors so do this
+		SetFileAttributes "$1\${Path}" NORMAL
+		RMDir "$1\${Path}"
+		Delete "$1\${Path}"
+		
+		${IfNot} ${FileExists} "$1\${Path}"
+			
+			; Try to rename the file if we own the old location
+			${Map.Get} $7 UninstallLogInfo "$0\${Path}"
+			${If} $7 == "old"
+				ClearErrors
+				Rename "$0\${Path}" "$1\${Path}"
+				${IfNot} ${Errors}
+				${AndIf} ${FileExists} "$1\${Path}"
+					${Break}
+				${EndIf}
+			${EndIf}
+			
+			; Otherwise, copy it
+			DetailPrint "$(ARX_COPY_DATA_FILE) $0\${Path}"
 			ClearErrors
-			Rename "$0\${Path}" "$1\${Path}"
+			CopyFiles /SILENT /FILESONLY "$0\${Path}" "$1$5"
 			${IfNot} ${Errors}
+			${AndIf} ${FileExists} "$1\${Path}"
 				${Break}
 			${EndIf}
+			
 		${EndIf}
 		
-		; Otherwise, copy it
-		ClearErrors
-		CopyFiles /SILENT "$0\${Path}" "$1$5"
-		${IfNot} ${Errors}
-			${Break}
-		${EndIf}
-		
-		${If} ${Cmd} `MessageBox MB_ABORTRETRYIGNORE|MB_ICONEXCLAMATION "$(ARX_COPY_DATA_FILE_ERROR)$\n$\n${Path}" /SD IDIGNORE IDABORT abort IDIGNORE`
+		Push $0
+		Push $1
+		StrCpy $0 "$0\${Path}"
+		StrCpy $1 "$1\${Path}"
+		StrCpy $7 "$(ARX_COPY_DATA_FILE_ERROR)$\n$\n$(ABORT_RETRY_IGNORE)"
+		Pop $1
+		Pop $0
+		${If} ${Cmd} `MessageBox MB_ABORTRETRYIGNORE|MB_ICONEXCLAMATION "$7" /SD IDIGNORE IDABORT abort IDIGNORE`
+			SetAutoClose false
 			${Break}
 		${EndIf}
 		

@@ -3,6 +3,8 @@
 
 ${LangFileString} SINGLE_INSTANCE "$(^Name) Setup läuft schon!"
 
+${LangFileString} ABORT_RETRY_IGNORE "Klicken Sie auf Abbrechen, um abzubrechen,$\nauf Wiederholen, um den Schreibvorgang erneut zu versuchen,$\noder auf Ignorieren, um diese Datei zu überspringen."
+
 ${LangFileString} ARX_WINDOWS_XP_SP2 "$(^Name) benötigt Windows XP Service Pack 2 or neuer."
 
 ${LangFileString} ARX_WINDOWS_UCRT "$(^Name) benötigen die Windows Universal C Runtime (UCRT)."
@@ -62,7 +64,7 @@ ${LangFileString} ARX_COPY_DATA_DESC "Kopiere alle .pak Dateien damit $(^Name) w
 ${LangFileString} ARX_COPY_DATA_STATUS "Arx Fatalis Daten werden kopiert..."
 ${LangFileString} ARX_COPY_DATA_DIR "Kopierquelle:"
 ${LangFileString} ARX_COPY_DATA_FILE "Kopiere"
-${LangFileString} ARX_COPY_DATA_FILE_ERROR "Arx Fatalis Datei konnte nicht kopiert werden:"
+${LangFileString} ARX_COPY_DATA_FILE_ERROR "Fehler beim Kompieren von Arx Fatalis Daten:$\n$\nVon: $0$\nNach: $1"
 
 ${LangFileString} ARX_CREATE_SHORTCUT_STATUS "$(^Name) Verknüpfungen werden erstellt..."
 
@@ -89,7 +91,7 @@ ${LangFileString} ARX_VERIFY_DATA_SUCCESS "Daten erfolgreich überprüft."
 ${LangFileString} ARX_VERIFY_DATA_PATCH_STEAM "Rechtsclick Arx Fatalis in der Steam-Bibliothek, wähle 'Eigenschaften', gehe zu 'LOKALE DATEIEN' und click 'Spieldaten auf Fehler überprüfen'."
 ${LangFileString} ARX_VERIFY_DATA_PATCH_BETHESDA "Geh zu Arx Fatalis im Bethesda.net Launcher, click 'Spieloptionen' und wähle 'Scannen und reparieren'."
 ${LangFileString} ARX_VERIFY_DATA_PATCH_WINDOWS "Geh zu Arx Fatalis (PC) in dem Windows 'Programme hinzufügen/entfernen' Dialog, wähle 'Erweiterte Optionen' und dort click 'Reparieren'."
-${LangFileString} ARX_VERIFY_DATA_PATCH "Bitte den 1.21 patch (neu) installieren: $(ARX_PATCH_URL)"
+${LangFileString} ARX_VERIFY_DATA_PATCH "Bitte den 1.21 patch (neu) installieren:"
 ${LangFileString} ARX_VERIFY_DATA_REINSTALL "Danach Starte  $(^Name) Setup erneut!"
 ${LangFileString} ARX_VERIFY_DATA_REPORT "Wenn Sie denken dass deine Arx Fatalis gültig sind, dann bitte einen Fehlerbericht mit allen Ausgaben melden:"
 ${LangFileString} ARX_COPY_DETAILS "Hier kann nach einem Richsclick '$(^CopyDetails)' ausgewählt werden."

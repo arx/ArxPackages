@@ -3,6 +3,8 @@
 
 ${LangFileString} SINGLE_INSTANCE "$(^Name) Setup is already running!"
 
+${LangFileString} ABORT_RETRY_IGNORE "Click Abort to stop the installation,$\nRetry to try again, or$\nIgnore to skip this file."
+
 ${LangFileString} ARX_WINDOWS_XP_SP2 "$(^Name) requires Windows XP Service Pack 2 or later."
 
 ${LangFileString} ARX_WINDOWS_UCRT "$(^Name) requires the Windows Universal C Runtime (UCRT)."
@@ -61,8 +63,8 @@ ${LangFileString} ARX_COPY_DATA "Copy Arx Fatalis data"
 ${LangFileString} ARX_COPY_DATA_DESC "Copy all .pak files so that $(^Name) will continue to work after you uninstall Arx Fatalis."
 ${LangFileString} ARX_COPY_DATA_STATUS "Copying Arx Fatalis data..."
 ${LangFileString} ARX_COPY_DATA_DIR "Source location:"
-${LangFileString} ARX_COPY_DATA_FILE "Copying"
-${LangFileString} ARX_COPY_DATA_FILE_ERROR "Could not copy Arx Fatalis file:"
+${LangFileString} ARX_COPY_DATA_FILE "Copy"
+${LangFileString} ARX_COPY_DATA_FILE_ERROR "Error copying Arx Fatalis data:$\n$\nFrom: $0$\nTo: $1"
 
 ${LangFileString} ARX_CREATE_SHORTCUT_STATUS "Creating $(^Name) shortcuts..."
 
@@ -86,11 +88,11 @@ ${LangFileString} ARX_VERIFY_DATA_MISSING "Missing:"
 ${LangFileString} ARX_VERIFY_DATA_MIXED "Found mixed Demo and Full version data!"
 ${LangFileString} ARX_VERIFY_DATA_FAILED "Found problems with your Arx Fatalis data!"
 ${LangFileString} ARX_VERIFY_DATA_SUCCESS "Data successfully verified."
-${LangFileString} ARX_VERIFY_DATA_PATCH_STEAM "Right click Arx Fatalis in your Steam library, choose 'Properties' and go to 'LOCAL FILES' and click 'Verify integrity of game files'."
+${LangFileString} ARX_VERIFY_DATA_PATCH_STEAM "Right click Arx Fatalis in your Steam library, choose 'Properties', go to 'LOCAL FILES' and click 'Verify integrity of game files'."
 ${LangFileString} ARX_VERIFY_DATA_PATCH_BETHESDA "Go to Arx Fatalis in the Bethesda.net Launcher, click 'Game Options' and choose 'Scan and Repair'."
 ${LangFileString} ARX_VERIFY_DATA_PATCH_WINDOWS "Go to Arx Fatalis (PC) in the Windows 'Add or remove programs' dialog, choose 'Advanced options' and there click 'Repair'."
 ${LangFileString} ARX_VERIFY_DATA_PATCH_REINSTALL "Please (re-)install Arx Fatalis."
-${LangFileString} ARX_VERIFY_DATA_PATCH "Please (re-)install the 1.21 patch: $(ARX_PATCH_URL)"
+${LangFileString} ARX_VERIFY_DATA_PATCH "Please (re-)install the 1.21 patch:"
 ${LangFileString} ARX_VERIFY_DATA_REINSTALL "Afterwards, run the $(^Name) Setup again!"
 ${LangFileString} ARX_VERIFY_DATA_REPORT "If you believe your Arx Fatalis data is valid, please report a bug with the full output:"
 ${LangFileString} ARX_COPY_DETAILS "You can right click here and choose '$(^CopyDetails)'."
