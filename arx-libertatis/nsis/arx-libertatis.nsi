@@ -183,6 +183,8 @@ InstType "/CUSTOMSTRING=$(ARX_MODIFY_INSTALL)"
 Section - Main
 	SectionIn RO
 	
+	Push $0
+	
 	SetDetailsPrint both
 	DetailPrint "$(ARX_INSTALL_STATUS)"
 	SetDetailsPrint listonly
@@ -213,6 +215,8 @@ Section - Main
 	WriteRegStr SHCTX "Software\ArxLibertatis" "InstallLocation" "$INSTDIR"
 	Call StoreInstallTypeInRegistry
 	WriteRegStr SHCTX "Software\ArxLibertatis" "DataDir" "$ArxFatalisLocation"
+	${GetArxFatalisStore} "$INSTDIR" $0
+	WriteRegStr SHCTX "Software\ArxLibertatis" "Store" "$0"
 	WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "DisplayName" "Arx Libertatis"
 	WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "DisplayIcon" "$\"$INSTDIR\arx.exe$\""
 	WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "UninstallString" "${UNINSTALL_CMDLINE}"
@@ -224,7 +228,6 @@ Section - Main
 	${ProgressBarUpdate} 0
 	
 	; Backup old arx.exe and arx.bat so that we can restore vanilla AF when uninstalling
-	Push $0
 	${Map.Get} $0 UninstallLogInfo "$INSTDIR\arx.exe"
 	${If} $0 != "old"
 	${AndIf} ${FileExists} "$INSTDIR\arx.exe"
@@ -237,7 +240,6 @@ Section - Main
 	${AndIfNot} ${FileExists} "$INSTDIR\arx.bat.bak"
 		Rename "$INSTDIR\arx.bat" "$INSTDIR\arx.bat.bak"
 	${EndIf}
-	Pop $0
 	
 	; Extract Arx Libertatis binaries
 <?
@@ -258,6 +260,8 @@ Section - Main
 	?>
 	
 	${ProgressBarEndSection}
+	
+	Pop $0
 	
 SectionEnd
 
@@ -545,6 +549,13 @@ Function .onInit
 		ReadRegStr $ExistingInstallType SHCTX "Software\ArxLibertatis" "InstallType"
 		ReadRegStr $ExistingArxFatalisLocation SHCTX "Software\ArxLibertatis" "DataDir"
 		${NormalizePath} "$ExistingArxFatalisLocation" $ExistingArxFatalisLocation
+		${Map.Get} $0 ArxFatalisLocationInfo "$INSTDIR"
+		${If} $0 == __NULL
+			ReadRegStr $0 SHCTX "Software\ArxLibertatis" "Store"
+			${If} $0 != ""
+				${Map.Set} ArxFatalisLocationInfo "$2" "${MU_UNKNOWN}:$0"
+			${EndIf}
+		${EndIf}
 		
 		${UninstallLogRead} "$INSTDIR\${UninstallLog}"
 		Call AdoptOldFiles
