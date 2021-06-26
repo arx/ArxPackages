@@ -177,7 +177,7 @@ Function PageArxFatalisLocationUpdate
 	
 	EnableWindow $ArxFatalisLocationNext 1
 	
-	${GetArxFatalisLocationInfo} "$ArxFatalisLocation" $0 $1
+	${GetArxFatalisStore} "$ArxFatalisLocation" $1
 	
 	${If} $ArxFatalisType == "patched"
 		SendMessage $ArxFatalisLocationIcon ${STM_SETIMAGE} ${IMAGE_ICON} $IconInfo

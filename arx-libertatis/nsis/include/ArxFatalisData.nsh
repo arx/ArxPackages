@@ -413,7 +413,7 @@ FunctionEnd
 
 ; Call FindArxFatalisData
 ; Fills the ArxFatalisLocations list with installed Arx Fatalis locations and stores metadata
-; about that location that can be queried using ${GetArxFatalisLocationInfo}.
+; about that location that can be queried using ${GetArxFatalisInstallMode} or ${GetArxFatalisStore}.
 Function FindArxFatalisData
 	
 	Push $0
@@ -496,7 +496,7 @@ FunctionEnd
 ; ${GetFirstArxFatalisInstallLocation} Result
 !define GetFirstArxFatalisInstallLocation '!insertmacro GetFirstArxFatalisInstallLocation'
 
-Function GetArxFatalisLocationInfo
+Function GetArxFatalisInstallMode
 	
 	Exch $0 ; Path
 	Push $1
@@ -506,60 +506,77 @@ Function GetArxFatalisLocationInfo
 		
 		${IsSubdirectory} "$PROGRAMFILES64" "$0" $1
 		${If} $1 == 1
-			StrCpy $0 ${MU_SYSTEM}
+			StrCpy $0 "AllUsers"
 		${Else}
 			${IsSubdirectory} "$PROGRAMFILES32" "$0" $1
 			${If} $1 == 1
-				StrCpy $0 ${MU_SYSTEM}
+				StrCpy $0 "AllUsers"
 			${Else}
 				${IsSubdirectory} "$UserProgramFiles" "$0" $1
 				${If} $1 == 1
-					StrCpy $0 ${MU_USER}
+					StrCpy $0 "CurrentUser"
 				${Else}
 					${IsSubdirectory} "$LOCALAPPDATA" "$0" $1
 					${If} $1 == 1
-						StrCpy $0 ${MU_USER}
+						StrCpy $0 "CurrentUser"
 					${Else}
 						${IsSubdirectory} "$PROFILE" "$0" $1
 						${If} $1 == 1
-							StrCpy $0 ${MU_USER}
+							StrCpy $0 "CurrentUser"
 						${Else}
-							StrCpy $0 ${MU_UNKNOWN}
+							StrCpy $0 ""
 						${EndIf}
 					${EndIf}
 				${EndIf}
 			${EndIf}
 		${EndIf}
 		
-		StrCpy $1 ""
-		
 	${Else}
 		
 		StrCpy $0 "$1" 1
-		StrCpy $1 "$1" ${NSIS_MAX_STRLEN} 2
+		${If} $0 == ${MU_SYSTEM}
+			StrCpy $0 "AllUsers"
+		${ElseIf} $0 == ${MU_USER}
+			StrCpy $0 "CurrentUser"
+		${Else}
+			StrCpy $0 ""
+		${EndIf}
 		
 	${EndIf}
 	
-	Exch $1
-	Exch
+	Pop $1
 	Exch $0
 	
 FunctionEnd
 
-!macro GetArxFatalisLocationInfo Path MultiuserResult StoreResult
+!macro GetArxFatalisInstallMode Path MultiuserResult
 	Push "${Path}"
-	Call GetArxFatalisLocationInfo
+	Call GetArxFatalisInstallMode
 	Pop ${MultiuserResult}
-	Pop ${StoreResult}
 !macroend
 
-; ${GetArxFatalisLocationInfo} Path MultiuserResult StoreResult
+; ${GetArxFatalisInstallMode} Path MultiuserResult StoreResult
 ; Gets information about the Arx Fatalis install at the given Path.
 ; The path should be normalized using ${NormalizePath} like those listed in ArxFatalisLocations.
-; MultiuserResult will contain if the path is a system or user install: ${MU_UNKNOWN}, ${MU_SYSTEM} or ${MU_USER}
+; MultiuserResult will contain if the path is a system or user install: "AllUsers", "CurrentUser" or ""
+; Paths not belonging to any store will return an empty string.
+!define GetArxFatalisInstallMode '!insertmacro GetArxFatalisInstallMode'
+
+!macro GetArxFatalisStore Path StoreResult
+	${Map.Get} ${StoreResult} ArxFatalisLocationInfo "${Path}"
+	${If} ${StoreResult} == __NULL
+		StrCpy ${StoreResult} ""
+	${Else}
+		StrCpy ${StoreResult} "${StoreResult}" ${NSIS_MAX_STRLEN} 2
+	${EndIf}
+!macroend
+
+; ${GetArxFatalisStore} Path StoreResult
+; Gets information about the Arx Fatalis install at the given Path.
+; The path should be normalized using ${NormalizePath} like those listed in ArxFatalisLocations.
 ; StoreResult will contain the store the path belongs to: "gog", "steam", "bethesda" or "windows"
 ; Paths not belonging to any store will return an empty string.
-!define GetArxFatalisLocationInfo '!insertmacro GetArxFatalisLocationInfo'
+!define GetArxFatalisStore '!insertmacro GetArxFatalisStore'
 
 Function IdentifyArxFatalisData
 	
@@ -1078,22 +1095,20 @@ Function LaunchArxFatalis
 	
 	Exch $0 ; Path
 	Push $1
-	Push $2
 	
 	${NormalizePath} "$0" $0
 	
-	${GetArxFatalisLocationInfo} "$0" $1 $2
+	${GetArxFatalisStore} "$0" $1
 	
-	${LaunchArxFatalisInStore} "$2" $2
+	${LaunchArxFatalisInStore} "$1" $1
 	
-	${If} $2 == 0
-		StrCpy $2 "$OUTDIR"
+	${If} $1 == 0
+		StrCpy $1 "$OUTDIR"
 		SetOutPath "$0"
 		Exec "$\"$0\arx.exe$\""
 		SetOutPath "$OUTDIR"
 	${EndIf}
 	
-	Pop $2
 	Pop $1
 	Pop $0
 	

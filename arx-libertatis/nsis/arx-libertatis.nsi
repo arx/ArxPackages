@@ -388,7 +388,7 @@ Section - VerifyData
 				StrCpy $1 "$(ARX_VERIFY_DATA_FAILED)"
 			${EndIf}
 			
-			${GetArxFatalisLocationInfo} "$ArxFatalisLocation" $2 $3
+			${GetArxFatalisStore} "$ArxFatalisLocation" $3
 			${If} $3 == "steam"
 				StrCpy $1 "$1$\n$\n$(ARX_VERIFY_DAYA_PATCH_STEAM)$\n$(ARX_VERIFY_DATA_REINSTALL)"
 			${ElseIf} $3 == "bethesda"
