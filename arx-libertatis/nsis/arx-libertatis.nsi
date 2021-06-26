@@ -214,7 +214,6 @@ Section - Main
 	${ProgressBarBeginSection} ${MAIN_SECTION_SIZE} ${MAIN_SECTION_COUNT}
 	
 	; First, store whatever we need to clean things up on error
-	${WriteUninstaller} "$INSTDIR\uninstall.exe"
 	WriteRegStr SHCTX "Software\ArxLibertatis" "InstallLocation" "$INSTDIR"
 	Call StoreInstallTypeInRegistry
 	WriteRegStr SHCTX "Software\ArxLibertatis" "DataDir" "$ArxFatalisLocation"
@@ -228,6 +227,22 @@ Section - Main
 	WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "DisplayVersion" "<?= $version ?>"
 	WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "NoModify" 1
 	WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "NoRepair" 1
+	
+	${Do}
+		StrCpy $0 "$INSTDIR\uninstall.exe"
+		SetFileAttributes "$0" NORMAL
+		${WriteUninstaller} "$0"
+		${IfNot} ${Errors}
+			${Break}
+		${EndIf}
+		StrCpy $0 "$(^FileError)"
+		${If} ${Cmd} `MessageBox MB_ABORTRETRYIGNORE|MB_ICONEXCLAMATION "$0" /SD IDIGNORE IDABORT abort IDIGNORE`
+			SetAutoClose false
+			${Break}
+			abort:
+			Abort
+		${EndIf}
+	${Loop}
 	${ProgressBarUpdate} 0
 	
 	; Backup old arx.exe and arx.bat so that we can restore vanilla AF when uninstalling
