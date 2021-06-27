@@ -245,18 +245,8 @@ Section - Main
 	${ProgressBarUpdate} 0
 	
 	; Backup old arx.exe and arx.bat so that we can restore vanilla AF when uninstalling
-	${Map.Get} $0 UninstallLogInfo "$INSTDIR\arx.exe"
-	${If} $0 != "old"
-	${AndIf} ${FileExists} "$INSTDIR\arx.exe"
-	${AndIfNot} ${FileExists} "$INSTDIR\arx.exe.bak"
-		Rename "$INSTDIR\arx.exe" "$INSTDIR\arx.exe.bak"
-	${EndIf}
-	${Map.Get} $0 UninstallLogInfo "$INSTDIR\arx.bat"
-	${If} $0 != "old"
-	${AndIf} ${FileExists} "$INSTDIR\arx.bat"
-	${AndIfNot} ${FileExists} "$INSTDIR\arx.bat.bak"
-		Rename "$INSTDIR\arx.bat" "$INSTDIR\arx.bat.bak"
-	${EndIf}
+	${UninstallLogBackup} "$INSTDIR\arx.exe"
+	${UninstallLogBackup} "$INSTDIR\arx.bat"
 	
 	; Extract Arx Libertatis binaries
 <?
