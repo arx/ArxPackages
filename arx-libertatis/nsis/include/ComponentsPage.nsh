@@ -172,22 +172,13 @@ Function RestorePatchInstallState
 FunctionEnd
 
 Function SaveSeparateInstallState
-	Push $0
-	StrCpy $0 $SecSeparateInstall
-	${If} $ExistingArxFatalisLocation == ""
-	${AndIf} $ArxFatalisLocation == ""
-		StrCpy $0 ${SF_SELECTED}
+	${If} $ExistingArxFatalisLocation != ""
+	${OrIf} $ArxFatalisLocation != ""
+		!insertmacro SaveSectionState ${CopyData} $SecCopyData
 	${EndIf}
-	${If} $0 != 0
-		${If} $ExistingArxFatalisLocation != ""
-		${OrIf} $ArxFatalisLocation != ""
-			!insertmacro SaveSectionState ${CopyData} $SecCopyData
-		${EndIf}
-		!insertmacro SaveSectionState ${StartMenu} $SecStartMenu
-		!insertmacro SaveSectionState ${Desktop} $SecDesktop
-		!insertmacro SaveSectionState ${QuickLaunch} $SecQuickLaunch
-	${EndIf}
-	Pop $0
+	!insertmacro SaveSectionState ${StartMenu} $SecStartMenu
+	!insertmacro SaveSectionState ${Desktop} $SecDesktop
+	!insertmacro SaveSectionState ${QuickLaunch} $SecQuickLaunch
 FunctionEnd
 
 Function RestoreSeparateInstallState
@@ -223,7 +214,10 @@ Function .onSelChange
 	Push $0 ; Index of clicked section
 	Push $1
 	
-	Call SaveSeparateInstallState
+	${If} $0 != ${SeparateInstall}
+	${AndIf} ${SectionIsSelected} ${SeparateInstall}
+		Call SaveSeparateInstallState
+	${EndIf}
 	
 	${If} $ExistingArxFatalisLocation != ""
 	${OrIf} $ArxFatalisLocation != ""
