@@ -64,6 +64,10 @@ Function PageDirectoryOnPre
 		Push $1
 		ReadRegStr $0 SHCTX "Software\ArxLibertatis" "InstallType"
 		ReadRegStr $1 SHCTX "Software\ArxLibertatis" "InstallLocation"
+		${If} $1 == ""
+			ReadRegStr $0 SHCTX "Software\Wow6432Node\ArxLibertatis" "InstallType"
+			ReadRegStr $1 SHCTX "Software\Wow6432Node\ArxLibertatis" "InstallLocation"
+		${EndIf}
 		${If} $0 == ""
 			${Map.Get} $0 ArxFatalisLocationInfo "$1"
 			${If} $0 == __NULL

@@ -86,6 +86,7 @@ BrandingText  " "
 ;------------------------------------------------------------------------------
 ;Variables
 
+Var ExistingInstall32
 Var ExistingInstallMode
 Var ExistingInstallLocation
 Var ExistingInstallType
@@ -395,12 +396,19 @@ Section - Cleanup
 	; Clean up old registry keys
 	${If} $MultiUser.InstallMode != $ExistingInstallMode
 	${OrIfNot} ${SectionIsSelected} ${Main}
+	${OrIf} $ExistingInstall32 == 1
+		${If} $ExistingInstall32 == 1
+			SetRegView 32
+		${EndIf}
 		${If} $ExistingInstallMode == "AllUsers"
 			DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis"
 			DeleteRegKey HKLM "Software\ArxLibertatis"
 		${ElseIf} $ExistingInstallMode == "CurrentUser"
 			DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis"
 			DeleteRegKey HKCU "Software\ArxLibertatis"
+		${EndIf}
+		${If} $ExistingInstall32 == 1
+			SetRegView 64
 		${EndIf}
 	${EndIf}
 	
@@ -521,9 +529,16 @@ Function .onInit
 	!insertmacro SingleInstanceMutex
 	
 	SetRegView 64
-	
 	!insertmacro MULTIUSER_INIT
+	${If} $MultiUser.DefaultKeyValue == ""
+		SetRegView 32
+		!insertmacro MULTIUSER_INIT
+		${If} $MultiUser.DefaultKeyValue != ""
+			StrCpy $ExistingInstall32 1
+		${EndIf}
+	${EndIf}
 	!insertmacro MUI_LANGDLL_DISPLAY
+	SetRegView 64
 	
 	; Check for >= Windows XP SP2
 	${IfNot} ${AtLeastWinVista}
@@ -566,6 +581,10 @@ Function .onInit
 		
 		Push $0
 		Push $1
+		
+		${If} $ExistingInstall32 == 1
+			SetRegView 32
+		${EndIf}
 		
 		StrCpy $ExistingInstallMode "$MultiUser.InstallMode"
 		${NormalizePath} "$MultiUser.DefaultKeyValue" $ExistingInstallLocation
@@ -657,6 +676,10 @@ Function .onInit
 		StrCpy $ArxFatalisLocation "$ExistingArxFatalisLocation"
 		Call UpdateArxFatalisLocationSize
 		
+		${If} $ExistingInstall32 == 1
+			SetRegView 64
+		${EndIf}
+		
 		Pop $1
 		Pop $0
 		
@@ -677,6 +700,7 @@ Function BeforeInstall
 	; Handle switching install modes
 	${If} $ExistingInstallMode != ""
 	${AndIf} $ExistingInstallMode != $MultiUser.InstallMode
+	${OrIf} $ExistingInstall32 == 1
 		Push $0
 		${If} $MultiUser.InstallMode == "AllUsers"
 			ReadRegStr $0 HKLM "Software\ArxLibertatis" "InstallLocation"
