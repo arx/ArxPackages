@@ -84,6 +84,7 @@ Function ProgressBarAddToTotal
 	IntOp $ProgressBarTotal $ProgressBarTotal + $0
 	IntOp $1 $1 * ${PROGRESS_BAR_ITEM_OVERHEAD}
 	IntOp $ProgressBarTotal $ProgressBarTotal + $1
+	IntOp $ProgressBarTotal $ProgressBarTotal + ${PROGRESS_BAR_SECTION_OVERHEAD}
 	
 	Pop $1
 	Pop $0
