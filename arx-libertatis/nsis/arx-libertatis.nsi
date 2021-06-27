@@ -632,7 +632,6 @@ Function .onInit
 		ReadRegStr $0 SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "DisplayVersion"
 		${If} $0 == "<?= $version ?>"
 			InstTypeSetText ${INSTTYPE_UPDATE_REPAIR} "$(ARX_REPAIR_INSTALL)"
-			InstTypeSetText -1 "Yo"
 		${Else}
 			InstTypeSetText ${INSTTYPE_UPDATE_REPAIR} "$(ARX_UPDATE_INSTALL)"
 		${EndIf}
