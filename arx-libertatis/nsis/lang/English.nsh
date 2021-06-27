@@ -103,4 +103,4 @@ ${LangFileString} ARX_COPY_DETAILS "You can right click here and choose '$(^Copy
 ${LangFileString} UNINSTALL_LOG "Could not open ${UninstallLog}!"
 ${LangFileString} UNINSTALL_ERROR "Error removing file or directory:$\n$\n$0"
 ${LangFileString} UNINSTALL_NOT_EMPTY "Install directory is not empty! Delete anyway?"
-${LangFileString} UNINSTALL_REPAIR "$(^Name) has been removed from your Arx Fatalis install but you might need to repair it."
+${LangFileString} UNINSTALL_REPAIR "$(^Name) has been removed from your Arx Fatalis install but you might need to repair it:"

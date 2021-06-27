@@ -102,4 +102,4 @@ ${LangFileString} ARX_COPY_DETAILS "Hier kann nach einem Richsclick '$(^CopyDeta
 ${LangFileString} UNINSTALL_LOG "${UninstallLog} konnte nicht geöffnet werden!"
 ${LangFileString} UNINSTALL_ERROR "Fehler beim löschen von:$\n$\n$0"
 ${LangFileString} UNINSTALL_NOT_EMPTY "Installationsverzeichnis ist nicht leer! Trotzdem löschen?"
-${LangFileString} UNINSTALL_REPAIR "$(^Name) wurde von der Arx Fatalis Installation entfernt aber sie muss möglicherweise repariert werden."
+${LangFileString} UNINSTALL_REPAIR "$(^Name) wurde von der Arx Fatalis Installation entfernt aber sie muss möglicherweise repariert werden:"

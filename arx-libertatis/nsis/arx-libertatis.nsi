@@ -764,15 +764,15 @@ FunctionEnd
 
 !macro UninstallSuggestRepair Store Result
 	${If} "${Store}" == "steam"
-		StrCpy ${Result} "$(UNINSTALL_REPAIR)$\n$\n$(ARX_VERIFY_DATA_PATCH_STEAM)"
+		StrCpy ${Result} "$(UNINSTALL_REPAIR)$\n$(ARX_VERIFY_DATA_PATCH_STEAM)"
 	${ElseIf} "${Store}" == "bethesda"
-		StrCpy ${Result} "$(UNINSTALL_REPAIR)$\n$\n$(ARX_VERIFY_DATA_PATCH_BETHESDA)"
+		StrCpy ${Result} "$(UNINSTALL_REPAIR)$\n$(ARX_VERIFY_DATA_PATCH_BETHESDA)"
 	${ElseIf} "${Store}" == "windows"
-		StrCpy ${Result} "$(UNINSTALL_REPAIR)$\n$\n$(ARX_VERIFY_DATA_PATCH_WINDOWS)"
+		StrCpy ${Result} "$(UNINSTALL_REPAIR)$\n$(ARX_VERIFY_DATA_PATCH_WINDOWS)"
 	${ElseIf} "${Store}" == "gog"
-		StrCpy ${Result} "$(UNINSTALL_REPAIR)$\n$\n$(ARX_VERIFY_DATA_PATCH_REINSTALL)"
+		StrCpy ${Result} "$(UNINSTALL_REPAIR)$\n$(ARX_VERIFY_DATA_PATCH_REINSTALL)"
 	${Else}
-		StrCpy ${Result} "$(UNINSTALL_REPAIR)$\n$\n$(ARX_VERIFY_DATA_PATCH)$\n${ARX_PATCH_URL}"
+		StrCpy ${Result} "$(UNINSTALL_REPAIR)$\n$(ARX_VERIFY_DATA_PATCH)$\n${ARX_PATCH_URL}"
 	${EndIf}
 !macroend
 
