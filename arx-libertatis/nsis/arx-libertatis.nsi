@@ -229,6 +229,7 @@ Section - Main
 	; Backup old arx.exe and arx.bat so that we can restore vanilla AF when uninstalling
 	${UninstallLogBackup} "$INSTDIR\arx.exe"
 	${UninstallLogBackup} "$INSTDIR\arx.bat"
+	${UninstallLogBackup} "$INSTDIR\readme.txt"
 	
 	; Extract Arx Libertatis binaries
 <?
