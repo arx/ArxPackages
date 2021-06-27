@@ -234,23 +234,6 @@ Section - Main
 	WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "NoModify" 1
 	WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "NoRepair" 1
 	
-	${Do}
-		StrCpy $0 "$INSTDIR\uninstall.exe"
-		SetFileAttributes "$0" NORMAL
-		${WriteUninstaller} "$0"
-		${IfNot} ${Errors}
-			${Break}
-		${EndIf}
-		StrCpy $0 "$(^FileError)"
-		${If} ${Cmd} `MessageBox MB_ABORTRETRYIGNORE|MB_ICONEXCLAMATION "$0" /SD IDIGNORE IDABORT abort IDIGNORE`
-			SetAutoClose false
-			${Break}
-			abort:
-			Abort
-		${EndIf}
-	${Loop}
-	${ProgressBarUpdate} 0
-	
 	; Backup old arx.exe and arx.bat so that we can restore vanilla AF when uninstalling
 	${UninstallLogBackup} "$INSTDIR\arx.exe"
 	${UninstallLogBackup} "$INSTDIR\arx.bat"
@@ -272,6 +255,23 @@ Section - Main
 		endif;
 	endforeach;
 	?>
+	
+	${Do}
+		StrCpy $0 "$INSTDIR\uninstall.exe"
+		SetFileAttributes "$0" NORMAL
+		${WriteUninstaller} "$0"
+		${IfNot} ${Errors}
+			${Break}
+		${EndIf}
+		StrCpy $0 "$(^FileError)"
+		${If} ${Cmd} `MessageBox MB_ABORTRETRYIGNORE|MB_ICONEXCLAMATION "$0" /SD IDIGNORE IDABORT abort IDIGNORE`
+			SetAutoClose false
+			${Break}
+			abort:
+			Abort
+		${EndIf}
+	${Loop}
+	${ProgressBarUpdate} 0
 	
 	${ProgressBarEndSection}
 	
