@@ -249,6 +249,7 @@ Function PageArxFatalisLocationUpdate
 	${EndIf}
 	
 	EnableWindow $ArxFatalisLocationNext 1
+	${NSD_SetFocus} $ArxFatalisLocationNext
 	
 	${GetArxFatalisStore} "$ArxFatalisLocation" $1
 	
