@@ -22,6 +22,7 @@
 !include "Sections.nsh"
 
 !include "NextInstallButton.nsh"
+!include "SpaceRequired.nsh"
 
 Var SecPatchInstall
 Var SecSeparateInstall
@@ -52,6 +53,7 @@ Var SelectedInstType
 	${EndIf}
 	!insertmacro SectionUngroup ${PatchInstall}
 	!insertmacro SectionUngroup ${SeparateInstall}
+	${Map.Create} SpaceRequiredOverrides
 !macroend
 
 !macro SaveSectionState SectionIndex Variable
@@ -121,6 +123,8 @@ FunctionEnd
 
 Function PageComponentsOnShow
 	
+	Push $0
+	
 	SysCompImg::SetThemed
 	
 	; Hack to work around NSIS' behavior when selecting a section group or subsections:
@@ -133,11 +137,9 @@ Function PageComponentsOnShow
 	
 	${If} $ExistingInstallLocation != ""
 		
-		Push $0
 		SendMessage $mui.ComponentsPage.Text ${WM_SETTEXT} 0 "STR:$(ARX_EXISTING_INSTALL)$\n$ExistingInstallLocation"
 		CreateFont $0 "$(^Font)" "$(^FontSize)" "700"
 		SendMessage $mui.ComponentsPage.Text ${WM_SETFONT} $0 1
-		Pop $0
 		
 		${If} $ExistingArxFatalisLocation != ""
 		${AndIf} $ExistingInstallType == "separate"
@@ -148,11 +150,24 @@ Function PageComponentsOnShow
 			SectionSetText ${CopyData} "$(ARX_COPY_DATA)"
 		${EndIf}
 		
+		${SpaceRequiredReplace} $mui.ComponentsPage.SpaceRequired
+		${Map.Clear} SpaceRequiredOverrides
+		${Map.Set} SpaceRequiredOverrides ${Main} 0
+		${Map.Set} SpaceRequiredOverrides ${PatchInstall} ${MAIN_SECTION_SIZE}
+		${Map.Set} SpaceRequiredOverrides ${SeparateInstall} ${MAIN_SECTION_SIZE}
+		StrCpy $0 "$StartMenuFolder" 1
+		${If} $0 == ">"
+			${Map.Set} SpaceRequiredOverrides ${StartMenu} 0
+		${EndIf}
+		${SpaceRequiredUpdate} $mui.ComponentsPage.SpaceRequired SpaceRequiredOverrides
+		
 	${EndIf}
 	
 	Call UpdateInstType
 	
 	Call PageComponentsUpdateNextButton
+	
+	Pop $0
 	
 FunctionEnd
 
@@ -279,6 +294,10 @@ Function .onSelChange
 	${EndIf}
 	
 	Call PageComponentsUpdateNextButton
+	
+	${If} $ExistingInstallLocation != ""
+		${SpaceRequiredUpdate} $mui.ComponentsPage.SpaceRequired SpaceRequiredOverrides
+	${EndIf}
 	
 	Pop $1
 	Pop $0

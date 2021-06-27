@@ -682,6 +682,12 @@ Function .onInit
 		StrCpy $ArxFatalisLocation "$ExistingArxFatalisLocation"
 		Call UpdateArxFatalisLocationSize
 		
+		${UninstallLogGetOldSize} "$ExistingInstallLocation\${UninstallLog}" "" $0
+		${GetFileSize} "$ExistingInstallLocation\uninstall.exe" $1
+		IntOp $0 $0 - $1
+		IntOp $0 0 - $0
+		SectionSetSize ${Cleanup} $0
+		
 		${If} $ExistingInstall32 == 1
 			SetRegView 64
 		${EndIf}

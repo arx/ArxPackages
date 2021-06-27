@@ -22,8 +22,13 @@
 
 !include "NextInstallButton.nsh"
 !include "PathUtil.nsh"
+!include "SpaceRequired.nsh"
+
+Var SpaceRequired
+Var SpaceRequiredDrive
 
 !macro DIRECTORY_PAGE
+!define MUI_DIRECTORYPAGE_VERIFYONLEAVE
 !define MUI_PAGE_CUSTOMFUNCTION_PRE PageDirectoryOnPre
 !define MUI_PAGE_CUSTOMFUNCTION_SHOW PageDirectoryOnShow
 !insertmacro MUI_PAGE_DIRECTORY
@@ -88,6 +93,14 @@ Function PageDirectoryOnShow
 	Call PageStartMenuIsInstall
 	Call SetNextButtonToInstall
 	
+	${If} $ExistingInstallLocation != ""
+		${SpaceRequiredReplace} $mui.DirectoryPage.SpaceRequired
+		StrCpy $SpaceRequiredDrive ""
+		Push "$INSTDIR"
+		Call UpdateSpaceRequiredDrive
+		${SpaceRequired} $mui.DirectoryPage.SpaceRequired $SpaceRequired
+	${EndIf}
+	
 FunctionEnd
 
 Function .onVerifyInstDir
@@ -95,6 +108,14 @@ Function .onVerifyInstDir
 	Push $0
 	
 	${NormalizePath} "$INSTDIR" $0
+	
+	${If} $ExistingInstallLocation != ""
+	${AndIf} $0 != ""
+		Push "$0"
+		Call UpdateSpaceRequiredDrive
+		${SpaceRequired} $mui.DirectoryPage.SpaceRequired $SpaceRequired
+	${EndIf}
+	
 	${If} $0 == $ArxFatalisLocation
 		Pop $0
 		Abort
@@ -104,4 +125,58 @@ Function .onVerifyInstDir
 	
 FunctionEnd
 
+Function UpdateSpaceRequiredDrive
+	
+	Exch $0
+	Push $1
+	
+	StrCpy $0 "$0" 2
+	${If} $0 != $SpaceRequiredDrive
+		StrCpy $SpaceRequiredDrive "$0"
+		
+		${Map.Create} SpaceRequiredDriveOverrides
+		${Map.Set} SpaceRequiredDriveOverrides ${Main} 0
+		${Map.Set} SpaceRequiredDriveOverrides ${PatchInstall} ${MAIN_SECTION_SIZE}
+		${Map.Set} SpaceRequiredDriveOverrides ${SeparateInstall} ${MAIN_SECTION_SIZE}
+		
+		; Filter sections that are not on the target drive
+		!insertmacro UpdateSpaceRequiredDriveOverride "$SMPROGRAMS" ${StartMenu}
+		StrCpy $0 "$StartMenuFolder" 1
+		${If} $0 == ">"
+			${Map.Set} SpaceRequiredDriveOverrides ${StartMenu} 0
+		${EndIf}
+		!insertmacro UpdateSpaceRequiredDriveOverride "$DESKTOP" ${Desktop}
+		!insertmacro UpdateSpaceRequiredDriveOverride "$QUICKLAUNCH" ${QuickLaunch}
+		${If} $ExistingInstallLocation != ""
+			${UninstallLogGetOldSize} "$ExistingInstallLocation\${UninstallLog}" "$SpaceRequiredDrive" $1
+			StrCpy $0 "$ExistingInstallLocation" 2
+			${If} $0 == $SpaceRequiredDrive
+				${GetFileSize} "$ExistingInstallLocation\uninstall.exe" $0
+				IntOp $1 $1 - $0
+			${EndIf}
+			IntOp $1 0 - $1
+			${Map.Set} SpaceRequiredDriveOverrides ${Cleanup} $1
+		${EndIf}
+		
+		${SpaceRequiredGet} SpaceRequiredDriveOverrides $SpaceRequired
+		${If} $SpaceRequired < 0
+			StrCpy $SpaceRequired 0
+		${EndIf}
+		
+		${Map.Destroy} SpaceRequiredDriveOverrides
+		
+	${EndIf}
+	
+	Pop $1
+	Pop $0
+	
+FunctionEnd
+
+!macroend
+
+!macro UpdateSpaceRequiredDriveOverride Variable SectionIndex
+	StrCpy $0 "${Variable}" 2
+	${If} $0 != $SpaceRequiredDrive
+		${Map.Set} SpaceRequiredDriveOverrides ${SectionIndex} 0
+	${EndIf}
 !macroend
