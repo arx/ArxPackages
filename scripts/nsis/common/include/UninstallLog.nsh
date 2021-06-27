@@ -404,10 +404,9 @@ Function UninstallLogClean
 	
 FunctionEnd
 
-
-!define UninstallLogGetSize '!insertmacro UninstallLogGetSize'
-
-!macro UninstallLogGetSize LogFile SizeResult
+!macro UninstallLogGetSize Mode LogFile Prefix SizeResult
+	Push "${Mode}"
+	Push "${Prefix}"
 	Push "${LogFile}"
 	Call UninstallLogGetSize
 	Pop ${SizeResult}
@@ -416,31 +415,55 @@ FunctionEnd
 Function UninstallLogGetSize
 	
 	Exch $0 ; LogFile
-	Push $1
-	Push $2
+	Exch 2
+	Exch $1 ; Mode
+	Exch
+	Exch $2 ; Prefix
 	Push $3
+	Push $4
+	Push $5
+	Push $6
 	
-	${GetFileSize} "$0" $0
+	StrLen $6 "$2"
+	
+	StrCpy $5 "$0" $6
+	${If} $5 == $2
+		${GetFileSize} "$0" $0
+		${If} $1 == "old"
+			IntOp $0 0 - $0
+		${EndIf}
+	${Else}
+		StrCpy $0 0
+	${EndIf}
 	
 	; Remove old files in reverse order
-	${List.Count} $1 UninstallLog
-	${DoWhile} $1 > 0
-		IntOp $1 $1 - 1
-		${List.Get} $2 UninstallLog $1
-		${Map.Get} $3 UninstallLogInfo "$2"
-		${If} $3 == "keep"
-			${GetFileSize} "$2" $3
-			DetailPrint "'$2' $3"
-			IntOp $0 $0 + $3
+	${List.Count} $3 UninstallLog
+	${DoWhile} $3 > 0
+		IntOp $3 $3 - 1
+		${List.Get} $4 UninstallLog $3
+		${Map.Get} $5 UninstallLogInfo "$4"
+		${If} $5 == $1
+			StrCpy $5 "$4" $6
+			${If} $5 == $2
+				${GetFileSize} "$4" $5
+				IntOp $0 $0 + $5
+			${EndIf}
 		${EndIf}
 	${Loop}
 	
+	Pop $6
+	Pop $5
+	Pop $4
 	Pop $3
 	Pop $2
 	Pop $1
 	Exch $0 ; SizeResult
 	
 FunctionEnd
+
+!define UninstallLogGetOldSize '!insertmacro UninstallLogGetSize "old"'
+
+!define UninstallLogGetNewSize '!insertmacro UninstallLogGetSize "keep"'
 
 !define UninstallLogRemoveAll '!insertmacro UninstallLogRemoveAll'
 

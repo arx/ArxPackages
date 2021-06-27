@@ -376,7 +376,7 @@ Section - Cleanup
 		
 		${UninstallLogClean} "$INSTDIR\${UninstallLog}"
 		
-		${UninstallLogGetSize} "$INSTDIR\${UninstallLog}" $0
+		${UninstallLogGetNewSize} "$INSTDIR\${UninstallLog}" "" $0
 		WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "EstimatedSize" $0
 		
 	${Else}
