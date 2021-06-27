@@ -214,6 +214,16 @@ Function DirectoryCheck
 			${EndIf}
 		${EndIf}
 		
+		${If} $0 != $ExistingInstallLocation
+		${AndIf} ${SectionIsSelected} ${SeparateInstall}
+			${If} ${FileExists} "$0\arx.exe"
+			${OrIf} ${FileExists} "$0\data.pak"
+				${If} ${Cmd} `MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(ARX_SEPARATE_INSTALL_CONTINUE)" /SD IDYES IDNO`
+					Abort
+				${EndIf}
+			${EndIf}
+		${EndIf}
+		
 	${EndIf}
 	
 	Pop $2

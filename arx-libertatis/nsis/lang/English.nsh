@@ -55,6 +55,7 @@ ${LangFileString} ARX_PATCH_INSTALL_DESC "Play using $(^Name) when you launch Ar
 
 ${LangFileString} ARX_SEPARATE_INSTALL "Create a separate $(^Name) install"
 ${LangFileString} ARX_SEPARATE_INSTALL_DESC "Only use $(^Name) when launched through its own shortcut. (Not Recommended)"
+${LangFileString} ARX_SEPARATE_INSTALL_CONTINUE "You have chosen to create a separate $(^Name) install but the install location already contains Arx Fatalis files:$\n$\n$0$\n$\nContinue with this location?"
 
 ${LangFileString} ARX_INSTALL_STATUS "Installing $(^Name)..."
 

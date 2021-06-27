@@ -55,6 +55,7 @@ ${LangFileString} ARX_PATCH_INSTALL_DESC "Spiel mit $(^Name) wenn Arx Fatalis ge
 
 ${LangFileString} ARX_SEPARATE_INSTALL "Separate $(^Name) Installation erstellen"
 ${LangFileString} ARX_SEPARATE_INSTALL_DESC "Benutze $(^Name) nur wenn es durch die eigene Verknüpfung gestartet wird. (Nicht Empfohlen)"
+${LangFileString} ARX_SEPARATE_INSTALL_CONTINUE "Sie haben gewählt eine separate $(^Name) Installation zu erstellen, aber das Installationsverzeichnis enthält bereits Arx Fatalis Dateien:$\n$\n$0$\n$\nMit diesem Verzeichnis fortfahren?"
 
 ${LangFileString} ARX_INSTALL_STATUS "$(^Name) wird installiert..."
 
