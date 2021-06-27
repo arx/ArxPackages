@@ -39,6 +39,7 @@ Var ArxFatalisLocationNext
 Var ArxFatalisLocation
 Var ArxFatalisFileCount
 Var ArxFatalisType
+Var ExpectedArxFatalisLocation
 
 !macro SET_ARX_FATALIS_LOCATION_PAGE
 PageEx custom
@@ -394,8 +395,11 @@ FunctionEnd
 Function PageChangeArxFatalisLocationIsInstall
 	
 	${If} $ExistingArxFatalisLocation == ""
-	${OrIf} $SelectedInstType == ${INSTTYPE_UPDATE_REPAIR}
+		StrCpy $ExpectedArxFatalisLocation "$ArxFatalisLocation"
+		Call PageInstallModeIsInstall
+	${ElseIf} $SelectedInstType == ${INSTTYPE_UPDATE_REPAIR}
 	${OrIf} $SelectedInstType == ${INSTTYPE_UNINSTALL}
+		StrCpy $ExpectedArxFatalisLocation "$ExistingArxFatalisLocation"
 		Call PageInstallModeIsInstall
 	${Else}
 		Push 0
@@ -439,6 +443,16 @@ Function PageChangeArxFatalisLocationOnLeave
 			Abort
 		${EndIf}
 	${EndIf}
+	
+	Push $0
+	StrCpy $ExpectedArxFatalisLocation "$ArxFatalisLocation"
+	StrCpy $ExpectedInstallLocation ""
+	Call PageInstallModeIsInstall
+	Pop $0
+	${If} $0 != 0
+		Call DirectoryCheck
+	${EndIf}
+	Pop $0
 	
 FunctionEnd
 

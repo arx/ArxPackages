@@ -5,6 +5,7 @@ ${LangFileString} SINGLE_INSTANCE "$(^Name) Setup is already running!"
 
 ${LangFileString} ABORT_RETRY_IGNORE "Click Abort to stop the installation,$\nRetry to try again, or$\nIgnore to skip this file."
 ${LangFileString} SPACE_FREED "Space freed: "
+${LangFileString} SPACE_LOW_CONTINUE "The installation requires about $1 of free space but there is only $2 available for the install location:$\n$\n$0$\n$\nContinue anyway?"
 
 ${LangFileString} ARX_WINDOWS_XP_SP2 "$(^Name) requires Windows XP Service Pack 2 or later."
 

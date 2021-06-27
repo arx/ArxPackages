@@ -371,6 +371,15 @@ Function PageComponentsOnLeave
 	Call RestorePatchInstallState
 	Call RestoreSeparateInstallState
 	
+	Push $0
+	StrCpy $ExpectedInstallLocation ""
+	Call PageChangeArxFatalisLocationIsInstall
+	Pop $0
+	${If} $0 != 0
+		Call DirectoryCheck
+	${EndIf}
+	Pop $0
+	
 FunctionEnd
 
 !macroend

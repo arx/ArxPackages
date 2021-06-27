@@ -26,11 +26,13 @@
 
 Var SpaceRequired
 Var SpaceRequiredDrive
+Var ExpectedInstallLocation
 
 !macro DIRECTORY_PAGE
 !define MUI_DIRECTORYPAGE_VERIFYONLEAVE
 !define MUI_PAGE_CUSTOMFUNCTION_PRE PageDirectoryOnPre
 !define MUI_PAGE_CUSTOMFUNCTION_SHOW PageDirectoryOnShow
+!define MUI_PAGE_CUSTOMFUNCTION_LEAVE PageDirectoryOnLeave
 !insertmacro MUI_PAGE_DIRECTORY
 !macroend
 
@@ -39,8 +41,13 @@ Var SpaceRequiredDrive
 Function PageDirectoryIsInstall
 	
 	${If} $SelectedInstType == ${INSTTYPE_UPDATE_REPAIR}
-	${OrIf} $SelectedInstType == ${INSTTYPE_UNINSTALL}
+		StrCpy $ExpectedInstallLocation "$ExistingInstallLocation"
+		Call PageStartMenuIsInstall
+	${ElseIf} $SelectedInstType == ${INSTTYPE_UNINSTALL}
+		StrCpy $ExpectedInstallLocation "$ExistingInstallLocation"
+		Call PageStartMenuIsInstall
 	${OrIf} ${SectionIsSelected} ${PatchInstall}
+		StrCpy $ExpectedInstallLocation "$ExpectedArxFatalisLocation"
 		Call PageStartMenuIsInstall
 	${Else}
 		Push 0
@@ -167,6 +174,49 @@ Function UpdateSpaceRequiredDrive
 		
 	${EndIf}
 	
+	Pop $1
+	Pop $0
+	
+FunctionEnd
+
+Function PageDirectoryOnLeave
+	
+	Push $0
+	GetInstDirError $0
+	${If} $0 == 1
+		Abort
+	${EndIf}
+	Pop $0
+	
+	StrCpy $ExpectedInstallLocation "$INSTDIR"
+	Call DirectoryCheck
+	
+FunctionEnd
+
+Function DirectoryCheck
+	
+	Push $0
+	Push $1
+	Push $2
+	
+	StrCpy $0 "$ExpectedInstallLocation"
+	
+	${If} $SelectedInstType != ${INSTTYPE_UNINSTALL}
+		
+		Push "$0"
+		Call UpdateSpaceRequiredDrive
+		${SpaceRequiredCheck} "$0" $SpaceRequired $2
+		${If} $2 != ""
+			${SpaceRequiredFormat} "$SpaceRequired" $1
+			${SpaceRequiredFormat} "$2" $2
+			${If} ${Cmd} `MessageBox MB_YESNO|MB_ICONEXCLAMATION "$(SPACE_LOW_CONTINUE)" /SD IDYES IDNO`
+				Abort
+			${EndIf}
+		${EndIf}
+		
+	${EndIf}
+	
+	Pop $2
 	Pop $1
 	Pop $0
 	

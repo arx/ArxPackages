@@ -28,6 +28,7 @@
 !macro INSTALLMODE_PAGE
 !define MUI_PAGE_CUSTOMFUNCTION_PRE PageInstallModeOnPre
 !define MUI_PAGE_CUSTOMFUNCTION_SHOW PageInstallModeOnShow
+!define MUI_PAGE_CUSTOMFUNCTION_LEAVE PageInstallModeOnLeave
 !insertmacro MULTIUSER_PAGE_INSTALLMODE
 !macroend
 
@@ -91,6 +92,20 @@ Function PageInstallModeOnShow
 	
 	Call PageDirectoryIsInstall
 	Call SetNextButtonToInstall
+	
+FunctionEnd
+
+Function PageInstallModeOnLeave
+	
+	Push $0
+	StrCpy $ExpectedArxFatalisLocation "$ArxFatalisLocation"
+	StrCpy $ExpectedInstallLocation ""
+	Call PageDirectoryIsInstall
+	Pop $0
+	${If} $0 != 0
+		Call DirectoryCheck
+	${EndIf}
+	Pop $0
 	
 FunctionEnd
 

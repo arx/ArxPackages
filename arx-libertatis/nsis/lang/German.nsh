@@ -5,6 +5,7 @@ ${LangFileString} SINGLE_INSTANCE "$(^Name) Setup läuft schon!"
 
 ${LangFileString} ABORT_RETRY_IGNORE "Klicken Sie auf Abbrechen, um abzubrechen,$\nauf Wiederholen, um den Schreibvorgang erneut zu versuchen,$\noder auf Ignorieren, um diese Datei zu überspringen."
 ${LangFileString} SPACE_FREED "Befreiter Speicher: "
+${LangFileString} SPACE_LOW_CONTINUE "Die Installation benötigt etwa $1 freien Speicher aber es ist nur $2 verfügbar für das Installationsverzeichnis:$\n$\n$0$\n$\nTrotzdem fortfahren?"
 
 ${LangFileString} ARX_WINDOWS_XP_SP2 "$(^Name) benötigt Windows XP Service Pack 2 or neuer."
 
