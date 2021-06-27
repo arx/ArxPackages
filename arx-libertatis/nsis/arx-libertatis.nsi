@@ -119,12 +119,11 @@ VIFileVersion "${Version}"
 ;------------------------------------------------------------------------------
 ;Language Selection Dialog Settings
 
-;!define MUI_LANGDLL_ALLLANGUAGES
-
 ;Remember the installer language
-!define MUI_LANGDLL_REGISTRY_ROOT "SHCTX" 
-!define MUI_LANGDLL_REGISTRY_KEY "Software\ArxLibertatis" 
-!define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
+!define MUI_LANGDLL_ALWAYSSHOW
+!define MUI_LANGDLL_REGISTRY_ROOT "SHCTX"
+!define MUI_LANGDLL_REGISTRY_KEY "Software\ArxLibertatis"
+!define MUI_LANGDLL_REGISTRY_VALUENAME "InstallerLanguage"
 
 ;------------------------------------------------------------------------------
 ;Reserve Files
@@ -531,6 +530,9 @@ Function .onInit
 	
 	!insertmacro SingleInstanceMutex
 	
+	SetRegView 64
+	
+	!insertmacro MULTIUSER_INIT
 	!insertmacro MUI_LANGDLL_DISPLAY
 	
 	; Check for >= Windows XP SP2
@@ -559,11 +561,8 @@ Function .onInit
 		Pop $0
 	${EndIf}
 	
-	SetRegView 64
-	
 	Call InitArxFatalisData
 	
-	!insertmacro MULTIUSER_INIT
 	!insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
 	
 	!insertmacro WELCOME_FINISH_PAGE_INIT
