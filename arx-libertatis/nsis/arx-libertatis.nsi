@@ -129,8 +129,14 @@ VIFileVersion "${Version}"
 ;------------------------------------------------------------------------------
 ;Reserve Files
 
+; These should be in the order of their first use
 !insertmacro MUI_RESERVEFILE_LANGDLL
+ReserveFile /plugin System.dll
+ReserveFile /plugin UserInfo.dll
+ReserveFile /plugin nsDialogs.dll
+ReserveFile /plugin NSISList.dll
 !insertmacro WELCOME_FINISH_PAGE_RESERVE
+ReserveFile /plugin SysCompImg.dll
 
 ;------------------------------------------------------------------------------
 ;Pages
