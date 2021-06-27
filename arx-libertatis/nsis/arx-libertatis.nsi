@@ -118,15 +118,6 @@ VIFileVersion "${Version}"
 !define MUI_ABORTWARNING
 
 ;------------------------------------------------------------------------------
-;Language Selection Dialog Settings
-
-;Remember the installer language
-!define MUI_LANGDLL_ALWAYSSHOW
-!define MUI_LANGDLL_REGISTRY_ROOT "SHCTX"
-!define MUI_LANGDLL_REGISTRY_KEY "Software\ArxLibertatis"
-!define MUI_LANGDLL_REGISTRY_VALUENAME "InstallerLanguage"
-
-;------------------------------------------------------------------------------
 ;Reserve Files
 
 ; These should be in the order of their first use
@@ -220,6 +211,7 @@ Section - Main
 	${ProgressBarBeginSection} ${MAIN_SECTION_SIZE} ${MAIN_SECTION_COUNT}
 	
 	; First, store whatever we need to clean things up on error
+	WriteRegStr SHCTX "Software\ArxLibertatis" "InstallerLanguage" "$LANGUAGE"
 	WriteRegStr SHCTX "Software\ArxLibertatis" "InstallLocation" "$INSTDIR"
 	Call StoreInstallTypeInRegistry
 	WriteRegStr SHCTX "Software\ArxLibertatis" "DataDir" "$ArxFatalisLocation"
@@ -543,6 +535,12 @@ Function .onInit
 			StrCpy $ExistingInstall32 1
 		${EndIf}
 	${EndIf}
+	Push $0
+	ReadRegStr $0 SHCTX "Software\ArxLibertatis" "InstallerLanguage"
+	${If} $0 != ""
+		StrCpy $LANGUAGE "$0"
+	${EndIf}
+	Pop $0
 	!insertmacro MUI_LANGDLL_DISPLAY
 	SetRegView 64
 	
@@ -844,7 +842,15 @@ Function un.onInit
 	SetRegView 64
 	
 	!insertmacro MULTIUSER_UNINIT
-	!insertmacro MUI_UNGETLANGUAGE
+	
+	Push $0
+	ReadRegStr $0 SHCTX "Software\ArxLibertatis" "InstallerLanguage"
+	${If} $0 != ""
+		StrCpy $LANGUAGE "$0"
+	${Else}
+		!insertmacro MUI_LANGDLL_DISPLAY
+	${EndIf}
+	Pop $0
 	
 	StrCpy $INSTDIR "$MultiUser.DefaultKeyValue"
 	
