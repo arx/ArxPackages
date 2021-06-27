@@ -39,6 +39,7 @@ Function UninstallLogAddOld
 	Push $1
 	
 	${If} ${FileExists} "$0"
+	${OrIf} ${FileExists} "$0.bak"
 		${NormalizePath} "$0" "$0"
 		${Map.Get} $1 UninstallLogInfo "$0"
 		${If} $1 == __NULL
@@ -166,6 +167,35 @@ Function UninstallLogAdd
 		FileWrite $UninstallLog "$0$\r$\n"
 	${EndIf}
 	${Map.Set} UninstallLogInfo "$0" "keep"
+	
+	Pop $1
+	Pop $0
+	
+	ClearErrors
+	
+FunctionEnd
+
+; Backup a file if it is not owned by the installer
+!define UninstallLogBackup '!insertmacro UninstallLogBackup'
+
+!macro UninstallLogBackup Path
+	Push "${Path}"
+	Call UninstallLogBackup
+!macroend
+
+Function UninstallLogBackup
+	
+	Exch $0 ; Path
+	Push $1
+	
+	${Map.Get} $1 UninstallLogInfo "$0"
+	${If} $1 != "old"
+	${AndIf} $1 != "keep"
+	${AndIf} ${FileExists} "$0"
+	${AndIfNot} ${FileExists} "$0.bak"
+		${UninstallLogAdd} "$0"
+		Rename "$0" "$0.bak"
+	${EndIf}
 	
 	Pop $1
 	Pop $0
