@@ -280,15 +280,36 @@ FunctionEnd
 	WriteUninstaller "${Path}"
 !macroend
 
-!macro UninstallLogRemove Item
-	${If} ${FileExists} "${Item}\*.*"
-		RMDir "${Item}"
-	${ElseIf} ${FileExists} "${Item}"
-		Delete "${Item}"
-	${EndIf}
+!macro UninstallLogRemove Item Temp
+	
+	${Do}
+		
+		SetFileAttributes "${Item}" NORMAL
+		
+		ClearErrors
+		${If} ${FileExists} "${Item}\*.*"
+			RMDir "${Item}"
+		${ElseIf} ${FileExists} "${Item}"
+			Delete "${Item}"
+		${EndIf}
+		${IfNot} ${Errors}
+			${Break}
+		${EndIf}
+		Push $0
+		StrCpy $0 "${Item}"
+		StrCpy ${Temp} "$(UNINSTALL_ERROR)$\n$\n$(ABORT_RETRY_IGNORE)"
+		Pop $0
+		${If} ${Cmd} `MessageBox MB_ABORTRETRYIGNORE|MB_ICONEXCLAMATION "${Temp}" /SD IDIGNORE IDABORT abort IDIGNORE`
+			SetAutoClose false
+			${Break}
+		${EndIf}
+		
+	${Loop}
+	
 	${If} ${FileExists} "${Item}.bak"
 		Rename "${Item}.bak" "${Item}"
 	${EndIf}
+	
 !macroend
 
 !define UninstallLogRemoveOld '!insertmacro UninstallLogRemoveOld'
@@ -304,6 +325,7 @@ Function UninstallLogRemoveOld
 	Push $1
 	Push $2
 	Push $3
+	Push $4
 	
 	${List.Sort} UninstallLog
 	
@@ -315,15 +337,22 @@ Function UninstallLogRemoveOld
 		${If} $2 != $0
 			${Map.Get} $3 UninstallLogInfo "$2"
 			${If} $3 == "old"
-				!insertmacro UninstallLogRemove "$2"
+				!insertmacro UninstallLogRemove "$2" $4
 			${EndIf}
 		${EndIf}
 	${Loop}
 	
+	Pop $4
 	Pop $3
 	Pop $2
 	Pop $1
 	Pop $0
+	
+	Return
+	
+abort:
+	
+	Abort
 	
 FunctionEnd
 
@@ -426,6 +455,7 @@ Function un.UninstallLogRemoveAll
 	Push $1
 	Push $2
 	Push $3
+	Push $4
 	
 	; Read log file and push all entries on the stack
 	SetFileAttributes "$0" NORMAL
@@ -451,15 +481,22 @@ Function un.UninstallLogRemoveAll
 	${DoWhile} $2 > 0
 		IntOp $2 $2 - 1
 		Pop $1
-		!insertmacro UninstallLogRemove "$1"
+		!insertmacro UninstallLogRemove "$1" $4
 	${Loop}
 	
 	Delete "$0"
 	
+	Pop $4
 	Pop $3
 	Pop $2
 	Pop $1
 	Pop $0
+	
+	Return
+	
+abort:
+	
+	Abort
 	
 FunctionEnd
 
