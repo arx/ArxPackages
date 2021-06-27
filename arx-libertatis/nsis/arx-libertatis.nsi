@@ -609,6 +609,7 @@ Function .onInit
 		
 		${UninstallLogRead} "$INSTDIR\${UninstallLog}"
 		Call AdoptOldFiles
+		${UninstallLogOrphan} "$INSTDIR"
 		
 		; Guess install type since older installers did not support it
 		${If} $ExistingInstallType == ""
@@ -733,6 +734,7 @@ Function BeforeInstall
 	${If} $INSTDIR != $ExistingInstallLocation
 		${UninstallLogRead} "$INSTDIR\${UninstallLog}"
 		Call AdoptOldFiles
+		${UninstallLogOrphan} "$INSTDIR"
 	${EndIf}
 	
 	${If} $ExistingInstallTypeUnclear == 1
