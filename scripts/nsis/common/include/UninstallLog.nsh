@@ -70,11 +70,11 @@ Function UninstallLogRead
 		
 		${UninstallLogAddOld} "$0"
 		
-		ClearErrors
 		SetFileAttributes "$0" NORMAL
 		FileOpen $0 "$0" r
 		
 		${Do}
+			ClearErrors
 			FileRead $0 $1
 			${If} ${Errors}
 				${Break}
@@ -465,8 +465,8 @@ Function un.UninstallLogRemoveAll
 		MessageBox MB_OK|MB_ICONSTOP "$(UNINSTALL_LOG)"
 	${EndIf}
 	StrCpy $2 0
-	ClearErrors
 	${Do}
+		ClearErrors
 		FileRead $1 $3
 		${If} ${Errors}
 			${Break}
