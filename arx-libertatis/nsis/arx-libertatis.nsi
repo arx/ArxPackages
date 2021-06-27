@@ -414,6 +414,10 @@ Section - Cleanup
 	
 	Pop $0
 	
+	${IfNot} ${SectionIsSelected} ${Main}
+		SetDetailsPrint both
+	${EndIf}
+	
 SectionEnd
 
 Section - VerifyData
