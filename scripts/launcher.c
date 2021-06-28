@@ -28,10 +28,6 @@
 #define LAUNCHER_USE_CMD_PATH 0
 #endif
 
-#ifndef LAUNCHER_ATTACH_CONSOLE
-#define LAUNCHER_ATTACH_CONSOLE 0
-#endif
-
 #define STR_HELPER(x) CAT(L, # x)
 #define STR(x) STR_HELPER(x)
 #define CAT_HELPER(x, y) x ## y
@@ -105,11 +101,6 @@ static WCHAR * copy(WCHAR * dest, const WCHAR * src) {
 
 __attribute__((__visibility__("default")))
 extern void start() {
-	
-	// Save the console for our children
-	#if LAUNCHER_ATTACH_CONSOLE
-	AttachConsole(ATTACH_PARENT_PROCESS);
-	#endif
 	
 	DWORD buffer_size = sizeof(WCHAR) * MAX_PATH * 10;
 	WCHAR * buffer = VirtualAlloc(0, buffer_size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
