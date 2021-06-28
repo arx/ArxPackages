@@ -84,7 +84,7 @@ Function SpaceRequiredFormat
 		Pop $0
 		System::Int64Op $0 % 10
 		Pop $0
-		StrCpy $0 "$1.$0 TB"
+		StrCpy $0 "$1.$0 $(^tera)$(^byte)"
 	${Else}
 		System::Int64Op $0 / 1048576
 		Pop $1
@@ -94,16 +94,16 @@ Function SpaceRequiredFormat
 			System::Int64Op $0 / 1048576
 			Pop $0
 			IntOp $0 $0 % 10
-			StrCpy $0 "$1.$0 GB"
+			StrCpy $0 "$1.$0 $(^giga)$(^byte)"
 		${Else}
 			IntOp $1 $0 / 1024
 			${If} $1 != 0
 				IntOp $0 $0 * 10
 				IntOp $0 $0 / 1024
 				IntOp $0 $0 % 10
-				StrCpy $0 "$1.$0 MB"
+				StrCpy $0 "$1.$0 $(^mega)$(^byte)"
 			${Else}
-				StrCpy $0 "$0 KB"
+				StrCpy $0 "$0 $(^kilo)$(^byte)"
 			${EndIf}
 		${EndIf}
 	${EndIf}

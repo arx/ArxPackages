@@ -1,6 +1,8 @@
 
 ; English text for the Arx Libertatis Windows installer
 
+${LangFileString} ^tera "T"
+
 ${LangFileString} SINGLE_INSTANCE "$(^Name) Setup is already running!"
 
 ${LangFileString} ABORT_RETRY_IGNORE "Click Abort to stop the installation,$\nRetry to try again, or$\nIgnore to skip this file."

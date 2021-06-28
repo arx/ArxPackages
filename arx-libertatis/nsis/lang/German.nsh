@@ -1,6 +1,8 @@
 
 ; German text for the Arx Libertatis Windows installer
 
+${LangFileString} ^tera "T"
+
 ${LangFileString} SINGLE_INSTANCE "$(^Name) Setup läuft schon!"
 
 ${LangFileString} ABORT_RETRY_IGNORE "Klicken Sie auf Abbrechen, um abzubrechen,$\nauf Wiederholen, um den Schreibvorgang erneut zu versuchen,$\noder auf Ignorieren, um diese Datei zu überspringen."
