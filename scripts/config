@@ -29,7 +29,7 @@ fi
 if [ -z "${is_release_candidate:-}" ] ; then
 	is_release_candidate=0
 	if [ $is_snapshot = 1 ] && [ ! -z "${version:-}" ] ; then
-		[[ "${version}" =~ ^.*\.[0-9]+rc[0-9]+$ ]] && is_release_candidate=1
+		[[ "${version}" =~ ^.*\.[0-9]+-rc[0-9]+$ ]] && is_release_candidate=1
 	fi
 fi
 
