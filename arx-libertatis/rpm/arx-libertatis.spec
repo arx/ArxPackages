@@ -62,7 +62,7 @@ BuildRequires:  xz
 %if 0%{?suse_version}
 BuildRequires:  update-desktop-files
 %endif
-%if 0%{?mageia} != 6
+%if 0%{?mageia} != 6 && 0%{?sle_version} != 150300
 BuildRequires:  blender-rpm-macros
 BuildRequires:  blender
 %endif
@@ -131,7 +131,7 @@ Requires:       libArxIO0 = %{version}-%{release}
 %description -n libArxIO-devel
 Arx Fatalis compression helper library used by the Blender addon (development files).
 
-%if 0%{?mageia} != 6
+%if 0%{?mageia} != 6 && 0%{?sle_version} != 150300
 %package -n arx-blender-addon
 Summary:        Arx Libertatis Blender addon
 %if 0%{?suse_version}
@@ -169,7 +169,7 @@ rm bin/arxsavetool
 rm bin/arxunpak
 rm data/README
 <? else: ?>
-%if 0%{?mageia} != 6
+%if 0%{?mageia} != 6 && 0%{?sle_version} != 150300
 %cmake \
 	-DCMAKE_INSTALL_LIBEXECDIR="%{_libexecdir}" \
 	-DINSTALL_BLENDER_PLUGINDIR="%{blender_addons}/arx" \
@@ -201,7 +201,7 @@ install -d "%{buildroot}/%{_libdir}"
 mv bin/libArxIO.so* "%{buildroot}/%{_libdir}/"
 install -d "%{buildroot}/%{_includedir}"
 mv bin/ArxIO.h "%{buildroot}/%{_includedir}/"
-%if 0%{?mageia} != 6
+%if 0%{?mageia} != 6 && 0%{?sle_version} != 150300
 install -d "%{buildroot}/%{blender_addons}"
 mv plugins/blender/arx_addon "%{buildroot}/%{blender_addons}/arx"
 %endif
@@ -300,7 +300,7 @@ mv arx-libertatis.desktop "%{buildroot}/%{_datadir}/applications/"
 %{_includedir}/ArxIO.h
 %{_libdir}/libArxIO.so
 
-%if 0%{?mageia} != 6
+%if 0%{?mageia} != 6 && 0%{?sle_version} != 150300
 %files -n arx-blender-addon
 %defattr(-,root,root)
 %dir %{blender_addons}
