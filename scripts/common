@@ -107,7 +107,7 @@ preprocess_all() {
 			elif [ -d "$path" ] ; then
 				[ -d "${output}/${path}" ] || e mkdir "${output}/${path}"
 			elif [[ "$mime" == "image/"* ]] || [[ "$mime" == "application/"* ]] ; then
-				e ln -s "$(realpath -m "$path")" "${output}/${path}"
+				e cp "$(realpath -m "$path")" "${output}/${path}"
 			else
 				preprocess "$config" "$path" "${output}/${path}"
 				[ -f "${output}/${path}" ] && [ -x "$path" ] && e chmod +x "${output}/${path}"
