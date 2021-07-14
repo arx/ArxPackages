@@ -19,7 +19,7 @@
 %define __python %{__python3}
 
 Name:           arx-libertatis
-Version:        1.1.2
+Version:        1.2
 Release:        1%{?dist}
 %if 0%{?suse_version}
 License:        GPL-3.0+
@@ -321,6 +321,10 @@ echo "See https://arx.vg/data for more information."
 %postun -n libArxIO0 -p /sbin/ldconfig
 
 %changelog
+* Wed Jul 14 2021 Daniel Scharrer <daniel@constexpr.org> - 1.2-1
+- Bump version to 1.2 (new upstream release):
+- This release brings improved rune recognition when casting spells, as well as a new bow aim mode. Support for high resolutions and wide monitors is enhanced with configurable HUD and player book scaling. The text and audio language can now be changed in the menu. Further, item physics have been fixed and item dragging has been refined. On top of that, this release adds a console to execute arbitrary script commands.
+
 * Thu Oct 17 2013 Daniel Scharrer <daniel@constexpr.org> - 1.1.2-1
 - Bump version to 1.1.2 (new upstream release):
 - Fixed a crash when hovering over map markers after the window was resized

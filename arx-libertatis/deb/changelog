@@ -1,3 +1,10 @@
+arx-libertatis (1.2-0.1) stable; urgency=low
+
+  * Bump version to 1.2 (new upstream release):
+  * This release brings improved rune recognition when casting spells, as well as a new bow aim mode. Support for high resolutions and wide monitors is enhanced with configurable HUD and player book scaling. The text and audio language can now be changed in the menu. Further, item physics have been fixed and item dragging has been refined. On top of that, this release adds a console to execute arbitrary script commands.
+
+ -- Daniel Scharrer <daniel@constexpr.org>  Wed, 14 Jul 2021 02:04:31 +0200
+
 arx-libertatis (1.1.2-0.1) stable; urgency=low
 
   * Bump version to 1.1.2 (new upstream release):
