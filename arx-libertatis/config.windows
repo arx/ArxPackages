@@ -2,7 +2,7 @@
 
 architectures=( 'x86' 'x64' )
 
-toolchains[windows-x86]='msvc-14-29-x86'
+toolchains[windows-x86]='msvc-14-16-x86'
 toolchains[windows-x64]='msvc-14-29-x64'
 
 readme_transforms+=(
@@ -13,6 +13,10 @@ cmake_options_windows_x64+=(
 	-DBUILD_TOOLS=0
 	-DBUILD_CRASHREPORTER=0
 	-DRUNTIME_LIBEXECDIR='.;..;../x86'
+)
+
+exe_linker_flags_windows_x86+=(
+	/subsystem:console,5.01
 )
 
 required_binaries_x86+=(

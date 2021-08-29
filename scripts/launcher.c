@@ -36,6 +36,11 @@
 
 static BOOL is_x64() {
 	
+	if(LOBYTE(LOWORD(GetVersion())) < 6) {
+		// Always use x86 version for Windows XP and earlier
+		return FALSE;
+	}
+	
 	typedef BOOL (WINAPI * IsWow64Process_t)(HANDLE, PBOOL);
 	typedef BOOL (WINAPI * IsWow64Process2_t)(HANDLE, USHORT *, USHORT *);
 	
