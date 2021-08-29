@@ -23,14 +23,10 @@ create_launcher() {
 	
 	local scommand="$(printf '%s' "${command%.exe}" | tr - _)"
 	
-	local use_path=0
 	local prefix_path="${bindir}/${architectures[0]}"
 	local prefix_files=(
 		$(find "$prefix_path" -maxdepth 1 -executable -type f ! -name "$library_pattern")
 	)
-	[ -d "$prefix_path/libexec" ] && use_path=1
-	[ "${#prefix_files[@]}" -gt 1 ] && use_path=1
-	[ $wrapper_use_path = 1 ] || use_path=0
 	
 	local binary=""
 	for arch in x86 x64 ; do
@@ -78,8 +74,6 @@ create_launcher() {
 		-Wl,--entry='_start'
 		-DUNICODE
 		-D_UNICODE
-		-DLAUNCHER_USE_PATH="$use_path"
-		-DLAUNCHER_USE_CMD_PATH=$wrapper_use_cmd_path
 		-DLAUNCHER_COMMAND="$command"
 		-DLAUNCHER_SCOMMAND="$scommand"
 		-DHAVE_X86="$have_x86"

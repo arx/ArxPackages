@@ -99,7 +99,9 @@ static WCHAR * copy(WCHAR * dest, const WCHAR * src) {
 	return dest;
 }
 
-__attribute__((__visibility__("default")))
+__attribute__((visibility("default")))
+__attribute__((noreturn))
+__attribute__((nothrow))
 extern void start() {
 	
 	DWORD buffer_size = sizeof(WCHAR) * MAX_PATH * 10;
@@ -109,20 +111,12 @@ extern void start() {
 	GetModuleFileNameW(NULL, buffer, buffer_size);
 	WCHAR * p = path_end(buffer);
 	
-	// Pass along the current executable directory
-	#if LAUNCHER_USE_CMD_PATH
-	*p = 0;
-	SetEnvironmentVariableW(STR(CAT(LAUNCHER_SCOMMAND, _PATH)), buffer);
-	#endif
-	
 	// Fudge the commandline
-	WCHAR * cmdline = GetCommandLineW();
 	#ifdef LAUNCHER_ARGS
+	WCHAR * cmdline = GetCommandLineW();
 	int argc;
 	WCHAR ** argv = CommandLineToArgvW(cmdline, &argc);
-	#if !LAUNCHER_USE_CMD_PATH
 	*p = 0;
-	#endif
 	cmdline = VirtualAlloc(0, 8191 * 2, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 	cmdline_state o = { cmdline, 0 };
 	#define LAUNCHER_ARG_BEGIN()    *o.p++ = L' '; *o.p++ = L'"'
@@ -142,45 +136,35 @@ extern void start() {
 	#endif
 	
 	// Determine the subdirectory for the appropriate variant
-	WCHAR * prefix;
+	WCHAR * path;
 	#if HAVE_X86 + HAVE_X64 > 1
 	if(is_x64()) {
-		prefix = L"\\bin\\x64\\";
+		path = L"\\bin\\x64\\" STR(LAUNCHER_COMMAND);
 	} else {
-		prefix = L"\\bin\\x86\\";
+		path = L"\\bin\\x86\\" STR(LAUNCHER_COMMAND);
 	}
 	#elif HAVE_X86
-	prefix = L"\\bin\\x86\\";
+	path = L"\\bin\\x86\\" STR(LAUNCHER_COMMAND);
 	#elif HAVE_X64
-	prefix = L"\\bin\\x64\\";
+	path = L"\\bin\\x64\\" STR(LAUNCHER_COMMAND);
 	#endif
-	p = copy(p, prefix);
+	p = copy(p, path);
 	
-	// Adjust %PATH%
-	#if LAUNCHER_USE_PATH
-	WCHAR * pp = p;
-	*pp++ = ';';
-	DWORD ppsize = buffer_size - (pp - buffer);
-	DWORD pathlen = GetEnvironmentVariableW(L"PATH", pp, ppsize);
-	if(pathlen && pathlen < ppsize) {
-		SetEnvironmentVariableW(L"PATH", buffer);
-	}
+	#ifndef LAUNCHER_ARGS
+	WCHAR * cmdline = GetCommandLineW();
 	#endif
-	
-	// Append the target command name
-	p = copy(p, STR(LAUNCHER_COMMAND));
 	
 	// Start the selected variant
+	DWORD exitcode = 42;
 	STARTUPINFO si = { sizeof(si) };
 	PROCESS_INFORMATION pi;
 	DWORD flags = CREATE_UNICODE_ENVIRONMENT;
-	if(!CreateProcessW(buffer, cmdline, NULL, NULL, FALSE, flags, NULL, NULL, &si, &pi)) {
-		ExitProcess(42);
+	if(CreateProcessW(buffer, cmdline, NULL, NULL, FALSE, flags, NULL, NULL, &si, &pi)) {
+		WaitForSingleObject(pi.hProcess, INFINITE);
+		GetExitCodeProcess(pi.hProcess, &exitcode);
 	}
 	
-	WaitForSingleObject(pi.hProcess, INFINITE);
-	DWORD exitcode = 1;
-	GetExitCodeProcess(pi.hProcess, &exitcode);
 	ExitProcess(exitcode);
 	
+	__builtin_unreachable();
 }
