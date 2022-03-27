@@ -15,6 +15,8 @@ ${LangFileString} ARX_WINDOWS_UCRT "$(^Name) requires the Windows Universal C Ru
 ${LangFileString} ARX_WINDOWS_UCRT_XP "For Windows XP you can get it by installing the Visual C++ Redistributable for Visual Studio 2015 or later:"
 ${LangFileString} ARX_WINDOWS_UCRT_VISTA "For Windows Vista or newer you should have gotten it as a Windows update."
 
+${LangFileString} ARX_DETECTING_INSTALL "Detecting Arx Fatalis installs..."
+
 ${LangFileString} ARX_TITLE_SUFFIX "Setup"
 
 ${LangFileString} ARX_DEVELOPMENT_SNAPSHOT "Development Snapshot"

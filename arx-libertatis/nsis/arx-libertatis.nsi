@@ -125,6 +125,7 @@ VIFileVersion "${Version}"
 ReserveFile /plugin System.dll
 ReserveFile /plugin UserInfo.dll
 ReserveFile /plugin nsDialogs.dll
+ReserveFile /plugin Banner.dll
 ReserveFile /plugin NSISList.dll
 !insertmacro WELCOME_FINISH_PAGE_RESERVE
 ReserveFile /plugin SysCompImg.dll
@@ -580,6 +581,8 @@ Function .onInit
 		Pop $0
 	${EndIf}
 	
+	Banner::show "$(ARX_DETECTING_INSTALL)"
+	
 	Call InitArxFatalisData
 	
 	!insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
@@ -704,6 +707,8 @@ Function .onInit
 		Pop $0
 		
 	${EndIf}
+	
+	Banner::destroy
 	
 FunctionEnd
 
