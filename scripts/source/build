@@ -28,7 +28,7 @@ printf '  Using commit %s\n' "$_git_log" >&2
 [ -e "${_outdir}/.git" ] && die 'bad git, bad'
 
 # Remove dotfiles
-e find "$_outdir" -name '.*' -exec rm -rvf {} \;
+e find "$_outdir" -name '.*' -exec rm -rvf {} +
 
 _version_file="${_outdir}/VERSION"
 if [ -f "$_version_file" ] ; then
