@@ -86,7 +86,7 @@ BrandingText  " "
 ;------------------------------------------------------------------------------
 ;Variables
 
-Var ExistingInstall32
+Var ExistingInstallWoW64
 Var ExistingInstallMode
 Var ExistingInstallLocation
 Var ExistingInstallType
@@ -395,8 +395,8 @@ Section - Cleanup
 	; Clean up old registry keys
 	${If} $MultiUser.InstallMode != $ExistingInstallMode
 	${OrIfNot} ${SectionIsSelected} ${Main}
-	${OrIf} $ExistingInstall32 == 1
-		${If} $ExistingInstall32 == 1
+	${OrIf} $ExistingInstallWoW64 == 1
+		${If} $ExistingInstallWoW64 == 1
 			SetRegView 32
 		${EndIf}
 		${If} $ExistingInstallMode == "AllUsers"
@@ -406,7 +406,7 @@ Section - Cleanup
 			DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis"
 			DeleteRegKey HKCU "Software\ArxLibertatis"
 		${EndIf}
-		${If} $ExistingInstall32 == 1
+		${If} $ExistingInstallWoW64 == 1
 			SetRegView 64
 		${EndIf}
 	${EndIf}
@@ -531,13 +531,16 @@ Function .onInit
 	
 	!insertmacro SingleInstanceMutex
 	
-	SetRegView 64
+	${If} ${RunningX64}
+		SetRegView 64
+	${EndIf}
 	!insertmacro MULTIUSER_INIT
 	${If} $MultiUser.DefaultKeyValue == ""
+	${AndIf} ${RunningX64}
 		SetRegView 32
 		!insertmacro MULTIUSER_INIT
 		${If} $MultiUser.DefaultKeyValue != ""
-			StrCpy $ExistingInstall32 1
+			StrCpy $ExistingInstallWoW64 1
 		${EndIf}
 	${EndIf}
 	Push $0
@@ -547,7 +550,9 @@ Function .onInit
 	${EndIf}
 	Pop $0
 	!insertmacro MUI_LANGDLL_DISPLAY
-	SetRegView 64
+	${If} ${RunningX64}
+		SetRegView 64
+	${EndIf}
 	
 	; Check for >= Windows XP SP2
 	${IfNot} ${AtLeastWinVista}
@@ -591,7 +596,7 @@ Function .onInit
 		Push $0
 		Push $1
 		
-		${If} $ExistingInstall32 == 1
+		${If} $ExistingInstallWoW64 == 1
 			SetRegView 32
 		${EndIf}
 		
@@ -691,7 +696,7 @@ Function .onInit
 		IntOp $0 0 - $0
 		SectionSetSize ${Cleanup} $0
 		
-		${If} $ExistingInstall32 == 1
+		${If} $ExistingInstallWoW64 == 1
 			SetRegView 64
 		${EndIf}
 		
@@ -715,7 +720,7 @@ Function BeforeInstall
 	; Handle switching install modes
 	${If} $ExistingInstallMode != ""
 	${AndIf} $ExistingInstallMode != $MultiUser.InstallMode
-	${OrIf} $ExistingInstall32 == 1
+	${OrIf} $ExistingInstallWoW64 == 1
 		Push $0
 		${If} $MultiUser.InstallMode == "AllUsers"
 			ReadRegStr $0 HKLM "Software\ArxLibertatis" "InstallLocation"
@@ -844,7 +849,9 @@ Function un.onInit
 	
 	!insertmacro SingleInstanceMutex
 	
-	SetRegView 64
+	${If} ${RunningX64}
+		SetRegView 64
+	${EndIf}
 	
 	!insertmacro MULTIUSER_UNINIT
 	
