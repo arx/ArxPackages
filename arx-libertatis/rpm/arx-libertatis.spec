@@ -28,6 +28,11 @@
 %define have_blender 0
 %endif
 
+<? if($bin): ?>
+%global debug_package %{nil}
+%global _missing_build_ids_terminate_build 0
+<? endif ?>
+
 Name:           arx-libertatis
 Version:        1.2
 Release:        1%{?dist}
