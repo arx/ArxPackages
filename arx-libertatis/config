@@ -192,7 +192,9 @@ test_binaries() {
 
 echo "${version:-kek}" | grep -P '^\d+\.\d+$' > /dev/null && codename_required=1
 
-launchpad_builds['trusty']='binary' # libepoxy is too old
+launchpad_builds['trusty']='binary'
+launchpad_builds['xenial']='binary'
+launchpad_builds['bionic']='binary'
 
 obs_bin_rpm=1
 
