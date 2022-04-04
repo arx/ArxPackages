@@ -303,7 +303,6 @@ check_dependencies() {
 			[ -f "$binary" ] || continue
 			[[ "$binary" == *.lib ]] && continue
 			[[ "$binary" == *.h ]] && continue
-			[ -L "${binary}" ] || e "${target}-strip" "${binary}"
 		done
 	fi
 	
@@ -370,6 +369,12 @@ check_dependencies() {
 
 # Get required libraries for all architectures
 for architecture in "${architectures[@]}" ; do
+	e check_dependencies "$architecture"
+done
+
+
+# Extract debug symbols into separate files
+for architecture in "${architectures[@]}" ; do
 	e extract_debug_symbols "$architecture"
 done
 
@@ -377,10 +382,4 @@ done
 # Copy binaries from other projects
 for src_project in "${inherit_projects[@]:+${inherit_projects[@]}}" ; do
 	e do_inherit_project "$src_project"
-done
-
-
-# Get required libraries for all architectures
-for architecture in "${architectures[@]}" ; do
-	e check_dependencies "$architecture"
 done
