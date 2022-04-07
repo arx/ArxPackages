@@ -24,7 +24,7 @@
 %define have_blender 0
 %endif
 %endif
-%if 0%{?mageia} == 6 || 0%{?sle_version} == 150300 || 0%{?sle_version} == 150400
+%if 0%{?mageia} == 6 || 0%{?sle_version} == 150400
 %define have_blender 0
 %endif
 
