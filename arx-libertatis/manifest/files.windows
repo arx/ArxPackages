@@ -50,13 +50,16 @@ data/localisation/languages/chinese.ini
 data/localisation/languages/deutsch.ini
 data/localisation/languages/english.ini
 data/localisation/languages/francais.ini
+data/localisation/languages/hungarian.ini
 data/localisation/languages/italian.ini
+data/localisation/languages/italiano.ini
 data/localisation/languages/japanese.ini
 data/localisation/languages/russian.ini
 data/localisation/languages/spanish.ini
 data/localisation/xtext_default_001_arxlibertatis.ini
 data/localisation/xtext_deutsch_001_arxlibertatis.ini
 data/localisation/xtext_english_001_arxlibertatis.ini
+data/localisation/xtext_hungarian_001_arxlibertatis.ini
 data/localisation/xtext_italiano_001_arxlibertatis.ini
 data/localisation/xtext_russian_001_arxlibertatis.ini
 data/localisation/xtext_spanish_001_arxlibertatis.ini
@@ -77,6 +80,8 @@ doc/arxunpak.txt
 license/
 license/arx-libertatis.COPYING.txt
 license/arx-libertatis.LICENSE.DejaVu
+license/arx-libertatis.LICENSE.fast_float
+license/arx-libertatis.LICENSE.stb
 license/arx-libertatis.LICENSE.txt
 license/Boost.LICENSE_1_0.txt
 license/FreeType.FTL.txt
