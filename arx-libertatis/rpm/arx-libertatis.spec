@@ -1,7 +1,7 @@
 #
 # spec file for arx-libertatis
 #
-# Copyright (c) 2012-2019 Daniel Scharrer <daniel@constexpr.org>
+# Copyright (c) 2012-2022 Daniel Scharrer <daniel@constexpr.org>
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
