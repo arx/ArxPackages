@@ -1,3 +1,39 @@
+arx-libertatis (1.2.1-0.1) stable; urgency=low
+
+  * Bump version to 1.2.1 (new upstream release):
+  * Fixed armor class and magic/poison resistance modifiers being rounded down
+  * Fixed being able to use items multiple times by dropping them on the player book (bug #1011)
+  * Fixed using stacks of items by dropping them on the player book causing the remaining unused
+    items in the stack to disappear
+  * Fixed messed up graphics with the Steam overlay active
+  * Fixed missing death screams for most NPCs (bug #1579)
+  * Fixed double click sound when unequipping armor
+  * Fixed excessively slow performance with "Crisp" Alpha Cutout AA enabled (bug #1595)
+  * The spellcast animation is no longer played when casting fails
+  * Fixed a crash when starting a new game while a game is already loaded
+  * Fixed a crash when color-keyed BMP images failed to load (bug #1557)
+  * Fixed a crash when the player is given an item while the inventory is full (bug #1570)
+  * Fixed a crash when releasing the escape key during the first frame of the main menu (bug #1155)
+  * Fixed a crash caused by the flying eye spell (bug #511)
+  * Fixed a crash when combining the coin purse with lights
+  * Fixed a crash with the activatephysics script command (bug #1259)
+  * Fixed a crash with the entity debug view (bug #1608)
+  * Fixed a crash when passing invalid values to command-line arguments
+  * Fixed a hang on startup on some POSIX platforms
+  * Fixed formatting for HTTPS links in dialogs
+  * Windows: Fixed a crash with Intel graphics and "Crisp" Alpha Cutout AA enabled (bug #1568,
+    bug #1603)
+  * Windows: Restored Windows XP support (bug #1569)
+  * Fixed compatibility with the CMake config installed by SDL 2.0.4+
+  * Fixed build without fstatat()
+  * Initial flags in CMAKE_REQUIRED_DEFINITIONS are no longer dropped when testing some platform
+    features
+  * Platform feature tests no longer fail if they produce generic warnings
+  * Fixed libstdc++ assert failures and disabled _GLIBCXX_ASSERTIONS in release builds (bug #1563)
+  * Added a workaround for miscompilation bugs in GCC 9.0-9.4 and 10.0-10.3 (bug #1600)
+
+ -- Daniel Scharrer <daniel@constexpr.org>  Sun, 10 Apr 2022 16:50:09 +0200
+
 arx-libertatis (1.2-0.1) stable; urgency=low
 
   * Bump version to 1.2 (new upstream release):
