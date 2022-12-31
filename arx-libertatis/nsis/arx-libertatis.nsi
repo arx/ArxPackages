@@ -227,6 +227,10 @@ Section - Main
 	WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "NoModify" 1
 	WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\ArxLibertatis" "NoRepair" 1
 	
+	; Clear any compatibility mode that might have been set up by AF installers
+	DeleteRegValue HKLM "Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers" "$INSTDIR\arx.exe"
+	DeleteRegValue HKCU "Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers" "$INSTDIR\arx.exe"
+	
 	; Backup old arx.exe and arx.bat so that we can restore vanilla AF when uninstalling
 	${UninstallLogBackup} "$INSTDIR\arx.exe"
 	${UninstallLogBackup} "$INSTDIR\arx.bat"
