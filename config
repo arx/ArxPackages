@@ -223,6 +223,7 @@ ubuntu_versions+=(
 	'xenial'  # 16.04 LTS  EOL: 2026-04
 	'bionic'  # 18.04 LTS  EOL: 2028-04
 	'focal'   # 20.04 LTS  EOL: 2030-04
-	'impish'  # 21.10
-	'jammy'   # 22.04
+	'jammy'   # 22.04 LTS
+	'kinetic' # 22.10
+	'lunar'   # 23.04
 )
