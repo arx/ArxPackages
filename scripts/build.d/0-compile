@@ -146,7 +146,7 @@ build() {
 		
 		mkdir -p "$depsdir"
 		
-		VERBOSE=1 e make -j"$(getconf _NPROCESSORS_ONLN)"
+		VERBOSE=1 e make -j1 #"$(getconf _NPROCESSORS_ONLN)"
 		
 		VERBOSE=1 e make install
 		
