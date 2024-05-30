@@ -7,7 +7,7 @@ Build-Depends: debhelper (>= 7.0.50)
 <? elseif($bin): ?>
 Build-Depends: debhelper (>= 7.0.50), qtbase5-dev (>= 5.0.0), libcurl3 (>= 7.20.0)
 <? else: ?>
-Build-Depends: debhelper (>= 7.0.50), cmake (>= 2.8), libboost-dev (>= 1.48), libglm-dev (>= 0.9.5.0), zlib1g-dev, libsdl2-dev (>= 2.0.0), libfreetype6-dev (>= 2.3.0), libopenal-dev, libepoxy-dev (>= 1.2), qtbase5-dev (>= 5.0.0), libcurl4-nss-dev (>= 7.20.0)
+Build-Depends: debhelper (>= 7.0.50), cmake (>= 2.8), libboost-dev (>= 1.48), libglm-dev (>= 0.9.5.0), zlib1g-dev, libsdl2-dev (>= 2.0.0), libfreetype6-dev (>= 2.3.0), libopenal-dev, libepoxy-dev (>= 1.2), qtbase5-dev (>= 5.0.0), libcurl4-nss-dev (>= 7.20.0) | libcurl4-gnutls-dev (>= 7.20.0)
 <? endif ?>
 Standards-Version: 3.9.4
 Homepage: https://arx-libertatis.org/
