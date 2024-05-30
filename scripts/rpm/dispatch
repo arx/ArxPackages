@@ -25,7 +25,7 @@ for archive in source linux ; do
 	
 	if [ $is_snapshot = 0 ] ; then
 		
-		_rpm_version="$(grep '^Version\:' "$_specfile" | sed 's/^Version\: *\([^ ]*\) *$/\1/')"
+		_rpm_version="$(grep '^Version:' "$_specfile" | sed 's/^Version\: *\([^ ]*\) *$/\1/')"
 		echo "rpm version is ${_rpm_version}"
 		
 		[ "$_rpm_version" = "$version" ] || die "RPM version is ${_rpm_version}, expected ${version}"
