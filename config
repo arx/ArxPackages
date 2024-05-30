@@ -22,6 +22,7 @@ _compiler_flags=(
 	-fmerge-all-constants
 	-fdevirtualize-at-ltrans
 	-fno-semantic-interposition
+	-fno-stack-clash-protection
 	# -fipa-pta (ICE with GCC 8.2)
 	-Wno-odr # false positives with static libraries with LTO upjects where headers were in a different location
 )
